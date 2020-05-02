@@ -1,0 +1,5 @@
+export const ADD_EIF_REQUEST = 'ADD_EIF_REQUEST'
+export const ADD_EIF_SUCCESS = 'ADD_EIF_SUCCESS'
+export const ADD_EIF_FAILURE = 'ADD_EIF_FAILURE'
+export const ADD_EIF_UPDATE = 'ADD_EIF_UPDATE'
+

@@ -1,0 +1,5 @@
+export const ADD_RAF_REQUEST = 'ADD_RAF_REQUEST'
+export const ADD_RAF_SUCCESS = 'ADD_RAF_SUCCESS'
+export const ADD_RAF_FAILURE = 'ADD_RAF_FAILURE'
+export const ADD_RAF_UPDATE = 'ADD_RAF_UPDATE'
+

@@ -1,0 +1,99 @@
+.App {
+  /* text-align: center; */
+  margin: 5px;
+  border: 1px;
+  border-radius: 0px;
+  /* box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); */
+  
+}
+.button {
+  padding: 0.5rem 5rem;
+    font-size: 1.25rem;
+    line-height: 1.5;
+    border-radius: .3rem;
+    background-color: #007bff;
+    border-color: #007bff;
+    color: white;
+}
+.App-logo {
+  margin: "0px";
+  width: 50%;
+  background-color: #fff;
+  padding: 16px;
+  position: relative;
+  @media all and (min-width: 520px) {
+    padding: 40px;
+    margin: 100px auto;
+    width: 60vw;
+  }
+  
+  @media all and (min-width: 520px) and (max-width: 1024px) {
+    width: 90vw;
+  }
+}
+
+/* @media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+} */
+.boxing {
+  width: "75%";
+  border: '1px solid black';
+  border-radius: '2px';
+  padding: '25px';
+  display: 'flex';
+  justify-content: 'center';
+  align-items: 'center';
+  margin-bottom: '15px';
+  background-color: '#ffffff';
+  box-shadow: '0px 0px 9px 0px rgba(0,0,0,0.1)';
+  min-width:  '1000px'
+}
+.popup {  
+  position: fixed;  
+  width: 100%;  
+  height: auto;  
+  top: 0;  
+  left: 0;  
+  right: 0;  
+  bottom: 0;  
+  margin: auto;  
+  background-color: rgba(0,0,0, 0.5);  
+}  
+.popup\_inner {  
+  position: absolute;  
+  left: 25%;  
+  right: 25%;  
+  top: 25%;  
+  bottom: 25%;  
+  margin: auto;  
+  border-radius: 10px;  
+  background: white;  
+}
+.navbar-light .navbar-nav .nav-link {
+  color:#007bff !important;
+}
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
