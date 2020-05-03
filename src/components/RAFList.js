@@ -123,7 +123,7 @@ export class RAFList extends React.Component {
                 return (
                     <div className="container-fluid">
                         <div className="row p-2 bg-primary text-white">New Organization Details</div><br />
-                         <div className="row d-flex justify-content-center text-left mb-4 mt-4"><span className="font-weight-bold">Domain Name:</span><span className="text-primary">http://3.6.90.1/{domain}</span> </div>
+                         <div className="row d-flex justify-content-center text-left mb-4 mt-4"><span className="font-weight-bold">Domain Name:</span><span className="text-primary">http://3.7.135.210/{domain}</span> </div>
                         <div className="row d-flex justify-content-center text-left mb-4 mt-4"><span className="font-weight-bold">User Name:</span><span className="text-primary"> {username}</span> </div>
                         <div className="row d-flex justify-content-center text-left mb-4 mt-4"><span className="font-weight-bold"> Password:</span><span className="text-primary">{password}</span> </div>
 

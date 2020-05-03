@@ -32,7 +32,7 @@ export class FindDomain extends Component {
                         
                     // })
                     
-                    const url = `http://3.6.90.1/${domain}`
+                    const url = `http://3.7.135.210/${domain}`
                     //console.log(url,"response1")
                 window.location.replace(url)
                    
