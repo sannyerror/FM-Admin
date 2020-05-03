@@ -34,7 +34,7 @@ import createAuthRefreshInterceptor from "axios-auth-refresh"
 import { update } from '../redux/login/loginAction' 
 import { clearUser } from '../redux/login/loginAction' 
 import  {store}  from '../App'
-export const baseApiUrl = "http://3.6.90.1:8005"; 
+export const baseApiUrl = "http://3.7.135.210:8005"; 
 const refreshAuthLogic = async failedRequest => {
   //  const { store } = store
     const userState = store.getState().user;
@@ -42,7 +42,7 @@ const refreshAuthLogic = async failedRequest => {
     if(!userState) {
        return Promise.reject();
     }
-    const tokenRefreshResponse = await axios.post('http://52.64.1.72/login/refresh/', {
+    const tokenRefreshResponse = await axios.post('http://3.7.135.210:8005/login/refresh/', {
     refresh: currentUser.refreshToken
   })
   localStorage.setItem('refreshtoken', tokenRefreshResponse.data.token)
