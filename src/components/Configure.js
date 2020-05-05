@@ -1,5 +1,6 @@
 import React from 'react';
 import '../App.css';
+import {connect} from 'react-redux';
 class Configure extends React.Component {
     constructor() {
         super();
@@ -8,6 +9,7 @@ class Configure extends React.Component {
         }
     }
     render() {
+        const { role_type} = this.props.user
         return (
 
             <div className="container-fluid">
@@ -24,7 +26,15 @@ class Configure extends React.Component {
                             <div className="col col-2"><a href="/configure/addquestion">Add</a></div>
                             {/* <div className="col col-2"><a href="">Edit</a></div> */}
                         </div>
-                        {/* <div className="row p-2 bg-primary text-white">Users</div> */}
+                        {role_type === "Super Admin" | "Admin" ? (
+                            <><div className="row p-2 bg-primary text-white">Users</div>
+                            <div className="row p-2 bd-highlight">
+                                <div className="col col-3"><a href="/configure/userslist">Users List</a></div>
+                                <div className="col col-2"><a href="/configure/adduser">Add</a></div>
+                                {/* <div className="col col-2"><a href="">Edit</a></div> */}
+                            </div></>
+                        ):""}
+                        
                     </div>
                     <div className="form-group row d-flex justify-content-center">
                         &nbsp;
@@ -37,4 +47,10 @@ class Configure extends React.Component {
     }
 }
 
-export default Configure;
+const mapStateToProps = state => {
+    return {
+        user: state.loginData.user
+    }
+}
+
+export default connect(mapStateToProps)( Configure);

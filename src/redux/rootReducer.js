@@ -11,6 +11,9 @@ import { AddRAFReducer }  from './AddRAF/AddRAFReducer'
 import { EIFListReducer }  from './FetchEIFList/EIFListReducer' 
 import { RAFListReducer }  from './FetchRAFList/RAFListReducer' 
 import { CheckDomainReducer }  from './CheckDomain/CheckDomainReducer'
+import { AddUsersReducer }  from './AddUsers/AddUsersReducer'
+import { GetUsersReducer }  from './GetUsers/GetUsersReducer' 
+
 
 export const rootReducer = combineReducers({
   loginData: LoginReducer,
@@ -24,7 +27,9 @@ export const rootReducer = combineReducers({
   raf:AddRAFReducer,
   eiflist:EIFListReducer,
   raflists:RAFListReducer,
-  domain:CheckDomainReducer
+  domain:CheckDomainReducer,
+  adduser: AddUsersReducer,
+  getusers: GetUsersReducer
 });
 
 export default rootReducer;

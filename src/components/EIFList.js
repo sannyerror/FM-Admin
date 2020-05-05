@@ -54,7 +54,7 @@ export class EIFList extends React.Component {
             form_status: value
         }
         
-     const currentUser = store.getState().loginData.user.accessToken;
+     const currentUser = store.getState().loginData.user.token;
           const response = await axios.post(`${baseApiUrl}/stages/validate/`,
           data, { 
             headers : {
@@ -62,11 +62,9 @@ export class EIFList extends React.Component {
               } 
         }      
         ).then(response=> {
-            const questionsList = response.data;
-            
             return response.data;
         })
-        console.log(response,"eif")
+        
         this.setState({ listID: "",
                          raf_link:response.response.raf_link
            

@@ -197,7 +197,7 @@ class AddQuestion extends React.Component {
                             <label className="col-sm-2 col-form-label font-weight-bold">Answer {index + 1}:</label>
                             <div className="col-sm-9">
                                 <input
-                                    onChange={this.handleChange}
+                                    //onChange={this.handleChange}
                                     type="text"
                                     onChange={this.handleText(index)}
                                     value={question}

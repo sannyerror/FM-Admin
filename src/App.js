@@ -23,6 +23,9 @@ import RAFMSG from "./components/RAFMSG";
 import Home from "./components/Home";
 import FindDomain from "./components/FindDomain";
 import Contactus from "./components/Contactus";
+import AddUser from "./components/AddUser";
+import Userslist from "./components/Userslist";
+import ChangePassword from "./components/ChangePassword";
 
 export const { store , persistor } = configureStore(createHistory());
 function App() {
@@ -36,7 +39,7 @@ function App() {
               <Switch>
               <Route exact path="/">
                           {/* <Redirect to="/configure" /> */}
-                          <Redirect to="/home" /> 
+                          <Redirect to="/login" /> 
               </Route>
                  <Route path="/eif" component={EIF}/>
                 <Route path="/eifmsg" component={EIFMSG}/>
@@ -46,12 +49,18 @@ function App() {
                 <Route path="/home" component={Home}/>
                 <Route path="/finddomain" component={FindDomain}/>
                 <Route path="/contactus" component={Contactus}/>
+                <Route path="/home" component={Home}/>
+                
                 
                 </Switch>
                 <Switch>
+                <PrivateRoute path="/changepassword" component={ChangePassword}/>
                 <PrivateRoute exact path="/configure" component={Configure}/>
                 <PrivateRoute path="/configure/questions" component={QuestionsList}/>
                 <PrivateRoute path="/configure/addquestion" component={AddQuestion}/>
+                <PrivateRoute path="/configure/adduser" component={AddUser}/>
+                <PrivateRoute path="/configure/edituser/edit=:edit&id=:id" component={AddUser}/>
+                <PrivateRoute path="/configure/userslist" component={Userslist}/>
                 <PrivateRoute path="/list" component={Landing}/>
                 <PrivateRoute path="/configure/questioncategory" component={AddQuestionCategory}/>
                 <PrivateRoute path="/eiflist" component={EIFList}/>

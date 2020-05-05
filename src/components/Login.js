@@ -21,19 +21,24 @@ export class Login extends Component {
         } else {
             try {
                 const response = await login(email, password);
-                if (response && response.data) {
-                    const { access_token, refresh_token } = response.data;
-                    this.setState({
-                        email,
-                        password,
-                        accessToken: access_token,
-                        refreshToken: refresh_token
-                    })
-                    this.props.history.push("/configure");
-
-                } else {
-                    console.log("failed")
+                
+                if(response.data.response.is_pwd_updated){
+                    if (response && response.data) {
+                        const { access_token, refresh_token } = response.data;
+                        this.setState({
+                            
+                            accessToken: access_token,
+                            refreshToken: refresh_token
+                        })
+                        this.props.history.push("/configure");
+    
+                    } else {
+                        console.log("failed")
+                    }
+                }else{
+                    this.props.history.push("/changepassword");
                 }
+                
 
             }
             catch (e) {
@@ -56,7 +61,7 @@ export class Login extends Component {
         return (
             <div>
                 <form>
-                    <div className="text-center"><h2>Admin Login</h2></div>
+                    <div className="text-center"><h2>Login</h2></div>
                     <div className="form-group row">
                         <label className="col-md-4 col-form-label text-md-right">Email ID:</label>
                         <div className="col-md-4">

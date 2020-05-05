@@ -56,7 +56,7 @@ export class RAFList extends React.Component {
             category: categoryId,
             form_status: value
         }
-        const currentUser = store.getState().loginData.user.accessToken;
+        const currentUser = store.getState().loginData.user.token;
         const response = await axios.post(`${baseApiUrl}/stages/validate/`,
             data, {
             headers: {
@@ -64,10 +64,8 @@ export class RAFList extends React.Component {
             }
         })
             .then(response => {
-                const questionsList = response.data;
                 return response.data;
             })
-        console.log(response, "res")
         this.setState({
             listID: "",
             success: response.status,

@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { checkDomain } from '../api/api';
-import { Redirect } from 'react-router-dom'
 import '../App.css'
 export class FindDomain extends Component {
     constructor(props) {
@@ -22,7 +21,7 @@ export class FindDomain extends Component {
         } else {
             try {
                 const response = await checkDomain(domain);
-                //console.log(response,"response")
+                
                 
                 if (response.message !== "domain not verified") {
                     //console.log(domain,"response2")
@@ -33,7 +32,7 @@ export class FindDomain extends Component {
                     // })
                     
                     const url = `http://3.7.135.210/${domain}`
-                    //console.log(url,"response1")
+                    
                 window.location.replace(url)
                    
                 } else {
@@ -60,7 +59,7 @@ export class FindDomain extends Component {
     }
 
     render() {
-         console.log(this.state.Canonical,"host")
+         
         return (
             <div>
                 <form>
