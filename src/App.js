@@ -20,7 +20,6 @@ import RAFList from "./components/RAFList";
 import Header from './components/Header';
 import RAF from "./components/RAF"
 import RAFMSG from "./components/RAFMSG";
-import Home from "./components/Home";
 import FindDomain from "./components/FindDomain";
 import Contactus from "./components/Contactus";
 import AddUser from "./components/AddUser";
@@ -46,12 +45,8 @@ function App() {
                 <Route path="/raf/:customer" component={RAF} />
                 <Route path="/rafmsg" component={RAFMSG} />
                 <Route path="/login" component={Login}/>
-                <Route path="/home" component={Home}/>
                 <Route path="/finddomain" component={FindDomain}/>
                 <Route path="/contactus" component={Contactus}/>
-                <Route path="/home" component={Home}/>
-                
-                
                 </Switch>
                 <Switch>
                 <PrivateRoute path="/changepassword" component={ChangePassword}/>
