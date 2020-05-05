@@ -3,7 +3,6 @@ import { fetchUsers, baseApiUrl } from '../api/api';
 import axios from 'axios'
 import { connect } from 'react-redux';
 import '../App.css';
-import 'react-confirm-alert/src/react-confirm-alert.css';
 import { store } from '../App'
 export class UsersList extends React.Component {
     constructor() {
