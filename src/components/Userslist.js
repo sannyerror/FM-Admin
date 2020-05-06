@@ -79,9 +79,9 @@ export class UsersList extends React.Component {
         return (
             <div className="container-fluid">
                 <div className="row p-2 bg-primary text-white">Users List</div>
-                <div class="table-responsive ">
+                <div className="table-responsive ">
                     <table className="table table-striped table-sm table-bordered mt-5 ">
-                        <thead class="bg-info text-white text-center">
+                        <thead className="bg-info text-white text-center">
                             <tr>
                                 <th scope="col mb-4">Name</th>
                                 <th scope="col">Email ID</th>

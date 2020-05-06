@@ -12,37 +12,37 @@ class RAF extends Component {
             data: {},
             file: null,
             loadrafquestions: [],
-            customer:""
+            customer: ""
         }
-        
+
     }
-    
+
     async componentDidMount() {
         const { customer } = this.props.match.params;
-        this.setState({customer:customer})
+        this.setState({ customer: customer })
         await rafQuestions();
         this.setState({
             loadrafquestions: this.props.loadrafquestions,
         })
-        
+
     }
-     onChange = async(e) => {
-        e.preventDefault() 
-          //this.setState({file:e.target.files[0]})
-          
-          let {name}=e.target;
-          let file =e.target.files[0]
-          let res = await this.uploadFile(file);
-          
-          this.setState({
+    onChange = async (e) => {
+        e.preventDefault()
+        //this.setState({file:e.target.files[0]})
+
+        let { name } = e.target;
+        let file = e.target.files[0]
+        let res = await this.uploadFile(file);
+
+        this.setState({
             data: {
                 ...this.state.data,
-           [name]: res.data.response,
+                [name]: res.data.response,
             }
         })
-        
-      }
-     uploadFile = async(file) =>{
+
+    }
+    uploadFile = async (file) => {
         const formData = new FormData();
 
         formData.append('assets', file)
@@ -73,15 +73,15 @@ class RAF extends Component {
         })
     }
 
-   handleSubmit = async (e) => {
+    handleSubmit = async (e) => {
         e.preventDefault();
-        const { data,customer } = this.state;
+        const { data, customer } = this.state;
         let newArray = [];
         for (let k in data) {
             newArray.push({ "id": parseInt(k), "answer": data[k] });
         }
         try {
-            await submitRAF(newArray,customer);
+            await submitRAF(newArray, customer);
             this.props.history.push('/rafmsg');
         }
         catch (e) {
@@ -118,7 +118,7 @@ class RAF extends Component {
                                     <><p key={idx}>{quest.question}</p>
                                         <div className="form-group">
                                             <input type="file" name={quest.id} onChange={this.onChange} />
-                                            
+
                                         </div></>
                                     : quest.question_type === 'CHECKBOX' ? quest.suggested_answers.map((suggested, idy) =>
                                         <>{idy === 0 ? <p key={idy}>{quest.question}</p> : null}
@@ -130,21 +130,20 @@ class RAF extends Component {
                                                     onChange={this.handleCheckboxChange} />
                                                 <label className="form-check-label">{suggested.answer}</label>
                                             </div>
-                                        </>) : quest.question_type === 'SELECT' ? quest.suggested_answers.map((suggested, idy) =>
-                                            <>{idy === 0 ? <p key={idy}>{quest.question}</p> : null}
-                                                <div className="form-group row">
-                                                    <select name={quest.id} class="form-control" id="exampleFormControlSelect1">
-                                                        <option value={suggested.answer}>{suggested.answer}</option>
-                                                    </select>
-                                                </div>
-                                            </>) : '')} 
+                                        </>) : quest.question_type === 'SELECT' ? (
+                                            <> <p >{quest.question}</p>
+                                                <div className="form-group">
+                                                    <select name={quest.id} className="form-control col-5" id="exampleFormControlSelect1">
+                                                        {quest.suggested_answers.map((suggested, idy) =>
+                                                            <option value={suggested.answer}>{suggested.answer}</option>
+                                                        )}</select></div> </>) : '')}
                 </>
             )
         return display
     }
 
     render() {
-        
+
         return (
             <div className="cotainer-fluid">
                 <div className="text-center"><h2>Readiness Assessment FORM</h2></div>

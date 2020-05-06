@@ -92,7 +92,8 @@ class AddQuestion extends React.Component {
         }
     }
        display = () => {
-        const display = this.props.questionscategoryList.response && this.props.questionscategoryList.response
+        const display = this.props.questionscategoryList.response && 
+        this.props.questionscategoryList.response
             .map((data, id) =>
                 <><div className="form-check">
                 <input
@@ -125,6 +126,7 @@ class AddQuestion extends React.Component {
         return display
     }
     render() {
+        console.log(this.state.question_type,"type")
         return (
             <div className="container-fluid">
                 <form className="">
@@ -162,7 +164,15 @@ class AddQuestion extends React.Component {
                                         onChange={this.onRadioChange}
                                         className="form-check-input" name="question_type" type="radio" id="gridCheck1" value="SELECT" />
                                     <label className="form-check-label" >
-                                        Select
+                                        Drop Down
+                                    </label>
+                                </div>
+                                <div className="form-check form-check-inline">
+                                    <input
+                                        onChange={this.onRadioChange}
+                                        className="form-check-input" name="question_type" type="radio" id="gridCheck1" value="TEXT" />
+                                    <label className="form-check-label" >
+                                        Text
                                     </label>
                                 </div>
                                 <div className="form-check form-check-inline">
@@ -204,18 +214,22 @@ class AddQuestion extends React.Component {
                                     className="form-control"
                                 />
                             </div>
+                            {this.state.question_type === "TEXT" ? "":
                             <div className="col-sm-1">
-                                <button className="badge badge-primary" onClick={this.handleDelete(index)}>x</button>
-                            </div>
+                            <button className="badge badge-primary" onClick={this.handleDelete(index)}>x</button>
+                        </div>
+                            
+                            }
+                            
                         </div>
                         
                     )):""}
-                    {this.state.question_type !== "FILE" ?
-                    <div className="form-group row d-flex justify-content-center">
-                        <div className="">
-                            <button className="btn btn-primary" onClick={this.addQuestion}>Click here to Add Answers</button>
-                        </div>
-                    </div> : "" }
+                    {this.state.question_type === "FILE" || this.state.question_type === "TEXT" ?
+                    "" : <div className="form-group row d-flex justify-content-center">
+                    <div className="">
+                        <button className="btn btn-primary" onClick={this.addQuestion}>Click here to Add Answers</button>
+                    </div>
+                </div> }
                     <div className="form-group row d-flex justify-content-center ">
                         <div className="mb-3">
                             <button type="submit" className="btn btn-primary" onClick={this.addQues}>Submit</button>

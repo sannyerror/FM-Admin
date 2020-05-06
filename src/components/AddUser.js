@@ -88,10 +88,16 @@ class AddUser extends React.Component {
 
     handleChange = (e) => {
         const { name, value } = e.target;
-        //const domain = domainPath.charAt(0).toUpperCase() + domainPath.substr(1).toLowerCase();
-        this.setState({
-            [name]: value.charAt(0).toUpperCase() + value.substr(1).toLowerCase()
-        });
+        if(name === "email_id"){
+            this.setState({            
+                [name]: value
+            });                
+        }else{
+            this.setState({            
+                [name]: value.charAt(0).toUpperCase() + value.substr(1).toLowerCase()
+            });
+        }
+       
     }
     onRadioChange = (e) => {
         // const { name, value } = e.target;
@@ -188,7 +194,7 @@ class AddUser extends React.Component {
                         <div className="form-group row">
                             <label className="col-sm-2 col-form-label font-weight-bold " >Role:</label>
                             <div className="col-sm-4">
-                                <select name="group_id" class="form-control" id="exampleFormControlSelect1" onChange={this.handleChange}>
+                                <select name="group_id" className="form-control" id="exampleFormControlSelect1" onChange={this.handleChange}>
                                 <option value="" checked={this.state.group_id === "0"}>Select</option>
                                 {this.state.Roles.map(role => <option value={role.id} selected={this.state.role_type === role.name}>{role.name}</option> )}
                                 {/* {role_type === "Super Admin" ? (<option value="Admin" checked={this.state.group-id === "Admin"}>Admin</option>): ""} */}
