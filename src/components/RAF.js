@@ -55,6 +55,7 @@ class RAF extends Component {
     }
     handleChange = (e) => {
         const { name, value } = e.target;
+        console.log(name,value,"name")
         this.setState({
             data: {
                 ...this.state.data,
@@ -100,40 +101,49 @@ class RAF extends Component {
                 <><div className="row p-2 mb-3 bg-primary text-white">{data.title}</div>
                     {data.questions.map((quest, idx) =>
                         quest.question_type === 'TEXT' ?
-                            <><p key={idx}>{quest.question}</p>
-                                <div className="form-group">
-                                    <input className="form-control" id='questionText' type='TEXT'
+                            <><div className="form-group">
+                                <label key={idx} className="font-weight-bold">{quest.id - 6}. {quest.question}</label>
+                                    <input className="form-control col-10 ml-3" id='questionText' type='TEXT'
                                         name={quest.id} value={this.state.name} onChange={this.handleChange} /></div></>
-                            : quest.question_type === 'RADIO' ? quest.suggested_answers.map((suggested, idy) =>
-                                <>{idy === 0 ? <p key={idy}>{quest.question}</p> : null}
-                                    <div className="form-check form-check-inline">
+                            : quest.question_type === 'RADIO' ? (
+                            <fieldset class="form-group">
+                                <legend class="col-form-label font-weight-bold pt-0">{quest.id - 6}. {quest.question}</legend>
+                               {quest.suggested_answers.map((suggested, idy) =>
+                                           <>
+                                           <div className="form-check form-check-inline ml-4">
                                         <input type="radio"
                                             className="form-check-input"
                                             name={quest.id}
                                             value={suggested.answer}
                                             onChange={this.handleCheckboxChange} />
                                         <label className="form-check-label">{suggested.answer}</label>
-                                    </div>
-                                </>) : quest.question_type === 'FILE' ?
-                                    <><p key={idx}>{quest.question}</p>
-                                        <div className="form-group">
+                                        </div>
+                                   </>
+                                )} </fieldset>) : quest.question_type === 'FILE' ?
+                                    <><label key={idx} className="font-weight-bold">{quest.id - 6}. {quest.question}</label>
+                                        <div className="form-group ml-4">
                                             <input type="file" name={quest.id} onChange={this.onChange} />
 
                                         </div></>
-                                    : quest.question_type === 'CHECKBOX' ? quest.suggested_answers.map((suggested, idy) =>
-                                        <>{idy === 0 ? <p key={idy}>{quest.question}</p> : null}
-                                            <div className="form-check form-check-inline">
-                                                <input type="CHECKBOX"
-                                                    className="form-check-input"
-                                                    name={quest.id}
-                                                    value={suggested.answer}
-                                                    onChange={this.handleCheckboxChange} />
-                                                <label className="form-check-label">{suggested.answer}</label>
-                                            </div>
-                                        </>) : quest.question_type === 'SELECT' ? (
-                                            <> <p >{quest.question}</p>
-                                                <div className="form-group">
-                                                    <select name={quest.id} className="form-control col-5" id="exampleFormControlSelect1">
+                                    : quest.question_type === 'CHECKBOX' ? (
+                                        <fieldset class="form-group">
+                                            <legend class="col-form-label font-weight-bold pt-0">{quest.id - 6}. {quest.question}</legend>
+                                           {quest.suggested_answers.map((suggested, idy) =>
+                                                       <>
+                                                       <div className="form-check form-check-inline ml-4">
+                                                    <input type="checkbox"
+                                                        className="form-check-input"
+                                                        name={quest.id}
+                                                        value={suggested.answer}
+                                                        onChange={this.handleCheckboxChange} />
+                                                    <label className="form-check-label">{suggested.answer}</label>
+                                                    </div>
+                                               </>
+                                            )} </fieldset>) : quest.question_type === 'SELECT' ? (
+                                            <> <label className="font-weight-bold" >{quest.id - 6}. {quest.question}</label>
+                                                <div className="form-group ml-4">
+                                                    <select name={quest.id} className="form-control col-5" id="exampleFormControlSelect1" onChange={this.handleChange}>
+                                                    <option value="">Select...</option>
                                                         {quest.suggested_answers.map((suggested, idy) =>
                                                             <option value={suggested.answer}>{suggested.answer}</option>
                                                         )}</select></div> </>) : '')}
