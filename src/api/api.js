@@ -89,29 +89,7 @@ export const login = async (email, password) => {
     dispatch(fetchUsersFailure(error.message))
     throwError(error)
   }
-};
-
-export const ChangePwd = async (retype_password,old_password,password) => {
-
-  const { dispatch } = store
-  try {
-    dispatch(fetchUsersRequest)
-    const response = await axios.post(`${baseApiUrl}/users/1/`, { retype_password: retype_password,old_password:old_password, password: password });
-    const { token, role_type } = response.data.response
-    const user = {
-     
-      password,
-      token,
-      role_type: role_type
-    }
-    dispatch(fetchUsersSuccess(user))
-    localStorage.setItem("refreshToken", response.data.token);
-    return response;
-  } catch (error) {
-    dispatch(fetchUsersFailure(error.message))
-    throwError(error)
-  }
-};
+}; 
 
 export const checkDomain = async (domain) => {
   const { dispatch } = store

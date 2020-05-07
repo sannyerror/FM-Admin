@@ -89,7 +89,7 @@ export class RAFList extends React.Component {
                             (r.questions.map(q => (q.answers.map(z => (<li className="list-group-item mb-1" onClick={this.getDetails}>
                                 <span className="text-primary "> {q.question}</span> <br />
                                 <span className=" ">(A)</span> -
-                                {z.answer.includes('static') ? (<a target="_blank" href={`${baseApiUrl}/${z.answer}`} className="font-weight-bold">View File</a>) : (<span className="text-primary font-weight-bold">{z.answer}</span>)}
+                                {z.answer.includes('static') ? (<a href={`${baseApiUrl}/${z.answer}`} className="font-weight-bold">View File</a>) : (<span className="text-primary font-weight-bold">{z.answer}</span>)}
 
                             </li>)
                             )))))))}

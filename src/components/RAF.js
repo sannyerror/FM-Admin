@@ -55,7 +55,7 @@ class RAF extends Component {
     }
     handleChange = (e) => {
         const { name, value } = e.target;
-        console.log(name,value,"name")
+        
         this.setState({
             data: {
                 ...this.state.data,

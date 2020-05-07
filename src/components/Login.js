@@ -26,7 +26,6 @@ export class Login extends Component {
                     if (response && response.data) {
                         const { access_token, refresh_token } = response.data;
                         this.setState({
-                            
                             accessToken: access_token,
                             refreshToken: refresh_token
                         })

@@ -126,7 +126,6 @@ class AddQuestion extends React.Component {
         return display
     }
     render() {
-        console.log(this.state.question_type,"type")
         return (
             <div className="container-fluid">
                 <form className="">

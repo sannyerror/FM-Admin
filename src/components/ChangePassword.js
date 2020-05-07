@@ -1,9 +1,9 @@
 import React from 'react';
 import '../App.css';
 import axios from 'axios'
-import { baseApiUrl  } from '../api/api';
-import {connect} from 'react-redux';
+import { baseApiUrl } from '../api/api';
 import { store } from '../App'
+import {connect} from 'react-redux'
 class ChangePassword extends React.Component {
     constructor() {
         super();
@@ -16,53 +16,64 @@ class ChangePassword extends React.Component {
     }
     changePwd = async (e) => {
         e.preventDefault();
-        const { retype_password,old_password,password} = this.state
+        const { retype_password, old_password, password } = this.state
         if (!password && !retype_password && old_password) {
             return this.setState({
                 error: "Please provide Password / Retype-Password / Old-Password"
             })
         } else {
-            const data ={
+            const data = {
                 password: password,
                 retype_password: retype_password,
                 old_password: old_password
             }
-            
-            const currentUser = store.getState().loginData.user.token;
-          try {
-              const response =  await axios.patch(`${baseApiUrl}/users/${this.props.user.user_id}/`,data,{
-            headers : {
-              'Authorization' : `Bearer ${currentUser}`
-            }            
-                    })
+
+            const { token, user_id, email, role_type, is_pwd_updated } = store.getState().loginData.user;
+
+
+            try {
+                const response = await axios.patch(`${baseApiUrl}/users/${user_id}/`, data, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                })
                     .then(response => {
-                      
-                      return response.data;
-                  })
-              
-              if (response.status === "failed"){
-                this.setState({
-                    error:response.status
-                });
-            }else{
-                this.props.history.push(`/configure`);
+
+                        return response.data;
+                    })
+                 
+                if (response.status === "failed") {
+                    this.setState({
+                        error: response.status
+                    });
+                } else {
+                    const user = {
+                        email,
+                        token,
+                        user_id,
+                        role_type: role_type,
+                        is_pwd_updated: ""
+                    }
+                    this.props.dispatch({ type: "FETCH_USERS_SUCCESS", user });
+                    this.props.history.push(`/configure`);
+                }
             }
+            catch (error) {
+                
+                console.log(error, 'error')
             }
-          catch (error) {
-            console.log(error,'error')
-         }
         }
     }
 
     handleChange = (e) => {
         const { name, value } = e.target;
-        
+
         this.setState({
             [name]: value
         });
     }
     onRadioChange = (e) => {
-        const {  value } = e.target;
+        const { value } = e.target;
         this.setState({
             gender: value
         })
@@ -123,10 +134,4 @@ class ChangePassword extends React.Component {
         );
     }
 }
-const mapStateToProps = state => {
-    return {
-        user: state.loginData.user
-    }
-}
-
-export default connect(mapStateToProps)(ChangePassword);
+export default connect(null,null)(ChangePassword);

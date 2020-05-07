@@ -50,7 +50,7 @@ export class EIF extends React.Component {
         for (let k in data) {
             newArray.push({ 'id': parseInt(k), 'answer': data[k] });
         }
-        
+        //let newArray1 = JSON.stringify(newArray);
         if (!data) {
             return this.setState({
                 error: "Please provide Email ID / Password"
