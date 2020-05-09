@@ -62,7 +62,7 @@ export class Login extends Component {
                 <form>
                     <div className="text-center"><h2>Login</h2></div>
                     <div className="form-group row">
-                        <label className="col-md-4 col-form-label text-md-right">Email ID:</label>
+                        <label className="col-md-4 col-form-label text-md-right">Email IDDD:</label>
                         <div className="col-md-4">
                             <input type="text" className="form-control" name="email" onChange={this.handleChange}
                                 value={this.state.email} required />
