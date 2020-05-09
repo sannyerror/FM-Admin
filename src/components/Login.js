@@ -21,15 +21,14 @@ export class Login extends Component {
         } else {
             try {
                 const response = await login(email, password);
-                
                 if(response.data.response.is_pwd_updated){
                     if (response && response.data) {
-                        const { access_token, refresh_token } = response.data;
+                        const { token, refresh_token, role_type } = response.data.response;
                         this.setState({
-                            accessToken: access_token,
+                            accessToken: token,
                             refreshToken: refresh_token
                         })
-                        this.props.history.push("/configure");
+                        this.props.history.push(`${role_type === "Coordinator" ? "/eiflist":"/configure"}`);
     
                     } else {
                         console.log("failed")

@@ -9,7 +9,7 @@ export class Header extends React.Component {
     //this.props.history.push("/login"); 
   }
   render(){
-      const { token,is_pwd_updated } =this.props.user
+      const { token,is_pwd_updated,role_type } =this.props.user
       
       const url = "https://firstmatchcom.wpcomstaging.com/"
     return (
@@ -44,9 +44,12 @@ export class Header extends React.Component {
                 </li> 
                 {is_pwd_updated === false ? "": (
                     <>
-                    <li className="nav-item">
-                    <a className="nav-link" href="/configure">Configure</a>
-                </li>
+                    {role_type === "Coordinator" ? "":(
+                        <li className="nav-item">
+                        <a className="nav-link" href="/configure">Configure</a>
+                         </li>
+                    )}
+                    
                 <li className="nav-item">
                     <a className="nav-link" href="/eiflist">Interest Forms</a>
                 </li>
