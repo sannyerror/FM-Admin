@@ -28,6 +28,7 @@ export class Login extends Component {
                             accessToken: token,
                             refreshToken: refresh_token
                         })
+                         console.log(role_type,"roletype")
                         this.props.history.push(`${role_type === "Coordinator" ? "/eiflist":"/configure"}`);
     
                     } else {
