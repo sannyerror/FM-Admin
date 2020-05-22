@@ -94,7 +94,7 @@ class AddUser extends React.Component {
             });                
         }else{
             this.setState({            
-                [name]: value.charAt(0).toUpperCase() + value.substr(1).toLowerCase()
+                [name]: value.charAt(0).toUpperCase() + value.substr(1)
             });
         }
        
