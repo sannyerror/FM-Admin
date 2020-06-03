@@ -15,7 +15,7 @@ class AddUser extends React.Component {
             mobile: "",
             role_type:"",
             Roles:[],
-            error: ""
+            error: []
         }
     }
     async componentDidMount() {
@@ -67,12 +67,14 @@ class AddUser extends React.Component {
         const data = this.state
         try {
             const response = await AddUsers(data,id);
-            console.log(response,"rr")
-            
             if (response.status === "failed") {
-                // this.setState({
-                //     error: response
-                // });
+            Object.keys(response.message).map(err => 
+                this.setState({
+                    error: err
+                })
+            
+                )
+                
             } else {
                 this.props.history.push('/configure/userslist');
             }
@@ -197,9 +199,7 @@ class AddUser extends React.Component {
                                 <select name="group_id" className="form-control" id="exampleFormControlSelect1" onChange={this.handleChange}>
                                 <option value="" checked={this.state.group_id === "0"}>Select</option>
                                 {this.state.Roles.map(role => <option value={role.id} selected={this.state.role_type === role.name}>{role.name}</option> )}
-                                {/* {role_type === "Super Admin" ? (<option value="Admin" checked={this.state.group-id === "Admin"}>Admin</option>): ""} */}
-                                  {/* <option value="Contributor" checked={this.state.group-id === "Contributor"}>Contributor</option>
-                                    <option value="Coordinator" checked={this.state.group-id === "Coordinator"}>Coordinator</option> */}
+                                
                                 </select> 
                             </div>
                         </div>

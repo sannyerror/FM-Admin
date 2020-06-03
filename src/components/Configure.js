@@ -36,8 +36,8 @@ class Configure extends React.Component {
                             </div>
                             <div className="row p-2 bg-primary text-white">Organizations</div>
                             <div className="row p-2 bd-highlight">
-                                <div className="col col-3"><a href="/configure/userslist">Organizations List</a></div>
-                                <div className="col col-2"><a href="/configure/adduser">Add</a></div>
+                                <div className="col col-3"><a href="/configure/organizationlist">Organizations List</a></div>
+                                <div className="col col-2"><a href="/configure/addorganization">Add</a></div>
                                 
                                 
                             </div>

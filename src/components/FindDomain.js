@@ -24,13 +24,6 @@ export class FindDomain extends Component {
                 
                 
                 if (response.message !== "domain not verified") {
-                    //console.log(domain,"response2")
-                    //  const { domain } = response.data;
-                    // this.setState({
-                    //     domain: e.target.value
-                        
-                    // })
-                    
                     const url = `http://3.7.135.210/${domain}`
                     
                 window.location.replace(url)

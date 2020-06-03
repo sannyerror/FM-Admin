@@ -36,6 +36,10 @@ import { addUsersFailure, addUsersRequest, addUsersSuccess }
   from '../redux/AddUsers/AddUsersAction'
 import { getUsersFailure, getUsersRequest, getUsersSuccess }
   from '../redux/GetUsers/GetUsersAction'
+  import { getOrganizationsFailure,getOrganizationsRequest, getOrganizationsSuccess }
+  from '../redux/GetOrganizations/GetOrganizationsAction'
+  import { addOrganizationsFailure, addOrganizationsRequest, addOrganizationsSuccess }
+  from '../redux/AddOrganization/AddOrganizationsAction'
 import createAuthRefreshInterceptor from "axios-auth-refresh"
 import { update } from '../redux/login/loginAction'
 import { clearUser } from '../redux/login/loginAction'
@@ -91,6 +95,25 @@ export const login = async (email, password) => {
   }
 }; 
 
+export const forgotPassWord = async (email_id) => {
+  const { dispatch } = store
+  
+  try {
+    return await axios.get(`${baseApiUrl}/admin/forgot-password?email_id=${email_id}`)
+      .then(response => {
+        const checkdomain = response.data
+       return response.data;
+      })
+  }
+
+  catch (error) {
+    console.log('error')
+    dispatch(checkDomainFailure(error.message))
+    throwError(error)
+
+  }
+};
+
 export const checkDomain = async (domain) => {
   const { dispatch } = store
   const data = `${domain}`
@@ -113,12 +136,17 @@ export const checkDomain = async (domain) => {
   }
 };
 
-export const fetchQuestions = async () => {
+export const fetchQuestions = async (value) => {
   const { dispatch } = store
+  const currentUser = store.getState().loginData.user.token;
   try {
     dispatch(fetchQuestionsRequest)
-    await axios.get(`${baseApiUrl}/questions/`)
-      .then(response => {
+    return await axios.get(`${baseApiUrl}/questions/?category=${value}`, {
+      headers: {
+        'Authorization': `Bearer ${currentUser}`
+      }
+    })
+    .then(response => {
         const questionsList = response.data
 
         dispatch(fetchQuestionsSuccess(questionsList))
@@ -132,6 +160,22 @@ export const fetchQuestions = async () => {
     throwError(error)
 
   }
+};
+
+export const alterQuestions = async (srcI,desI) => {
+  const { dispatch } = store
+  const currentUser = store.getState().loginData.user.token;
+  const data = {
+    parent_question: srcI, 
+    child_question_id: desI
+  }
+  console.log(data,"data")
+  const response = await axios.post(`${baseApiUrl}/questionsrelation/`,data , {
+    headers: {
+      'Authorization': `Bearer ${currentUser}`
+    }
+  })
+  
 };
 
 export const fetchUsers = async () => {
@@ -157,6 +201,34 @@ export const fetchUsers = async () => {
   catch (error) {
     console.log('error')
     dispatch(getUsersFailure(error.message))
+    throwError(error)
+
+  }
+};
+
+export const fetchOrganizations = async () => {
+  const { dispatch } = store
+  const currentUser = store.getState().loginData.user.token;
+  
+  try {
+    dispatch(getOrganizationsRequest)
+    return await axios.get(`${baseApiUrl}/customers/`, {
+      headers: {
+        'Authorization': `Bearer ${currentUser}`
+      }
+    })
+      .then(response => {
+        const organizationsList = response.data
+        
+        dispatch(getOrganizationsSuccess(organizationsList))
+        return response.data;
+      })
+
+  }
+
+  catch (error) {
+    console.log('error')
+    dispatch(getOrganizationsFailure(error.message))
     throwError(error)
 
   }
@@ -219,7 +291,7 @@ export const fetchQuestionsCategory = async () => {
   const { dispatch } = store
   try {
     dispatch(fetchQuestionscategoryRequest)
-     await axios.get(`${baseApiUrl}/questionscategory/`)
+    return await axios.get(`${baseApiUrl}/questionscategory/`)
       .then(response => {
         const questionscategoryList = response.data
         dispatch(fetchQuestionscategorySuccess(questionscategoryList))
@@ -235,30 +307,56 @@ export const fetchQuestionsCategory = async () => {
   }
 };
 
-export const AddQuestions = async (data) => {
+export const AddQuestions = async (data,id) => {
   const { dispatch } = store
   const currentUser = store.getState().loginData.user.token;
-  try {
-    dispatch(addQuestionsRequest)
-    return await axios.post(`${baseApiUrl}/questions/`, data, {
-      headers: {
-        'Authorization': `Bearer ${currentUser}`
-      }
-    })
-      .then(response => {
-        const addedquestions = response.data
-        dispatch(addQuestionsSuccess(addedquestions))
-        return response.data;
+  console.log(data,"data")
+  if (id) {
+    try {
+      dispatch(addQuestionsRequest)
+      return await axios.put(`${baseApiUrl}/questions/${id}/`, data, {
+        headers: {
+          'Authorization': `Bearer ${currentUser}`
+        }
       })
+        .then(response => {
+          const addedquestions = response.data
+          dispatch(addQuestionsSuccess(addedquestions))
+          return response.data;
+        })
+    }
+  
+    catch (error) {
+      console.log('error')
+      dispatch(addQuestionsFailure(error.message))
+      throwError(error)
+  
+    }
+  }else{
+    try {
+      dispatch(addQuestionsRequest)
+      return await axios.post(`${baseApiUrl}/questions/`, data, {
+        headers: {
+          'Authorization': `Bearer ${currentUser}`
+        }
+      })
+        .then(response => {
+          const addedquestions = response.data
+          dispatch(addQuestionsSuccess(addedquestions))
+          return response.data;
+        })
+    }
+  
+    catch (error) {
+      console.log('error')
+      dispatch(addQuestionsFailure(error.message))
+      throwError(error)
+  
+    }
   }
-
-  catch (error) {
-    console.log('error')
-    dispatch(addQuestionsFailure(error.message))
-    throwError(error)
-
-  }
+  
 };
+
 export const AddUsers = async (data, id) => {
   const { dispatch } = store
   const currentUser = store.getState().loginData.user.token;
@@ -309,6 +407,74 @@ export const AddUsers = async (data, id) => {
   }
   
 };
+
+export const AddOrganizations = async (data,id) => {
+  const { dispatch } = store
+  const currentUser = store.getState().loginData.user.token;
+  if(id){
+    try{
+      dispatch(addOrganizationsRequest) 
+         const d ={
+           name: data.name,
+           country: data.country,
+           org_name: data.org_name,
+           mobile: data.mobile,
+           email: data.email,
+           gender: "2"
+         }
+         return await axios.put(`${baseApiUrl}/customers/${id}/`, d, {
+           headers: {
+             'Authorization': `Bearer ${currentUser}`
+           }
+         })
+           .then(response => {
+             const addedOrganizations = response.data
+             dispatch(addOrganizationsSuccess(addedOrganizations))
+             
+             return response.data;
+           })
+       }
+     
+       catch (error) {
+         console.log(error,'error')
+         dispatch(addOrganizationsFailure(error.message))
+         throwError(error)
+       }
+  }else{
+    try{
+      dispatch(addOrganizationsRequest)
+         const d ={
+           name: data.name,
+           country: data.country,
+           org_name: data.org_name,
+           mobile: data.mobile,
+           email: data.email,
+           gender: "2"
+         }
+         return await axios.post(`${baseApiUrl}/customers/`, d, {
+           headers: {
+             'Authorization': `Bearer ${currentUser}`
+           }
+         })
+           .then(response => {
+             const addedOrganizations = response.data
+             dispatch(addOrganizationsSuccess(addedOrganizations))
+             
+             return response.data;
+           })
+       }
+     
+       catch (error) {
+         console.log(error,'error')
+         dispatch(addOrganizationsFailure(error.message))
+         throwError(error)
+       }
+  }
+  
+   
+ };
+
+
 export const submitEIF = async (data) => {
 
   const { dispatch } = store

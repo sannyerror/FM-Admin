@@ -13,6 +13,8 @@ import { RAFListReducer }  from './FetchRAFList/RAFListReducer'
 import { CheckDomainReducer }  from './CheckDomain/CheckDomainReducer'
 import { AddUsersReducer }  from './AddUsers/AddUsersReducer'
 import { GetUsersReducer }  from './GetUsers/GetUsersReducer' 
+import { GetOrganizationsReducer} from './GetOrganizations/GetOrganizationsReducer'
+import { AddOrganizationsReducer }  from './AddOrganization/AddOrganizationsReducer'
 
 
 export const rootReducer = combineReducers({
@@ -29,7 +31,9 @@ export const rootReducer = combineReducers({
   raflists:RAFListReducer,
   domain:CheckDomainReducer,
   adduser: AddUsersReducer,
-  getusers: GetUsersReducer
+  getusers: GetUsersReducer,
+  getorganization: GetOrganizationsReducer,
+  addorganization: AddOrganizationsReducer
 });
 
 export default rootReducer;

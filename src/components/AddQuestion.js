@@ -1,7 +1,9 @@
 import React from 'react';
+import axios from 'axios'
 import '../App.css';
-import { AddQuestions, fetchQuestionsCategory } from '../api/api';
+import { AddQuestions, fetchQuestionsCategory, baseApiUrl } from '../api/api';
 import { connect } from 'react-redux';
+import { store } from '../App'
 
 class AddQuestion extends React.Component {
     constructor() {
@@ -12,15 +14,39 @@ class AddQuestion extends React.Component {
             category: "",
             free_text: "",
             suggested_answers: [""],
-            error:""
+            error: "",
+            disabled: true
         }
     }
 
     async componentDidMount() {
         await fetchQuestionsCategory();
-        // this.setState({
-        //     Questions: this.props.questionscategoryList,
-        // })
+        const { id } = this.props.match.params;
+        const currentUser = store.getState().loginData.user.token;
+        if (id) {
+
+            try {
+                const response = await axios.get(`${baseApiUrl}/questions/${id}`, {
+                    headers: {
+                        'Authorization': `Bearer ${currentUser}`
+                    }
+                })
+                    .then(response => {
+
+                        return response.data;
+                    })
+                this.setState({
+                    question: response.question,
+                    question_type: response.question_type,
+                    category: response.category,
+                    suggested_answers: response.suggested_answers
+
+                })
+            }
+            catch (error) {
+                console.log(error, 'error')
+            }
+        }
     }
 
     handleText = i => e => {
@@ -51,19 +77,18 @@ class AddQuestion extends React.Component {
     }
     addQues = async (e) => {
         e.preventDefault();
-        // const email = this.state.email
-        // const { question,question_type,category,free_text,suggested_answers}= this.state
+        const { id } = this.props.match.params;
         const data = this.state
         try {
-            const response = await AddQuestions(data);
-            if (response.status === "failed"){
+            const response = await AddQuestions(data, id);
+            if (response.status === "failed") {
                 this.setState({
-                    error:response.message
+                    error: response.message
                 });
-            }else{
+            } else {
                 this.props.history.push('/configure/questions');
             }
-            
+
         }
         catch (e) {
             this.setState({
@@ -91,45 +116,50 @@ class AddQuestion extends React.Component {
             })
         }
     }
-       display = () => {
-        const display = this.props.questionscategoryList.response && 
-        this.props.questionscategoryList.response
-            .map((data, id) =>
-                <><div className="form-check">
-                <input
-                    className="form-check-input"
-                    onChange={this.onRadioChange}
-                    value={data.id}
-                    type="radio" name="category" />
-                <label className="form-check-label" >
-                    {data.title}
-                </label>
-            </div>
-                   
-                    {data.children.length >= 1 ?
-                        data.children.map((child, i) => 
-                        <div className="form-check form-check-inline mr-4 ml-4">
+    display = () => {
+        const display = this.props.questionscategoryList.response &&
+            this.props.questionscategoryList.response
+                .map((data, id) =>
+                    <><div className="form-check">
+
                         <input
                             className="form-check-input"
                             onChange={this.onRadioChange}
-                            value={child.id}
-                            type="radio" name="category" />
+                            value={data.id}
+                            type="radio" name="category"
+                            checked={this.state.category == data.id} />
                         <label className="form-check-label" >
-                            {child.title}
+                            {data.title}
                         </label>
-                    </div>) : ''
+                    </div>
 
-                    }
-                    
-                </>
-            )
+                        {data.children.length >= 1 ?
+                            data.children.map((child, i) =>
+                                <div className="form-check form-check-inline mr-4 ml-4">
+                                    <input
+                                        className="form-check-input"
+                                        onChange={this.onRadioChange}
+                                        value={child.id}
+                                        type="radio" name="category"
+                                        checked={this.state.category == child.id}
+                                         />
+                                    <label className="form-check-label" >
+                                        {child.title}
+                                    </label>
+                                </div>) : ''
+
+                        }
+
+                    </>
+                )
         return display
     }
     render() {
+        const { id } = this.props.match.params
         return (
             <div className="container-fluid">
                 <form className="">
-                    <div className="row p-2 bg-primary text-white">Add New Question</div><br />
+                    <div className="row p-2 bg-primary text-white">{id ? "Edit" : "Add New"} Question</div><br />
                     {this.state.error &&
                         <div className="col text-center text-danger mb-3 font-weight-bold">
                             {this.state.error}
@@ -161,7 +191,10 @@ class AddQuestion extends React.Component {
                                 <div className="form-check form-check-inline">
                                     <input
                                         onChange={this.onRadioChange}
-                                        className="form-check-input" name="question_type" type="radio" id="gridCheck1" value="SELECT" />
+                                        className="form-check-input" name="question_type"
+                                        type="radio" checked={this.state.question_type === "SELECT"}
+                                        disabled={id && this.state.question_type !== "SELECT" ? true : false}
+                                        value="SELECT" />
                                     <label className="form-check-label" >
                                         Drop Down
                                     </label>
@@ -169,7 +202,9 @@ class AddQuestion extends React.Component {
                                 <div className="form-check form-check-inline">
                                     <input
                                         onChange={this.onRadioChange}
-                                        className="form-check-input" name="question_type" type="radio" id="gridCheck1" value="TEXT" />
+                                        className="form-check-input" name="question_type"
+                                        checked={this.state.question_type === "TEXT"}
+                                        type="radio" id="gridCheck1" value="TEXT" disabled={id && this.state.question_type !== "TEXT" ? true : false}/> 
                                     <label className="form-check-label" >
                                         Text
                                     </label>
@@ -177,7 +212,10 @@ class AddQuestion extends React.Component {
                                 <div className="form-check form-check-inline">
                                     <input
                                         onChange={this.onRadioChange}
-                                        className="form-check-input" name="question_type" type="radio" id="gridCheck1" value="CHECKBOX" />
+                                        className="form-check-input" name="question_type"
+                                        checked={this.state.question_type === "CHECKBOX"}
+                                        type="radio" id="gridCheck1" value="CHECKBOX"
+                                        disabled={id && this.state.question_type !== "CHECKBOX" ? true : false} />
                                     <label className="form-check-label" >
                                         Checkbox
                                     </label>
@@ -185,7 +223,10 @@ class AddQuestion extends React.Component {
                                 <div className="form-check form-check-inline">
                                     <input
                                         onChange={this.onRadioChange}
-                                        className="form-check-input" name="question_type" type="radio" id="gridCheck1" value="RADIO" />
+                                        className="form-check-input" name="question_type"
+                                        checked={this.state.question_type === "RADIO"}
+                                        type="radio" id="gridCheck1" value="RADIO"
+                                        disabled={id && this.state.question_type !== "RADIO" ? true : false} />
                                     <label className="form-check-label" >
                                         Radio
                                     </label>
@@ -193,7 +234,10 @@ class AddQuestion extends React.Component {
                                 <div className="form-check form-check-inline">
                                     <input
                                         onChange={this.onRadioChange}
-                                        className="form-check-input" name="question_type" type="radio" id="gridCheck1" value="FILE" />
+                                        className="form-check-input" name="question_type" type="radio"
+                                         id="gridCheck1" value="FILE"
+                                         disabled={id && this.state.question_type !== "FILE" ? true : false}
+                                    />
                                     <label className="form-check-label" >
                                         Upload File
                                     </label>
@@ -201,7 +245,7 @@ class AddQuestion extends React.Component {
                             </div>
                         </div>
                     </fieldset>
-                    {this.state.question_type !== "FILE" ? this.state.suggested_answers.map((question, index) => (
+                    {this.state.question_type === "FILE" || this.state.question_type === "TEXT" ? "" : this.state.suggested_answers.map((question, index) => (
                         <div className="form-group row">
                             <label className="col-sm-2 col-form-label font-weight-bold">Answer {index + 1}:</label>
                             <div className="col-sm-9">
@@ -209,26 +253,33 @@ class AddQuestion extends React.Component {
                                     //onChange={this.handleChange}
                                     type="text"
                                     onChange={this.handleText(index)}
-                                    value={question}
+                                    value={question.answer}
                                     className="form-control"
                                 />
+                                <div style={{
+                                position: "absolute",
+                                top: "1px",
+                                right: "-0px",
+                                width: "25px",
+                                height: "25px",
+                                border: "1px solid #d9534f",
+                                backgroundColor: "#d9534f",
+                                borderRadius: "200px",
+                                textAlign: "center",
+                                color: "white"
+                            }} className="font-text-bold text-center "
+                                onClick={this.handleDelete(index)} ><b>X</b></div>
                             </div>
-                            {this.state.question_type === "TEXT" ? "":
-                            <div className="col-sm-1">
-                            <button className="badge badge-primary" onClick={this.handleDelete(index)}>x</button>
-                        </div>
-                            
-                            }
                             
                         </div>
-                        
-                    )):""}
+
+                    ))}
                     {this.state.question_type === "FILE" || this.state.question_type === "TEXT" ?
-                    "" : <div className="form-group row d-flex justify-content-center">
-                    <div className="">
-                        <button className="btn btn-primary" onClick={this.addQuestion}>Click here to Add Answers</button>
-                    </div>
-                </div> }
+                        "" : <div className="form-group row d-flex justify-content-center">
+                            <div className="">
+                                <button className="btn btn-primary" onClick={this.addQuestion}>Click here to Add Answers</button>
+                            </div>
+                        </div>}
                     <div className="form-group row d-flex justify-content-center ">
                         <div className="mb-3">
                             <button type="submit" className="btn btn-primary" onClick={this.addQues}>Submit</button>

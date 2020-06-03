@@ -24,7 +24,9 @@ import FindDomain from "./components/FindDomain";
 import Contactus from "./components/Contactus";
 import AddUser from "./components/AddUser";
 import Userslist from "./components/Userslist";
+import Organizationlist from "./components/Organizationlist";
 import ChangePassword from "./components/ChangePassword";
+import AddOrganization from "./components/AddOrganization"
 
 export const { store , persistor } = configureStore(createHistory());
 function App() {
@@ -52,10 +54,14 @@ function App() {
                 <PrivateRoute path="/changepassword" component={ChangePassword}/>
                 <PrivateRoute exact path="/configure" component={Configure}/>
                 <PrivateRoute path="/configure/questions" component={QuestionsList}/>
+                <PrivateRoute path="/configure/question/edit=:edit&id=:id" component={AddQuestion}/>
                 <PrivateRoute path="/configure/addquestion" component={AddQuestion}/>
                 <PrivateRoute path="/configure/adduser" component={AddUser}/>
-                <PrivateRoute path="/configure/edituser/edit=:edit&id=:id" component={AddUser}/>
+                <PrivateRoute path="/configure/user/edit=:edit&id=:id" component={AddUser}/>
                 <PrivateRoute path="/configure/userslist" component={Userslist}/>
+                <PrivateRoute path="/configure/addorganization" component={AddOrganization}/>
+                <PrivateRoute path="/configure/organizationlist" component={Organizationlist}/> 
+                <PrivateRoute path="/configure/organization/edit=:edit&id=:id" component={AddOrganization}/> 
                 <PrivateRoute path="/list" component={Landing}/>
                 <PrivateRoute path="/configure/questioncategory" component={AddQuestionCategory}/>
                 <PrivateRoute path="/eiflist" component={EIFList}/>

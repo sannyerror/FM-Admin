@@ -1,14 +1,14 @@
 import React from 'react';
-import { fetchUsers, baseApiUrl } from '../api/api';
+import { fetchOrganizations, baseApiUrl } from '../api/api';
 import axios from 'axios'
 import { connect } from 'react-redux';
 import '../App.css';
 import { store } from '../App'
-export class UsersList extends React.Component {
+export class OrganizationList extends React.Component {
     constructor() {
         super();
         this.state = {
-            Users: [],
+            Organizations: [],
             userID: "",
             prompt: false
 
@@ -16,10 +16,9 @@ export class UsersList extends React.Component {
     }
 
     async componentDidMount() {
-        const res = await fetchUsers();
-
+        const res = await fetchOrganizations();
         this.setState({
-            Users: res,
+            Organizations: res,
         })
     }
 
@@ -31,7 +30,7 @@ export class UsersList extends React.Component {
         }
         const currentUser = store.getState().loginData.user.token;
         try {
-            const response = await axios.delete(`${baseApiUrl}/users/${userID}`, {
+            const response = await axios.delete(`${baseApiUrl}/customers/${userID}/`, {
                 headers: {
                     'Authorization': `Bearer ${currentUser}`
                 }
@@ -45,9 +44,9 @@ export class UsersList extends React.Component {
                     error: response.status
                 });
             } else {
-                const res = await fetchUsers();
+                const res = await fetchOrganizations();
                this.setState({
-                    Users: res,
+                Organizations: res,
                 })
 
             }
@@ -67,45 +66,39 @@ export class UsersList extends React.Component {
             userID: userID,
             prompt: true
         })
-        this.props.history.push(`/configure/user/edit=true&id=${userID}`);
+        this.props.history.push(`/configure/organization/edit=true&id=${userID}`);
     }
-
-    //  async componentDidUpdate(){
-    //     const  response = await fetchUsers();
-
-    //   }
-    render() {
+render() {
 
         return (
             <div className="container-fluid">
-                <div className="row p-2 bg-primary text-white">Users List</div>
+                <div className="row p-2 bg-primary text-white">Organizations List</div>
                 <div className="table-responsive ">
                     <table className="table table-striped table-sm table-bordered mt-5 ">
                         <thead className="bg-info text-white text-center">
                             <tr>
-                                <th scope="col mb-4">Name</th>
-                                <th scope="col">Email ID</th>
-                                <th scope="col">Role</th>
+                                <th scope="col mb-4">Organization Name</th>
+                                <th scope="col">Name</th>
                                 <th scope="col">Edit</th>
                                 <th scope="col">Delete</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {this.props.usersList &&
-                                this.state.Users.map((ques, index) => (
-
+                            {this.state.Organizations &&
+                                this.state.Organizations.map((q, index) => (
+  
                                     <tr>
-                                        <td>{ques.full_name}</td>
-                                        <td>{ques.email_id}</td>
-                                        <td>{ques.role_type}</td>
-                                        <td>{ques.role_type === "Super Admin" ? "-":(<a href="" data-id={ques.id} onClick={this.handleEdit}>Edit</a>)}</td>
-                                        <td>{ques.role_type === "Super Admin" ? "-":(
-                                             <a href="" data-id={ques.id}
+                                        <td>{q.org_name}</td>
+                                        <td>{q.name}</td>
+                                        <td>{q.role_type === "Super Admin" ? "-":(<a href="" data-id={q.id} onClick={this.handleEdit}>
+                                            Edit</a>)}</td>
+                                        <td>
+                                             <a href="" data-id={q.id}
                                              onClick={e =>
-                                                 window.confirm("Are you sure you wish to delete this User?") &&
+                                                 window.confirm("Are you sure you wish to delete this Organization?") &&
                                                  this.handleDelete(e)
                                              }>Delete</a>
-                                        )}
+                                        
                                         </td>
                                     </tr>
 
@@ -126,7 +119,7 @@ export class UsersList extends React.Component {
 }
 const mapStateToProps = state => {
     return {
-        usersList: state.getusers.usersList,
+        organizationlist: state.getorganization.organizationlist,
     }
 }
-export default connect(mapStateToProps)(UsersList);
+export default connect(mapStateToProps)(OrganizationList);

@@ -44,10 +44,8 @@ class RAF extends Component {
     }
     uploadFile = async (file) => {
         const formData = new FormData();
-
         formData.append('assets', file)
-
-        return await axios.post(`${baseApiUrl}/assets`, formData, {
+       return await axios.post(`${baseApiUrl}/assets`, formData, {
             headers: {
                 'content-type': 'multipart/form-data'
             }
