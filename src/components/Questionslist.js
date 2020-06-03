@@ -230,32 +230,33 @@ export class QuestionsList extends React.Component {
                                                             <div style={{
                                                                 position: "absolute",
                                                                 top: "10px",
-                                                                right: "-10px",
-                                                                width: "25px",
-                                                                height: "25px",
-                                                                border: "1px solid #d9534f",
-                                                                backgroundColor: "#d9534f",
-                                                                borderRadius: "200px",
+                                                                right: "-60px",
+                                                                width: "auto",
+                                                                height: "49px",
+                                                                border: "1px solid rgba(0,0,0,.125);",
+                                                                // backgroundColor: "#d9534f",
+                                                                borderRadius: "5px 5px",
                                                                 textAlign: "center",
-                                                                color: "white"
-                                                            }} className="font-text-bold text-center "
+                                                                 color: "#0275d8",
+                                                            }} className="text-center "
                                                                 data-id={item.id}
-                                                                onClick={this.handleShow} ><b>X</b></div>
+                                                                onClick={this.handleShow} >Delete</div>
                                                             <div style={{
                                                                 position: "absolute",
                                                                 top: "10px",
-                                                                right: "-50px",
-                                                                width: "35px",
+                                                                right: "-100px",
+                                                                width: "auto",
                                                                 height: "25px",
-                                                                border: "1px solid #5bc0de",
-                                                                backgroundColor: "#5bc0de",
+                                                                border: "1px solid rgba(0,0,0,.125);",
+                                                                curser: "pointer",
+                                                                // backgroundColor: "#5bc0de",
                                                                 borderRadius: "5px 5px",
                                                                 textAlign: "center",
-                                                                color: "white"
-                                                            }} className="font-text-bold text-center "
+                                                                 color: "#0275d8"
+                                                            }} className=" text-center "
                                                                 data-id={item.id}
                                                                 onClick={this.handleEdit} >
-                                                                <b>Edit</b>
+                                                               / Edit
                                                             </div>
                                                         </div>
 
