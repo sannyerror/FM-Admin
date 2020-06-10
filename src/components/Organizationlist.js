@@ -79,7 +79,7 @@ render() {
                             <tr>
                                 <th scope="col mb-4">Organization Name</th>
                                 <th scope="col">Name</th>
-                                <th scope="col">Edit</th>
+                                {/* <th scope="col">Edit</th> */}
                                 <th scope="col">Delete</th>
                             </tr>
                         </thead>
@@ -90,8 +90,8 @@ render() {
                                     <tr>
                                         <td>{q.org_name}</td>
                                         <td>{q.name}</td>
-                                        <td>{q.role_type === "Super Admin" ? "-":(<a href="" data-id={q.id} onClick={this.handleEdit}>
-                                            Edit</a>)}</td>
+                                        {/* <td>{q.role_type === "Super Admin" ? "-":(<a href="" data-id={q.id} onClick={this.handleEdit}>
+                                            Edit</a>)}</td> */}
                                         <td>
                                              <a href="" data-id={q.id}
                                              onClick={e =>

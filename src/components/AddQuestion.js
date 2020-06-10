@@ -15,7 +15,9 @@ class AddQuestion extends React.Component {
             free_text: "",
             suggested_answers: [""],
             error: "",
-            disabled: true
+            disabled: true,
+            is_mandatory: ""
+             
         }
     }
 
@@ -35,17 +37,24 @@ class AddQuestion extends React.Component {
 
                         return response.data;
                     })
+                console.log(response, "id")
                 this.setState({
                     question: response.question,
                     question_type: response.question_type,
                     category: response.category,
-                    suggested_answers: response.suggested_answers
+                    suggested_answers: response.suggested_answers,
+                    is_mandatory: response.is_mandatory
 
                 })
             }
             catch (error) {
                 console.log(error, 'error')
             }
+        }else{
+            this.setState({
+                
+
+            })
         }
     }
 
@@ -78,12 +87,22 @@ class AddQuestion extends React.Component {
     addQues = async (e) => {
         e.preventDefault();
         const { id } = this.props.match.params;
-        const data = this.state
+      const data = {
+        question: this.state.question,
+        question_type: this.state.question_type,
+        category: this.state.category,
+        free_text: this.state.free_text,
+        suggested_answers: [this.state.suggested_answers],
+        is_mandatory: this.state.is_mandatory.toString()
+         
+    }
+        console.log(data, "data")
         try {
             const response = await AddQuestions(data, id);
+            console.log(response, "response")
             if (response.status === "failed") {
                 this.setState({
-                    error: response.message
+                    error: response.message.question
                 });
             } else {
                 this.props.history.push('/configure/questions');
@@ -92,7 +111,7 @@ class AddQuestion extends React.Component {
         }
         catch (e) {
             this.setState({
-                error: e
+                error: e.message.question
             });
             return;
         }
@@ -111,9 +130,19 @@ class AddQuestion extends React.Component {
                 category: value
             })
         } else {
-            this.setState({
-                question_type: value
-            })
+            if (name === "is_mandatory") {
+                console.log(value,"value")
+                const val = value === "true" ? false : true
+                
+                console.log(val,"aftervalue")
+                this.setState({
+                    is_mandatory: val
+                })
+            } else {
+                this.setState({
+                    question_type: value
+                })
+            }
         }
     }
     display = () => {
@@ -142,7 +171,7 @@ class AddQuestion extends React.Component {
                                         value={child.id}
                                         type="radio" name="category"
                                         checked={this.state.category == child.id}
-                                         />
+                                    />
                                     <label className="form-check-label" >
                                         {child.title}
                                     </label>
@@ -204,7 +233,7 @@ class AddQuestion extends React.Component {
                                         onChange={this.onRadioChange}
                                         className="form-check-input" name="question_type"
                                         checked={this.state.question_type === "TEXT"}
-                                        type="radio" id="gridCheck1" value="TEXT" disabled={id && this.state.question_type !== "TEXT" ? true : false}/> 
+                                        type="radio" value="TEXT" disabled={id && this.state.question_type !== "TEXT" ? true : false} />
                                     <label className="form-check-label" >
                                         Text
                                     </label>
@@ -214,7 +243,7 @@ class AddQuestion extends React.Component {
                                         onChange={this.onRadioChange}
                                         className="form-check-input" name="question_type"
                                         checked={this.state.question_type === "CHECKBOX"}
-                                        type="radio" id="gridCheck1" value="CHECKBOX"
+                                        type="radio" value="CHECKBOX"
                                         disabled={id && this.state.question_type !== "CHECKBOX" ? true : false} />
                                     <label className="form-check-label" >
                                         Checkbox
@@ -225,7 +254,7 @@ class AddQuestion extends React.Component {
                                         onChange={this.onRadioChange}
                                         className="form-check-input" name="question_type"
                                         checked={this.state.question_type === "RADIO"}
-                                        type="radio" id="gridCheck1" value="RADIO"
+                                        type="radio" value="RADIO"
                                         disabled={id && this.state.question_type !== "RADIO" ? true : false} />
                                     <label className="form-check-label" >
                                         Radio
@@ -235,8 +264,8 @@ class AddQuestion extends React.Component {
                                     <input
                                         onChange={this.onRadioChange}
                                         className="form-check-input" name="question_type" type="radio"
-                                         id="gridCheck1" value="FILE"
-                                         disabled={id && this.state.question_type !== "FILE" ? true : false}
+                                        value="FILE"
+                                        disabled={id && this.state.question_type !== "FILE" ? true : false}
                                     />
                                     <label className="form-check-label" >
                                         Upload File
@@ -245,6 +274,7 @@ class AddQuestion extends React.Component {
                             </div>
                         </div>
                     </fieldset>
+
                     {this.state.question_type === "FILE" || this.state.question_type === "TEXT" ? "" : this.state.suggested_answers.map((question, index) => (
                         <div className="form-group row">
                             <label className="col-sm-2 col-form-label font-weight-bold">Answer {index + 1}:</label>
@@ -257,23 +287,33 @@ class AddQuestion extends React.Component {
                                     className="form-control"
                                 />
                                 <div style={{
-                                position: "absolute",
-                                top: "1px",
-                                right: "-0px",
-                                width: "25px",
-                                height: "25px",
-                                border: "1px solid #d9534f",
-                                backgroundColor: "#d9534f",
-                                borderRadius: "200px",
-                                textAlign: "center",
-                                color: "white"
-                            }} className="font-text-bold text-center "
-                                onClick={this.handleDelete(index)} ><b>X</b></div>
+                                    position: "absolute",
+                                    top: "1px",
+                                    right: "-0px",
+                                    width: "25px",
+                                    height: "25px",
+                                    border: "1px solid #d9534f",
+                                    backgroundColor: "#d9534f",
+                                    borderRadius: "200px",
+                                    textAlign: "center",
+                                    color: "white"
+                                }} className="font-text-bold text-center "
+                                    onClick={this.handleDelete(index)} ><b>X</b></div>
                             </div>
-                            
+
                         </div>
 
                     ))}
+                    <div className="form-check form-check-inline">
+                        <input type="checkbox"
+                            className="form-check-input"
+                            name="is_mandatory"
+                            value={this.state.is_mandatory }
+                            checked={this.state.is_mandatory === true }
+                            onChange={this.onRadioChange} />
+                        <label className="form-check-label font-weight-bold">Mandatory</label>
+                        
+                    </div>
                     {this.state.question_type === "FILE" || this.state.question_type === "TEXT" ?
                         "" : <div className="form-group row d-flex justify-content-center">
                             <div className="">

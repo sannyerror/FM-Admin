@@ -19,6 +19,7 @@ export class QuestionsList extends React.Component {
             listID: "",
             showPOPUP: false,
             list: [],
+            btnAction:""
         }
     }
     async componentDidMount() {
@@ -29,15 +30,17 @@ export class QuestionsList extends React.Component {
 
     }
 
-    handleShow = () => {
+    handleShow = (e) => {
 
         this.setState({
-            showPOPUP: true
+            showPOPUP: true,
+            btnAction:e.currentTarget.dataset.id
         })
     }
     handleClose = () => {
         this.setState({
-            showPOPUP: false
+            showPOPUP: false,
+            btnAction:""
         })
     }
 
@@ -53,10 +56,22 @@ export class QuestionsList extends React.Component {
             subCategory: subCat
 
         })
-        const response = await fetchQuestions(value);
-        this.setState({
-            Questions: response,
-        })
+        
+        const param = subCat[0] ? subCat[0].children? subCat[0].children[0].id : "":""
+        if(param){
+            const res = await fetchQuestions(param);
+            console.log(param,"res")
+            this.setState({
+                Questions: res,
+            })
+        }else{
+            const response = await fetchQuestions(value);
+            this.setState({
+                Questions: response,
+            })
+        }
+        console.log(subCat[0] ? subCat[0].children? subCat[0].children[0].id : "":"","sub")
+        
 
     }
 
@@ -73,6 +88,16 @@ export class QuestionsList extends React.Component {
 
     handleSubChange = async (e) => {
         const { name, value } = e.target;
+        console.log(value, "target")
+        const response = await fetchQuestions(value);
+        this.setState({
+            Questions: response,
+            subCategoryVal: value
+        })
+
+    }
+
+    handleSubChangeonload = async (value) => {
         const response = await fetchQuestions(value);
         this.setState({
             Questions: response,
@@ -111,12 +136,16 @@ export class QuestionsList extends React.Component {
                 })
             if (response.status === "failed") {
                 this.setState({
-                    error: response.status
+                    error: response.status,
+                    showPOPUP: false,
+                    btnAction:""
                 });
             } else {
                 const res = await fetchQuestions(this.state.subCategoryVal);
                 this.setState({
                     Questions: res,
+                    showPOPUP: false,
+                    btnAction:""
                 })
 
             }
@@ -148,7 +177,9 @@ export class QuestionsList extends React.Component {
     subcategory = () => {
         const subcategory = this.state.subCategory &&
             this.state.subCategory.map((data, idx) =>
-                data.children.map(t => <option value={t.id}>{t.title}</option>)
+                data.children.map((t, i) => (i === 0 ?
+                    (<option selected="selected" value={t.id}>{t.title}</option>)
+                    : <option value={t.id}>{t.title}</option>))
             )
         return subcategory
     }
@@ -163,7 +194,8 @@ export class QuestionsList extends React.Component {
                 transform: 'translate(-50%, -50%)'
             }
         };
-        const list = this.state.Questions.response 
+        const list = this.state.Questions.response
+        console.log(this.state.subCategory, "child")
         return (
             <div className="container-fluid">
                 <div className="row p-2 bg-primary text-white"><span className="ml-4">Questions List</span></div>
@@ -180,7 +212,7 @@ export class QuestionsList extends React.Component {
                     {this.state.subCategory.length > 0 &&
                         <div className="form-group  col-3 ml-4">
                             <label className="font-weight-bold  ml-4" >Select Sub Category</label>
-                            <select name="Category" className="form-control" id="exampleFormControlSelect1" onChange={this.handleSubChange}>
+                            <select name="Category" className="form-control" id="exampleFormControlSelect1" onChange={this.handleSubChange} >
                                 <option value="">Select...</option>
                                 {this.subcategory()}
                             </select>
@@ -226,7 +258,7 @@ export class QuestionsList extends React.Component {
                                                             }}
                                                         >
                                                             {/* <DragHandle {...provided.dragHandleProps} /> */}
-                                                            <span className="text-primary ">{item.id}. {item.question}</span>
+                                                            <span className="text-primary "> {item.question}</span>
                                                             <div style={{
                                                                 position: "absolute",
                                                                 top: "10px",
@@ -237,7 +269,7 @@ export class QuestionsList extends React.Component {
                                                                 // backgroundColor: "#d9534f",
                                                                 borderRadius: "5px 5px",
                                                                 textAlign: "center",
-                                                                 color: "#0275d8",
+                                                                color: "#0275d8",
                                                             }} className="text-center "
                                                                 data-id={item.id}
                                                                 onClick={this.handleShow} >Delete</div>
@@ -252,11 +284,11 @@ export class QuestionsList extends React.Component {
                                                                 // backgroundColor: "#5bc0de",
                                                                 borderRadius: "5px 5px",
                                                                 textAlign: "center",
-                                                                 color: "#0275d8"
+                                                                color: "#0275d8"
                                                             }} className=" text-center "
                                                                 data-id={item.id}
                                                                 onClick={this.handleEdit} >
-                                                               / Edit
+                                                                / Edit
                                                             </div>
                                                         </div>
 
@@ -286,17 +318,18 @@ export class QuestionsList extends React.Component {
                 >
                     <h4 className="text-primary">Are you sure to delete this Question?</h4>
                     <div className="form-group row d-flex justify-content-center">
-                    
-                            </div>
+
+                    </div>
                     <div className="row ">
                         <div className="col-6 text-center ">
-                            <button className="button" onClick={this.handleDelete} >Yes</button>
+                            <button className="button" data-id={this.state.btnAction} onClick={this.handleDelete} >Yes</button>
                         </div>
                         <div className="col-6 text-center ">
                             <button className="button btn-secondary" onClick={this.handleClose} >No</button>
                         </div>
                     </div>
                 </Modal>
+                
                 <div className="form-group row d-flex justify-content-center">
                     &nbsp;
                             </div>

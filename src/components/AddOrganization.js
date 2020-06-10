@@ -12,7 +12,7 @@ class AddOrganization extends React.Component {
             country: "US",
             org_name: "", 
             mobile: "",
-            email: "",
+            email_id: "",
            error: ""
         }
     }
@@ -34,7 +34,7 @@ class AddOrganization extends React.Component {
                this.setState({
                     name: response.name,
                     org_name: response.org_name,
-                    email: response.email_id,
+                    email_id: response.email_id,
                     mobile: response.mobile,
                     
                 })
@@ -138,8 +138,8 @@ class AddOrganization extends React.Component {
                             <div className="col-sm-4">
                                 <input type="text"
                                     onChange={this.handleChange}
-                                    value={this.state.email}
-                                    name="email"
+                                    value={this.state.email_id}
+                                    name="email_id"
                                     className="form-control " placeholder="" />
                             </div>
                         </div>

@@ -59,6 +59,7 @@ export class EIF extends React.Component {
          
             try {
                 const response = await submitEIF(newArray);
+                console.log(response,"eif")
                 if (response.status === "failed"){
                     this.setState({
                         error:response.message
@@ -82,9 +83,9 @@ export class EIF extends React.Component {
         const display = this.props.loadquestions.response && this.props.loadquestions.response
             .map((data, idx) =>
                 data.question_type === 'TEXT' ?
-                    <div className="form-group">
-                        <label className="font-weight-bold">{data.question}</label>
-                        <input className="form-control" id='questionText' type='TEXT' name={data.id} value={this.state.name} onChange={this.handleChange} required />
+                    <div className="row form-group">
+                        <label className="font-weight-bold col-3 text-left">{data.question}</label>
+                        <input className="form-control col-8" id='questionText' type='TEXT' name={data.id} value={this.state.name} onChange={this.handleChange} required />
                         </div>
                     :
                     data.suggested_answers.map((suggested, idy) =>
@@ -100,7 +101,8 @@ export class EIF extends React.Component {
 
             <div className="cotainer">
                 <div className="text-center"><h2>EXPRESS INTREST FORM</h2></div>
-                <div className="text-center col-sm">Do you offer solutions to at-risk youth? Are you interested to know on how Artificial Intelligence can tranform the outcomes? Then fill in the INTEREST FORM below.</div>
+                <div className="shadow-lg p-3 mb-5 bg-white rounded">
+                <div className="text-center col-sm text-primary">Do you offer solutions to at-risk youth? Are you interested to know on how Artificial Intelligence can tranform the outcomes? Then fill in the INTEREST FORM below.</div>
                
                 <form className="m-4"  >
                     {this.state.error &&
@@ -123,6 +125,7 @@ export class EIF extends React.Component {
                     <div className="form-group row d-flex justify-content-center"></div>
 
                 </form>
+                </div>
                 </div>
            
 

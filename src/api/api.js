@@ -45,6 +45,7 @@ import { update } from '../redux/login/loginAction'
 import { clearUser } from '../redux/login/loginAction'
 import { store } from '../App'
 export const baseApiUrl = "http://3.7.135.210:8005";
+//export const baseApiUrl = "https://819f0acc214a.ngrok.io";
 
 const refreshAuthLogic = async failedRequest => {
   //  const { store } = store
@@ -484,7 +485,8 @@ export const submitEIF = async (data) => {
     dispatch(addEifRequest)
     return await axios.post(`${baseApiUrl}/staging`, {
       category: 1,
-      answers: data
+      answers: data,
+      is_completely_filled: "true"
     }, {
       headers: {
         'Authorization': `Bearer ${currentUser}`
@@ -505,14 +507,15 @@ export const submitEIF = async (data) => {
   }
 };
 
-export const submitRAF = async (data, customer) => {
+export const submitRAF = async (data, customer, is_completely_filled) => {
   const { dispatch } = store
   const currentUser = store.getState().loginData.user.token;
+  console.log(is_completely_filled,"addraf")
   try {
     dispatch(addRafRequest)
-    await axios.post(`${baseApiUrl}/staging`, {
+    return await axios.post(`${baseApiUrl}/staging`, {
       category: 2, customer: customer,
-      answers: data
+      answers: data, is_completely_filled: is_completely_filled
     }, {
       headers: {
         'Authorization': `Bearer ${currentUser}`
@@ -520,6 +523,7 @@ export const submitRAF = async (data, customer) => {
     })
       .then(response => {
         const addraf = response.data
+        console.log(is_completely_filled,"addraf")
         dispatch(addRafSuccess(addraf))
         return response.data;
       })
@@ -553,12 +557,12 @@ export const eifQuestions = async () => {
   }
 };
 
-export const rafQuestions = async () => {
+export const rafQuestions = async (customer) => {
 
   const { dispatch } = store
   try {
     dispatch(rafQuestionsRequest)
-    await axios.get(`${baseApiUrl}/stages?category=2`)
+    return await axios.get(`${baseApiUrl}/stages?category=2&customer=${customer}`)
       .then(response => {
         const loadrafquestions = response.data
         dispatch(rafQuestionsSuccess(loadrafquestions))
