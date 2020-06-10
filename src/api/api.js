@@ -420,7 +420,7 @@ export const AddOrganizations = async (data,id) => {
            country: data.country,
            org_name: data.org_name,
            mobile: data.mobile,
-           email: data.email,
+           email_id: data.email_id,
            gender: "2"
          }
          return await axios.put(`${baseApiUrl}/customers/${id}/`, d, {
