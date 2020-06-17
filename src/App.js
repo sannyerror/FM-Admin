@@ -28,9 +28,6 @@ import Organizationlist from "./components/Organizationlist";
 import ChangePassword from "./components/ChangePassword";
 import AddOrganization from "./components/AddOrganization"
 import EmailList from "./components/Emaillist"
-import { Beforeunload } from 'react-beforeunload';
-
-
 
 export const { store , persistor } = configureStore(createHistory());
 function App() {
