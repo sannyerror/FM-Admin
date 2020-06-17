@@ -41,6 +41,10 @@ class Configure extends React.Component {
                                 
                                 
                             </div>
+                            <div className="row p-2 bg-primary text-white">Communication</div>
+                            <div className="row p-2 bd-highlight">
+                                <div className="col col-3"><a href="/configure/emailslist">Emails List</a></div>
+                               </div>
                             </>
                         ):""}
                         

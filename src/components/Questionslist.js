@@ -5,6 +5,8 @@ import { connect } from 'react-redux';
 import '../App.css';
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import axios from 'axios'
+import { ToastContainer, toast } from 'react-toastify';
+  import 'react-toastify/dist/ReactToastify.css';
 import { store } from '../App'
 
 export class QuestionsList extends React.Component {
@@ -37,6 +39,7 @@ export class QuestionsList extends React.Component {
             btnAction:e.currentTarget.dataset.id
         })
     }
+
     handleClose = () => {
         this.setState({
             showPOPUP: false,
@@ -60,7 +63,6 @@ export class QuestionsList extends React.Component {
         const param = subCat[0] ? subCat[0].children? subCat[0].children[0].id : "":""
         if(param){
             const res = await fetchQuestions(param);
-            console.log(param,"res")
             this.setState({
                 Questions: res,
             })
@@ -70,9 +72,7 @@ export class QuestionsList extends React.Component {
                 Questions: response,
             })
         }
-        console.log(subCat[0] ? subCat[0].children? subCat[0].children[0].id : "":"","sub")
         
-
     }
 
     getList() {
@@ -88,16 +88,6 @@ export class QuestionsList extends React.Component {
 
     handleSubChange = async (e) => {
         const { name, value } = e.target;
-        console.log(value, "target")
-        const response = await fetchQuestions(value);
-        this.setState({
-            Questions: response,
-            subCategoryVal: value
-        })
-
-    }
-
-    handleSubChangeonload = async (value) => {
         const response = await fetchQuestions(value);
         this.setState({
             Questions: response,
@@ -147,13 +137,30 @@ export class QuestionsList extends React.Component {
                     showPOPUP: false,
                     btnAction:""
                 })
-
+                toast.info('Question deleted successfully.', { position: toast.POSITION.TOP_CENTER,autoClose:3000 })
             }
         }
         catch (error) {
             console.log(error, 'error')
         }
     }
+    
+    handleMove=async(e)=>{
+        e.preventDefault();
+        const {srcI, desI, list} = this.state;
+        if (desI) {
+            const src = list[srcI].id;
+            const des = list[desI].id;
+            list.splice(desI, 0, list.splice(srcI, 1)[0]);
+            await this.saveList(list);
+           const response = await alterQuestions(src, des)
+        }
+        this.setState({
+            showPOPUP: false,
+            btnAction:""
+        })
+   
+    } 
 
     Question = () => {
         const Question = this.state.Questions.response &&
@@ -194,8 +201,8 @@ export class QuestionsList extends React.Component {
                 transform: 'translate(-50%, -50%)'
             }
         };
+        toast.configure()
         const list = this.state.Questions.response
-        console.log(this.state.subCategory, "child")
         return (
             <div className="container-fluid">
                 <div className="row p-2 bg-primary text-white"><span className="ml-4">Questions List</span></div>
@@ -224,11 +231,13 @@ export class QuestionsList extends React.Component {
                         const srcI = param.source.index;
                         const desI = param.destination?.index;
                         if (desI) {
-                            const src = list[srcI].id;
-                            const des = list[desI].id;
-                            list.splice(desI, 0, list.splice(srcI, 1)[0]);
-                            await this.saveList(list);
-                            await alterQuestions(src, des)
+                            this.setState({
+                                showPOPUP: true,
+                                srcI: srcI,
+                                desI: desI,
+                                list: list
+                            })
+                           
                         }
                     }}
                 >
@@ -316,16 +325,17 @@ export class QuestionsList extends React.Component {
                     contentLabel="Forgot Password"
                     ariaHideApp={false}
                 >
-                    <h4 className="text-primary">Are you sure to delete this Question?</h4>
+                    <h4 className="text-primary">Are you sure to {this.state.btnAction ? "delete":"move"} this question?</h4>
                     <div className="form-group row d-flex justify-content-center">
 
                     </div>
                     <div className="row ">
                         <div className="col-6 text-center ">
-                            <button className="button" data-id={this.state.btnAction} onClick={this.handleDelete} >Yes</button>
+                            <button className="button-pop" data-id={this.state.btnAction} onClick={this.state.btnAction?this.handleDelete:this.handleMove} >Yes</button>
+                            
                         </div>
                         <div className="col-6 text-center ">
-                            <button className="button btn-secondary" onClick={this.handleClose} >No</button>
+                            <button className="button-pop" onClick={this.handleClose} >No</button>
                         </div>
                     </div>
                 </Modal>

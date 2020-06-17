@@ -1,11 +1,17 @@
 import React, { Component } from 'react';
 import { login, forgotPassWord } from '../api/api';
 import Modal from 'react-modal';
+import {connect} from 'react-redux'
 import '../App.css'
 export class Login extends Component {
 
     constructor(props) {
         super(props);
+        const isLoggedIn = props.user && props.user;
+       
+    if (isLoggedIn && isLoggedIn.length>0&&isLoggedIn.token !== "") {
+       this.props.history.push(`${isLoggedIn.role_type === "Coordinator" ? "/eiflist" : "/configure"}`);
+    }
         this.state = {
             email: '',
             password: '',
@@ -163,10 +169,10 @@ export class Login extends Component {
                         </div>
                         <div className="row ">
                         <div className="col text-center ">
-                            <button className="button" onClick={this.forgotPassword} >Submit</button>
+                            <button className="button-pop" onClick={this.forgotPassword} >Submit</button>
                         </div>
                         <div className="col text-center ">
-                            <button className="button" onClick={this.handleClose} >Close</button>
+                            <button className="button-pop" onClick={this.handleClose} >Close</button>
                         </div>
                     </div>
                         
@@ -179,5 +185,8 @@ export class Login extends Component {
     }
 }
 
-export default Login
+const mapStateToProps = state => ({
+    user: state.loginData.user
+  });
+  export default connect(mapStateToProps)(Login)
 

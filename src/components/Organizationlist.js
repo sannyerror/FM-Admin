@@ -3,6 +3,8 @@ import { fetchOrganizations, baseApiUrl } from '../api/api';
 import axios from 'axios'
 import { connect } from 'react-redux';
 import '../App.css';
+import {  toast } from 'react-toastify';
+  import 'react-toastify/dist/ReactToastify.css';
 import { store } from '../App'
 export class OrganizationList extends React.Component {
     constructor() {
@@ -44,6 +46,7 @@ export class OrganizationList extends React.Component {
                     error: response.status
                 });
             } else {
+                toast.info(`Organization deleted successfully.`, { position: toast.POSITION.TOP_CENTER,autoClose:3000 })
                 const res = await fetchOrganizations();
                this.setState({
                 Organizations: res,
@@ -69,7 +72,7 @@ export class OrganizationList extends React.Component {
         this.props.history.push(`/configure/organization/edit=true&id=${userID}`);
     }
 render() {
-
+    toast.configure()
         return (
             <div className="container-fluid">
                 <div className="row p-2 bg-primary text-white">Organizations List</div>

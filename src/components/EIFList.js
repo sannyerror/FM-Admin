@@ -3,12 +3,13 @@ import { fetchEiflist,baseApiUrl } from '../api/api';
 import { connect } from 'react-redux';
 import axios from 'axios'
 import '../App.css';
+import {BeatLoader } from 'react-spinners'
 import  {store}  from '../App'
 export class EIFList extends React.Component {
     constructor() {
         super();
         this.state = {
-            eiflist: [],
+            EifList: [],
             listID:"",
             listData:[],
             customerId:"",
@@ -21,9 +22,11 @@ export class EIFList extends React.Component {
         }
     }
     async componentDidMount() { 
-        await fetchEiflist();
+        this.setState({ loading: true })
+        const EifList = await fetchEiflist();
         this.setState({
-            eiflist: this.props.EifList,
+            EifList: EifList,
+            loading: false
             
         })
        
@@ -36,7 +39,7 @@ export class EIFList extends React.Component {
             listID = e.currentTarget.dataset.id ;
           }
          
-         const List = this.props.EifList.response.filter(listdata => listdata.id == listID)
+         const List = this.state.EifList.response.filter(listdata => listdata.id == listID)
          let customer_id = List.find(obj => obj.customer_id);
          this.setState({ listID: listID,
                           listData:List,
@@ -72,7 +75,7 @@ export class EIFList extends React.Component {
           } 
 
     render() {
-           let {listID, raf_link,list_status} = this.state;
+           let {listID, raf_link,list_status,loading} = this.state;
            if(listID !== ""){
             return (
                 <div className="container-fluid">
@@ -127,8 +130,9 @@ export class EIFList extends React.Component {
                 return (
                     <div className="container-fluid">
                         <div className="row p-2 bg-primary text-white mb-1">EIF List</div> 
+                        {loading?<div className="form-group mt-5 row d-flex justify-content-center"><span className="font-weight-bold h5">Loading</span><BeatLoader size={24} color='#0099CC' loading={loading}/><BeatLoader size={24} color='#0099CC' loading={loading}/></div> :""}
                         <ul className="list-group">
-                            {this.props.EifList.response && this.props.EifList.response.map((ques, index) =>
+                            {this.state.EifList.response && this.state.EifList.response.map((ques, index) =>
                             
                                 (
                                     <li className="list-group-item mb-1" data-id={ques.id} onClick={this.getDetails}>

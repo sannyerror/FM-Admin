@@ -3,12 +3,13 @@ import { fetchRaflist, baseApiUrl } from '../api/api';
 import { connect } from 'react-redux';
 import axios from 'axios'
 import '../App.css';
+import {BeatLoader } from 'react-spinners'
 import { store } from '../App'
 export class RAFList extends React.Component {
     constructor() {
         super();
         this.state = {
-            raflist: [],
+            RafList: [],
             listID: "",
             listData: [],
             customerId: "",
@@ -25,9 +26,11 @@ export class RAFList extends React.Component {
         }
     }
     async componentDidMount() {
-        await fetchRaflist();
+        this.setState({ loading: true })
+       const RafList =  await fetchRaflist();
         this.setState({
-            raflist: this.props.RafList,
+            RafList: RafList,
+            loading: false
         })
 
     }
@@ -38,7 +41,7 @@ export class RAFList extends React.Component {
         if (e.currentTarget.dataset.id === 0 || e.currentTarget.dataset.id) {
             listID = e.currentTarget.dataset.id;
         }
-        const List = this.props.RafList.response.filter(listdata => listdata.id == listID)
+        const List = this.state.RafList.response.filter(listdata => listdata.id == listID)
         let customer_id = List.find(obj => obj.customer_id);
         this.setState({
             listID: listID,
@@ -78,7 +81,7 @@ export class RAFList extends React.Component {
 
 
     render() {
-        let { listID, success, domain, username, password, list_status } = this.state;
+        let { listID, success, domain, username, password, list_status,loading } = this.state;
         if (listID !== "") {
             return (
                 <div className="container-fluid">
@@ -132,8 +135,9 @@ export class RAFList extends React.Component {
                 return (
                     <div className="container-fluid">
                         <div className="row p-2 bg-primary text-white mb-1">RAF List</div>
+                        {loading?<div className="form-group mt-5 row d-flex justify-content-center"><span className="font-weight-bold h5">Loading</span><BeatLoader size={24} color='#0099CC' loading={loading}/><BeatLoader size={24} color='#0099CC' loading={loading}/></div> :""}
                         <ul className="list-group">
-                            {this.props.RafList.response && this.props.RafList.response.map((ques, index) =>
+                            {this.state.RafList.response && this.state.RafList.response.map((ques, index) =>
 
                                 (
                                     <li className="list-group-item mb-1" data-id={ques.id} onClick={this.getDetails}>

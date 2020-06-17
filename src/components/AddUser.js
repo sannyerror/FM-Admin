@@ -3,7 +3,19 @@ import '../App.css';
 import { AddUsers, baseApiUrl } from '../api/api';
 import axios from 'axios'
 import { store } from '../App'
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+const validEmailRegex = RegExp(/^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i);
+const validateForm = (errors) => {
+    let valid = true;
+    Object.values(errors).forEach(
+        (val) => val.length > 0 && (valid = false)
+    );
+    return valid;
+}
+
 class AddUser extends React.Component {
     constructor() {
         super();
@@ -13,21 +25,29 @@ class AddUser extends React.Component {
             email_id: "",
             gender: '',
             mobile: "",
-            role_type:"",
-            Roles:[],
-            error: []
+            group_id: "",
+            role_type: "",
+            Roles: [],
+            error: {
+                first_name: "",
+                last_name: "",
+                email_id: "",
+                gender: '',
+                mobile: "",
+                group_id: "",
+            }
         }
     }
     async componentDidMount() {
         let res = await this.getRoles();
-        
-          this.setState({
+
+        this.setState({
             Roles: res.data
         })
         const { id } = this.props.match.params;
         const currentUser = store.getState().loginData.user.token;
         if (id) {
-            
+
             try {
                 const response = await axios.get(`${baseApiUrl}/users/${id}`, {
                     headers: {
@@ -38,7 +58,7 @@ class AddUser extends React.Component {
 
                         return response.data;
                     })
-               
+                const role = res.data.filter(v => v.name === response.role_type)
                 this.setState({
                     first_name: response.first_name,
                     last_name: response.last_name,
@@ -46,6 +66,7 @@ class AddUser extends React.Component {
                     gender: `${response.gender}`,
                     mobile: response.mobile,
                     role_type: response.role_type,
+                    group_id: role[0].id,
                 })
             }
             catch (error) {
@@ -53,9 +74,9 @@ class AddUser extends React.Component {
             }
         }
     }
-    getRoles = async() =>{
+    getRoles = async () => {
         const currentUser = store.getState().loginData.user.token;
-        return await axios.get(`${baseApiUrl}/groups/`,{
+        return await axios.get(`${baseApiUrl}/groups/`, {
             headers: {
                 'Authorization': `Bearer ${currentUser}`
             }
@@ -66,16 +87,15 @@ class AddUser extends React.Component {
         const { id } = this.props.match.params;
         const data = this.state
         try {
-            const response = await AddUsers(data,id);
+            const response = await AddUsers(data, id);
             if (response.status === "failed") {
-            Object.keys(response.message).map(err => 
+                const err = response.response
+                const msg = Object.keys(err).map(m => err[m])
                 this.setState({
-                    error: err
+                    error: msg
                 })
-            
-                )
-                
             } else {
+                toast.info(`User ${id ? "updated" : "added"}  successfully.`, { position: toast.POSITION.TOP_CENTER, autoClose: 3000 })
                 this.props.history.push('/configure/userslist');
             }
 
@@ -86,53 +106,58 @@ class AddUser extends React.Component {
             });
             return;
         }
+
     };
 
     handleChange = (e) => {
+        e.preventDefault();
         const { name, value } = e.target;
-        if(name === "email_id"){
-            this.setState({            
+        let error = this.state.error;
+        if (name === "email_id") {
+            this.setState({
                 [name]: value
-            });                
-        }else{
-            this.setState({            
+            });
+        } else {
+            this.setState({
                 [name]: value.charAt(0).toUpperCase() + value.substr(1)
             });
         }
-       
+
     }
     onRadioChange = (e) => {
         // const { name, value } = e.target;
         this.setState({
             gender: e.currentTarget.value
         });
-        
+
     }
 
     render() {
+        toast.configure()
         const { id } = this.props.match.params
-        const { role_type} = this.props.user
-        
+        const { role_type } = this.props.user
+        const { error } = this.state
+
         return (
             <div className="container-fluid">
-                <form className="">
-                    <div className="row p-2 bg-primary text-white">{id ? "Edit" : "Add"} User</div><br />
-                    {this.state.error &&
+                <div className="row p-2 bg-primary text-white">{id ? "Edit" : "Add"} User</div><br />
+                <form onSubmit={this.addUser}>
+                    {/* {this.state.error &&
                         <div className="col text-center text-danger mb-3 font-weight-bold">
                             {this.state.error}
                         </div>
-                    }
+                    } */}
                     <div className=" ml-4">
                         <div className="form-group row">
-                            <label className="col-sm-2 col-form-label font-weight-bold ">First Name:</label>
+                            <label className="col-sm-2 col-form-label font-weight-bold ">First name</label>
                             <div className="col-sm-4">
-                                <input type="text"
-                                    onChange={this.handleChange}
+                                <input type="text" class="form-control" id="validationDefault01" onChange={this.handleChange}
                                     value={this.state.first_name}
-                                    name="first_name"
-                                    className="form-control " placeholder="" />
+                                    name="first_name" required />
                             </div>
+
                         </div>
+
                         <div className="form-group row">
                             <label className="col-sm-2 col-form-label font-weight-bold ">Last Name:</label>
                             <div className="col-sm-4">
@@ -140,18 +165,22 @@ class AddUser extends React.Component {
                                     onChange={this.handleChange}
                                     value={this.state.last_name}
                                     name="last_name"
-                                    className="form-control " placeholder="" />
+                                    className="form-control " placeholder="" required />
                             </div>
+                            {this.state.last_nameError && <div className="text-center text-danger">{this.state.last_nameError}
+                            </div>}
                         </div>
                         <div className="form-group row">
                             <label className="col-sm-2 col-form-label font-weight-bold ">Email ID:</label>
                             <div className="col-sm-4">
-                                <input type="text"
+                                <input type="email"
                                     onChange={this.handleChange}
                                     value={this.state.email_id}
                                     name="email_id"
-                                    className="form-control " placeholder="" />
+                                    className="form-control " required />
                             </div>
+                            {this.state.email_idError && <div className="text-center text-danger">{this.state.email_idError}
+                            </div>}
                         </div>
                         <fieldset className="form-group">
                             <div className="row">
@@ -160,10 +189,10 @@ class AddUser extends React.Component {
                                     <div className="form-check form-check-inline">
                                         <input
                                             onChange={this.onRadioChange}
-                                            className="form-check-input" name="gender" type="radio" 
+                                            className="form-check-input" name="gender" type="radio"
                                             value="1" id="female"
                                             checked={this.state.gender === "1"}
-                                             />
+                                            required />
                                         <label className="form-check-label" >
                                             Female
                                     </label>
@@ -171,47 +200,53 @@ class AddUser extends React.Component {
                                     <div className="form-check form-check-inline">
                                         <input
                                             onChange={this.onRadioChange}
-                                            className="form-check-input" name="gender" 
-                                            type="radio" value="2"  id="male"
+                                            className="form-check-input" name="gender"
+                                            type="radio" value="2" id="male"
                                             checked={this.state.gender === "2"}
-                                             />
+                                            required />
                                         <label className="form-check-label" >
                                             Male
                                     </label>
+                                        {this.state.genderError && <div className="text-center text-danger ml-5">{this.state.genderError}
+                                        </div>}
                                     </div>
 
                                 </div>
                             </div>
+
                         </fieldset>
                         <div className="form-group row">
                             <label className="col-sm-2 col-form-label font-weight-bold ">Mobile Number:</label>
                             <div className="col-sm-4">
-                                <input type="text"
+                                <input type="number"
                                     onChange={this.handleChange}
                                     value={this.state.mobile}
                                     name="mobile"
-                                    className="form-control " placeholder="" />
+                                    className="form-control " required />
                             </div>
+                            {this.state.mobileError && <div className="text-center text-danger">{this.state.mobileError}
+                            </div>}
                         </div>
                         <div className="form-group row">
                             <label className="col-sm-2 col-form-label font-weight-bold " >Role:</label>
                             <div className="col-sm-4">
-                                <select name="group_id" className="form-control" id="exampleFormControlSelect1" onChange={this.handleChange}>
-                                <option value="" checked={this.state.group_id === "0"}>Select</option>
-                                {this.state.Roles.map(role => <option value={role.id} selected={this.state.role_type === role.name}>{role.name}</option> )}
-                                
-                                </select> 
+                                <select name="group_id" className="form-control" id="exampleFormControlSelect1" onChange={this.handleChange} required>
+                                    <option value="" >Select</option>
+                                    {this.state.Roles.map(role => <option value={role.id} selected={this.state.role_type === role.name}>{role.name}</option>)}
+
+                                </select>
                             </div>
+                            {this.state.group_idError && <div className="text-center text-danger">{this.state.group_idError}
+                            </div>}
                         </div>
-                           <div className="form-group row">
+                        <div className="form-group row">
                             <label className="col-sm-2 col-form-label font-weight-bold "></label>
                             <div className="col-sm-4">
-                                <button type="submit" className="btn btn-primary font-weight-bold btn-block" onClick={this.addUser}>{id ? "UPDATE" : "ADD USER"}</button>
+                                <button type="submit" className="btn btn-primary font-weight-bold btn-block" >{id ? "UPDATE" : "ADD USER"}</button>
                             </div>
                         </div>
                     </div>
                 </form>
-
             </div>
 
         );

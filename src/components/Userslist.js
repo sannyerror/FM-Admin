@@ -3,6 +3,8 @@ import { fetchUsers, baseApiUrl } from '../api/api';
 import axios from 'axios'
 import { connect } from 'react-redux';
 import '../App.css';
+import {  toast } from 'react-toastify';
+  import 'react-toastify/dist/ReactToastify.css';
 import { store } from '../App'
 export class UsersList extends React.Component {
     constructor() {
@@ -45,6 +47,7 @@ export class UsersList extends React.Component {
                     error: response.status
                 });
             } else {
+                toast.info(`User deleted successfully.`, { position: toast.POSITION.TOP_CENTER,autoClose:3000 })
                 const res = await fetchUsers();
                this.setState({
                     Users: res,
@@ -70,12 +73,8 @@ export class UsersList extends React.Component {
         this.props.history.push(`/configure/user/edit=true&id=${userID}`);
     }
 
-    //  async componentDidUpdate(){
-    //     const  response = await fetchUsers();
-
-    //   }
     render() {
-
+        toast.configure()
         return (
             <div className="container-fluid">
                 <div className="row p-2 bg-primary text-white">Users List</div>

@@ -3,6 +3,8 @@ import axios from 'axios'
 import '../App.css';
 import { AddQuestions, fetchQuestionsCategory, baseApiUrl } from '../api/api';
 import { connect } from 'react-redux';
+import { ToastContainer, toast } from 'react-toastify';
+  import 'react-toastify/dist/ReactToastify.css';
 import { store } from '../App'
 
 class AddQuestion extends React.Component {
@@ -16,7 +18,7 @@ class AddQuestion extends React.Component {
             suggested_answers: [""],
             error: "",
             disabled: true,
-            is_mandatory: ""
+            is_mandatory: "false"
              
         }
     }
@@ -37,7 +39,6 @@ class AddQuestion extends React.Component {
 
                         return response.data;
                     })
-                console.log(response, "id")
                 this.setState({
                     question: response.question,
                     question_type: response.question_type,
@@ -96,15 +97,14 @@ class AddQuestion extends React.Component {
         is_mandatory: this.state.is_mandatory.toString()
          
     }
-        console.log(data, "data")
         try {
             const response = await AddQuestions(data, id);
-            console.log(response, "response")
             if (response.status === "failed") {
                 this.setState({
                     error: response.message.question
                 });
             } else {
+                toast.info(`Question ${id ? "updated" : "added"}  successfully.`, { position: toast.POSITION.TOP_CENTER,autoClose:3000 })
                 this.props.history.push('/configure/questions');
             }
 
@@ -131,10 +131,7 @@ class AddQuestion extends React.Component {
             })
         } else {
             if (name === "is_mandatory") {
-                console.log(value,"value")
                 const val = value === "true" ? false : true
-                
-                console.log(val,"aftervalue")
                 this.setState({
                     is_mandatory: val
                 })
@@ -156,7 +153,7 @@ class AddQuestion extends React.Component {
                             onChange={this.onRadioChange}
                             value={data.id}
                             type="radio" name="category"
-                            checked={this.state.category == data.id} />
+                            checked={this.state.category == data.id} / >
                         <label className="form-check-label" >
                             {data.title}
                         </label>
@@ -185,9 +182,10 @@ class AddQuestion extends React.Component {
     }
     render() {
         const { id } = this.props.match.params
+        toast.configure()
         return (
             <div className="container-fluid">
-                <form className="">
+                <form className="" onSubmit={this.addQues}>
                     <div className="row p-2 bg-primary text-white">{id ? "Edit" : "Add New"} Question</div><br />
                     {this.state.error &&
                         <div className="col text-center text-danger mb-3 font-weight-bold">
@@ -210,7 +208,7 @@ class AddQuestion extends React.Component {
                                 onChange={this.handleChange}
                                 value={this.state.question}
                                 name="question"
-                                className="form-control " id="inputEmail3" placeholder="" />
+                                className="form-control " id="inputEmail3" required />
                         </div>
                     </div>
                     <fieldset className="form-group">
@@ -223,7 +221,7 @@ class AddQuestion extends React.Component {
                                         className="form-check-input" name="question_type"
                                         type="radio" checked={this.state.question_type === "SELECT"}
                                         disabled={id && this.state.question_type !== "SELECT" ? true : false}
-                                        value="SELECT" />
+                                        value="SELECT" required />
                                     <label className="form-check-label" >
                                         Drop Down
                                     </label>
@@ -233,7 +231,7 @@ class AddQuestion extends React.Component {
                                         onChange={this.onRadioChange}
                                         className="form-check-input" name="question_type"
                                         checked={this.state.question_type === "TEXT"}
-                                        type="radio" value="TEXT" disabled={id && this.state.question_type !== "TEXT" ? true : false} />
+                                        type="radio" value="TEXT" disabled={id && this.state.question_type !== "TEXT" ? true : false} required />
                                     <label className="form-check-label" >
                                         Text
                                     </label>
@@ -244,7 +242,7 @@ class AddQuestion extends React.Component {
                                         className="form-check-input" name="question_type"
                                         checked={this.state.question_type === "CHECKBOX"}
                                         type="radio" value="CHECKBOX"
-                                        disabled={id && this.state.question_type !== "CHECKBOX" ? true : false} />
+                                        disabled={id && this.state.question_type !== "CHECKBOX" ? true : false} required/>
                                     <label className="form-check-label" >
                                         Checkbox
                                     </label>
@@ -255,7 +253,7 @@ class AddQuestion extends React.Component {
                                         className="form-check-input" name="question_type"
                                         checked={this.state.question_type === "RADIO"}
                                         type="radio" value="RADIO"
-                                        disabled={id && this.state.question_type !== "RADIO" ? true : false} />
+                                        disabled={id && this.state.question_type !== "RADIO" ? true : false} required/>
                                     <label className="form-check-label" >
                                         Radio
                                     </label>
@@ -266,7 +264,7 @@ class AddQuestion extends React.Component {
                                         className="form-check-input" name="question_type" type="radio"
                                         value="FILE"
                                         disabled={id && this.state.question_type !== "FILE" ? true : false}
-                                    />
+                                        required/>
                                     <label className="form-check-label" >
                                         Upload File
                                     </label>
@@ -284,7 +282,7 @@ class AddQuestion extends React.Component {
                                     type="text"
                                     onChange={this.handleText(index)}
                                     value={question.answer}
-                                    className="form-control"
+                                    className="form-control" required
                                 />
                                 <div style={{
                                     position: "absolute",
@@ -310,7 +308,7 @@ class AddQuestion extends React.Component {
                             name="is_mandatory"
                             value={this.state.is_mandatory }
                             checked={this.state.is_mandatory === true }
-                            onChange={this.onRadioChange} />
+                            onChange={this.onRadioChange}   />
                         <label className="form-check-label font-weight-bold">Mandatory</label>
                         
                     </div>
@@ -322,7 +320,7 @@ class AddQuestion extends React.Component {
                         </div>}
                     <div className="form-group row d-flex justify-content-center ">
                         <div className="mb-3">
-                            <button type="submit" className="btn btn-primary" onClick={this.addQues}>Submit</button>
+                            <button type="submit" className="btn btn-primary" >Submit</button>
                         </div>
                     </div>
 

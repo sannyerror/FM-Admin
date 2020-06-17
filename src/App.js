@@ -27,6 +27,10 @@ import Userslist from "./components/Userslist";
 import Organizationlist from "./components/Organizationlist";
 import ChangePassword from "./components/ChangePassword";
 import AddOrganization from "./components/AddOrganization"
+import EmailList from "./components/Emaillist"
+import { Beforeunload } from 'react-beforeunload';
+
+
 
 export const { store , persistor } = configureStore(createHistory());
 function App() {
@@ -39,16 +43,18 @@ function App() {
                 <Header/>
               <Switch>
               <Route exact path="/">
-                          {/* <Redirect to="/configure" /> */}
-                          <Redirect to="/login" /> 
+                          <Redirect to="/configure" />
+                          {/* <Redirect to="/login" />  */}
               </Route>
                  <Route path="/eif" component={EIF}/>
                 <Route path="/eifmsg" component={EIFMSG}/>
-                <Route path="/raf/:customer" component={RAF} />
                 <Route path="/rafmsg" component={RAFMSG} />
                 <Route path="/login" component={Login}/>
                 <Route path="/finddomain" component={FindDomain}/>
                 <Route path="/contactus" component={Contactus}/>
+                {/* <Beforeunload onBeforeunload={() => "You'll lose your data!"} > */}
+                <Route path="/raf/:customer" component={RAF} />
+                {/* </Beforeunload> */}
                 </Switch>
                 <Switch>
                 <PrivateRoute path="/changepassword" component={ChangePassword}/>
@@ -66,6 +72,7 @@ function App() {
                 <PrivateRoute path="/configure/questioncategory" component={AddQuestionCategory}/>
                 <PrivateRoute path="/eiflist" component={EIFList}/>
                 <PrivateRoute path="/raflist" component={RAFList}/>
+                <PrivateRoute path="/configure/emailslist" component={EmailList}/>
                 <PrivateRoute path="/configure/questioncategorylist" component={QuestionsCategorylist}/>
                 </Switch>
                </Router>

@@ -4,6 +4,9 @@ import { rafQuestions, submitRAF, baseApiUrl } from '../api/api';
 import { connect } from 'react-redux';
 import axios from 'axios'
 import Modal from 'react-modal';
+import { ToastContainer, toast } from 'react-toastify';
+  import 'react-toastify/dist/ReactToastify.css';
+import { BounceLoader, BarLoader, BeatLoader } from 'react-spinners'
 
 
 class RAF extends Component {
@@ -20,14 +23,19 @@ class RAF extends Component {
         }
 
     }
-
+    onUnload = e => { // the method that will be used for both add and remove event
+        e.preventDefault();
+        e.returnValue = '';
+     }
     async componentDidMount() {
+        window.addEventListener("beforeunload", this.onUnload);
         const { customer } = this.props.match.params;
         this.setState({ customer: customer })
+        this.setState({ loading: true })
         const response = await rafQuestions(customer);
-        console.log(response,"rif")
         if(response&&response.message&&response.message==="form already submitted"){
             this.setState({
+                loading: false, 
                 error: "You have already submitted all data.",
             })
         }else{
@@ -36,13 +44,20 @@ class RAF extends Component {
                     ...this.state.data,
                     [ques.id]: q.answer
                 }
-            })):"HH"))
+            })):""))
             
         }
         this.setState({
             loadrafquestions: response,
+            loading: false
         }) 
+       
     }
+    componentWillUnmount() {
+        window.removeEventListener("beforeunload", this.onUnload);
+    }
+
+      
     onChange = async (e) => {
         e.preventDefault()
         //this.setState({file:e.target.files[0]})
@@ -81,7 +96,6 @@ class RAF extends Component {
 
     handleCheckboxChange = (e) => {
         const { name, value } = e.target;
-        console.log(value,"value")
         this.setState({
             data: {
                 ...this.state.data,
@@ -106,18 +120,17 @@ class RAF extends Component {
     handleSubmit = async (e) => {
         e.preventDefault();
         const {btnAction} = this.state
-        console.log(btnAction,"value")
         const { data, customer } = this.state;
-        const is_completely_filled = btnAction === "save" ? "false" : "true";
-        console.log(is_completely_filled,"is_completely_filled")
+        const is_completely_filled = btnAction === "" ? "false" : "true";
         let newArray = [];
         for (let k in data) {
             newArray.push({ "id": parseInt(k), "answer": data[k] });
         }
         try {
            const res = await submitRAF(newArray, customer, is_completely_filled);
-           console.log(res,"rifsubmit")
-            this.props.history.push('/rafmsg');
+           {is_completely_filled === "true" ? this.props.history.push('/rafmsg') :
+           toast.info('Data saved successfully.', { position: toast.POSITION.TOP_CENTER,autoClose:1500 }) }
+            
         }
         catch (e) {
             console.log(e)
@@ -130,7 +143,7 @@ class RAF extends Component {
         }
 
     }
-
+    
     display = () => {
         const display = this.state.loadrafquestions.response && this.state.loadrafquestions.response
             .map((data, id) =>
@@ -192,6 +205,7 @@ class RAF extends Component {
     }
 
     render() {
+       
         const customStyles = {
             content: {
                 top: '50%',
@@ -202,36 +216,44 @@ class RAF extends Component {
                 transform: 'translate(-50%, -50%)'
             }
         };
-        console.log(this.state,"state")
+        toast.configure()
+        const loading = this.state.loading
         return (
             <div className="cotainer-fluid">
-                
+                {/* <Beforeunload onBeforeunload={() => "You'll lose your data!"} /> */}
                 <div className="text-center"><h2>Readiness Assessment FORM</h2></div>
-                <div className="text-center col-sm">Thanks for your interest in being part of the FirstMatch initiative. Please fill in the assessment form below.</div>
-                <div className="card-body">
-                    {this.state.error ? this.state.error:(
+                <div className="text-center col-sm text-info">Thanks for your interest in being part of the FirstMatch initiative. Please fill in the assessment form below.</div>
+                {loading?<div className="form-group mt-5 row d-flex justify-content-center"><span className="font-weight-bold h5">Loading</span><BeatLoader size={24} color='#0099CC' loading={loading}/><BeatLoader size={24} color='#0099CC' loading={loading}/></div> :""}
+                <div className="card-body shadow-sm p-3 m-3 bg-white rounded">
+                    {this.state.error ? <div className="col-sm-12 d-flex shadow-lg p-3 mb-5 bg-white rounded justify-content-center text-info font-weight-bold h2">
+                    {this.state.error}
+                               </div>:(
                         <>
-                       <form >
-                       <fieldset className="form-group">
-                           {this.display()}
-                           <hr />
-                           <div className="form-group row d-flex justify-content-center">
-                               <div className="col-sm-3">
-                                   &nbsp;
-                           </div>
-                               <div className="col-sm-6 d-flex justify-content-center">
-                                   <button type="submit" className="btn btn-primary btn btn-block" data-id="submit" onClick={this.handleShow}>Submit</button>
-                               </div>
-                               <div className="col-sm-3  ">
-                                   &nbsp;
-                           </div>
-                           </div>
-                           
-                           <div className="form-group row d-flex justify-content-center"></div>
-                       </fieldset>
-                       
-                   </form>
-                   <div style={{ position: "fixed", bottom: "50%", right: "5px" }}><button data-id="save" onClick={this.handleShow} className="btn btn-primary" >Save</button></div></>
+                        {loading ? "":
+                        <form >
+                        <fieldset className="form-group">
+                            
+                            {this.display()}
+                            
+                            <hr />
+                            <div className="form-group row d-flex justify-content-center">
+                                <div className="col-sm-3">
+                                    &nbsp;
+                            </div>
+                                <div className="col-sm-6 d-flex justify-content-center">
+                                    <button type="submit" className="btn btn-primary btn btn-block" data-id="submit" onClick={this.handleShow}>Submit</button>
+                                </div>
+                                <div className="col-sm-3  ">
+                                    &nbsp;
+                            </div>
+                            </div>
+                            
+                            <div className="form-group row d-flex justify-content-center"></div>
+                        </fieldset>
+                        
+                    </form>}
+                  {loading ? "":    
+                   <div style={{ position: "fixed", bottom: "50%", right: "5px" }}><button onClick={this.handleSubmit} className="btn btn-info" >Save</button></div>} </>
                    
                     )}
                     <Modal
@@ -244,19 +266,16 @@ class RAF extends Component {
                 >
 
                    <p className="text-center">
-                       {this.state.btnAction ==="save" ? 
-                       "Are you sure to save the data in midway? Once saved data can be accessible from same link until submit."
-                       :
-                       "Are you sure to submit the data ? Once submitted this link cannot be accessible."}
+                   Are you sure to submit the data ? Once submitted this link cannot be accessible
                        
                        </p>
                     
                         <div className="row ">
                         <div className="col text-center ">
-                            <button className="button" data-id={this.state.btnAction} onClick={this.handleSubmit} >Yes</button>
+                            <button className="button-pop" data-id={this.state.btnAction} onClick={this.handleSubmit} >Yes</button>
                         </div>
                         <div className="col text-center ">
-                            <button className="button" onClick={this.handleClose} >No</button>
+                            <button className="button-pop" onClick={this.handleClose} >No</button>
                         </div>
                     </div>
                         

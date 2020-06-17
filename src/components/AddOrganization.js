@@ -4,6 +4,8 @@ import { AddOrganizations, baseApiUrl } from '../api/api';
 import axios from 'axios'
 import { store } from '../App'
 import {connect} from 'react-redux';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 class AddOrganization extends React.Component {
     constructor() {
         super();
@@ -51,10 +53,13 @@ class AddOrganization extends React.Component {
         try {
             const response = await AddOrganizations(data,id);
             if (response.status === "failed") {
-                this.setState({
-                    error: response.message
-                });
+                const err =response.response
+             const msg=   Object.keys(err).map(m=> err[m])
+            this.setState({
+                    error: msg
+                })
             } else {
+                toast.info(`User ${id ? "updated" : "added"}  successfully.`, { position: toast.POSITION.TOP_CENTER, autoClose: 3000 })
                 this.props.history.push('/configure/organizationlist');
             }
 
@@ -90,9 +95,10 @@ class AddOrganization extends React.Component {
 
     render() {
         const { id } = this.props.match.params
+        toast.configure()
         return (
             <div className="container-fluid">
-                <form className="">
+                <form className="" onSubmit={this.addORG}>
                     <div className="row p-2 bg-primary text-white">
                         {/* {id ? "Edit" : "Add"}  */}
                         Organization</div><br />
@@ -110,7 +116,7 @@ class AddOrganization extends React.Component {
                                     onChange={this.handleChange}
                                     value={this.state.name}
                                     name="name"
-                                    className="form-control " placeholder="" />
+                                    className="form-control " required />
                             </div>
                         </div>
                         <div className="form-group row">
@@ -120,34 +126,34 @@ class AddOrganization extends React.Component {
                                     onChange={this.handleChange}
                                     value={this.state.org_name}
                                     name="org_name"
-                                    className="form-control " placeholder="" />
+                                    className="form-control " required />
                             </div>
                         </div>
                         <div className="form-group row">
                             <label className="col-sm-2 col-form-label font-weight-bold ">Mobile Number:</label>
                             <div className="col-sm-4">
-                                <input type="text"
+                                <input type="number"
                                     onChange={this.handleChange}
                                     value={this.state.mobile}
                                     name="mobile"
-                                    className="form-control " placeholder="" />
+                                    className="form-control " required />
                             </div>
                         </div>
                         <div className="form-group row">
                             <label className="col-sm-2 col-form-label font-weight-bold ">Email ID:</label>
                             <div className="col-sm-4">
-                                <input type="text"
+                                <input type="email"
                                     onChange={this.handleChange}
                                     value={this.state.email_id}
                                     name="email_id"
-                                    className="form-control " placeholder="" />
+                                    className="form-control " required />
                             </div>
                         </div>
                         
                            <div className="form-group row">
                             <label className="col-sm-2 col-form-label font-weight-bold "></label>
                             <div className="col-sm-4">
-                                <button type="submit" className="btn btn-primary font-weight-bold btn-block" onClick={this.addORG}>{id ? "UPDATE" : "ADD ORGANIZATION"}</button>
+                                <button type="submit" className="btn btn-primary font-weight-bold btn-block" >{id ? "UPDATE" : "ADD ORGANIZATION"}</button>
                             </div>
                         </div>
                     </div>

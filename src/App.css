@@ -15,6 +15,15 @@
     border-color: #007bff;
     color: white;
 }
+.button-pop {
+  padding: 0.25rem 2.5rem;
+    font-size: 1.25rem;
+    line-height: 1.5;
+    border-radius: .3rem;
+    background-color: #007bff;
+    border-color: #007bff;
+    color: white;
+}
 .App-logo {
   margin: "0px";
   width: 50%;

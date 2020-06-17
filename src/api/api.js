@@ -163,6 +163,31 @@ export const fetchQuestions = async (value) => {
   }
 };
 
+export const fetchEmails = async () => {
+  const { dispatch } = store
+  const currentUser = store.getState().loginData.user.token;
+  
+  try {
+       return await axios.get(`${baseApiUrl}/admin/email-statuses`, {
+      headers: {
+        'Authorization': `Bearer ${currentUser}`
+      }
+    })
+      .then(response => {
+        const emailsList = response.data
+        return response.data;
+      })
+
+  }
+
+  catch (error) {
+    console.log('error')
+    
+    throwError(error)
+
+  }
+};
+
 export const alterQuestions = async (srcI,desI) => {
   const { dispatch } = store
   const currentUser = store.getState().loginData.user.token;
@@ -170,8 +195,7 @@ export const alterQuestions = async (srcI,desI) => {
     parent_question: srcI, 
     child_question_id: desI
   }
-  console.log(data,"data")
-  const response = await axios.post(`${baseApiUrl}/questionsrelation/`,data , {
+  return await axios.post(`${baseApiUrl}/questionsrelation/`,data , {
     headers: {
       'Authorization': `Bearer ${currentUser}`
     }
@@ -242,7 +266,7 @@ export const fetchEiflist = async () => {
   
   try {
     dispatch(fetchEifListRequest)
-    await axios.get(`${baseApiUrl}/staging?category=1`, {
+    return await axios.get(`${baseApiUrl}/staging?category=1`, {
       headers: {
         'Authorization': `Bearer ${currentUser}`
       }
@@ -268,7 +292,7 @@ export const fetchRaflist = async () => {
   const currentUser = store.getState().loginData.user.token;
   try {
     dispatch(fetchRafListRequest)
-    await axios.get(`${baseApiUrl}/staging?category=2`, {
+    return await axios.get(`${baseApiUrl}/staging?category=2`, {
       headers: {
         'Authorization': `Bearer ${currentUser}`
       }
@@ -311,7 +335,6 @@ export const fetchQuestionsCategory = async () => {
 export const AddQuestions = async (data,id) => {
   const { dispatch } = store
   const currentUser = store.getState().loginData.user.token;
-  console.log(data,"data")
   if (id) {
     try {
       dispatch(addQuestionsRequest)
@@ -414,6 +437,7 @@ export const AddOrganizations = async (data,id) => {
   const currentUser = store.getState().loginData.user.token;
   if(id){
     try{
+      
       dispatch(addOrganizationsRequest) 
          const d ={
            name: data.name,
@@ -423,6 +447,7 @@ export const AddOrganizations = async (data,id) => {
            email_id: data.email_id,
            gender: "2"
          }
+         
          return await axios.put(`${baseApiUrl}/customers/${id}/`, d, {
            headers: {
              'Authorization': `Bearer ${currentUser}`
@@ -449,7 +474,7 @@ export const AddOrganizations = async (data,id) => {
            country: data.country,
            org_name: data.org_name,
            mobile: data.mobile,
-           email: data.email,
+           email_id: data.email_id,
            gender: "2"
          }
          return await axios.post(`${baseApiUrl}/customers/`, d, {
@@ -510,7 +535,6 @@ export const submitEIF = async (data) => {
 export const submitRAF = async (data, customer, is_completely_filled) => {
   const { dispatch } = store
   const currentUser = store.getState().loginData.user.token;
-  console.log(is_completely_filled,"addraf")
   try {
     dispatch(addRafRequest)
     return await axios.post(`${baseApiUrl}/staging`, {
@@ -523,7 +547,6 @@ export const submitRAF = async (data, customer, is_completely_filled) => {
     })
       .then(response => {
         const addraf = response.data
-        console.log(is_completely_filled,"addraf")
         dispatch(addRafSuccess(addraf))
         return response.data;
       })
