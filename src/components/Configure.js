@@ -26,7 +26,7 @@ class Configure extends React.Component {
                             <div className="col col-2"><a href="/configure/addquestion">Add</a></div>
                             
                         </div>
-                        {role_type === "Super Admin" | "Admin" ? (
+                        {role_type === "Super Admin" | role_type === "Admin" ? (
                             <><div className="row p-2 bg-primary text-white">Users</div>
                             <div className="row p-2 bd-highlight">
                                 <div className="col col-3"><a href="/configure/userslist">Users List</a></div>
