@@ -28,7 +28,7 @@ class ChangePassword extends React.Component {
                 old_password: old_password
             }
 
-            const { token, user_id, email, role_type, is_pwd_updated } = store.getState().loginData.user;
+            const { token, user_id, email, role_type} = store.getState().loginData.user;
 
 
             try {

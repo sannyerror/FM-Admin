@@ -6,7 +6,7 @@ export class Header extends React.Component {
    
   handlelogout = () => {
    logOut();
-    //this.props.history.push("/login"); 
+    
   }
   render(){
       const { token,is_pwd_updated,role_type } =this.props.user
@@ -16,7 +16,6 @@ export class Header extends React.Component {
       
     <div id="app" className="container-fluid">
     <nav className="navbar navbar-expand-lg navbar-light ">
-        {/* <a className="navbar-brand" href="#">Navbar</a> */}
         <a className="navbar-brand" href={`${token ? "/configure" : url}`}> 
       <img
           className="navbar-brand"
@@ -25,10 +24,6 @@ export class Header extends React.Component {
           width="40%" height="40%" 
         />
         </a>
-        {/* </a> */}
-        {/* <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-            <span className="navbar-toggler-icon"></span>
-        </button> */}
         <div id="navbarNav" className="collapse navbar-collapse">
             <ul className="navbar-nav mr-auto">
                

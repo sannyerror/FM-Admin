@@ -3,7 +3,7 @@ import { fetchEmails, baseApiUrl } from '../api/api';
 import axios from 'axios'
 import '../App.css';
 import { store } from '../App'
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 export class EmailList extends React.Component {

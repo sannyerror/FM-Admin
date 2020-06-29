@@ -3,7 +3,7 @@ import axios from 'axios'
 import '../App.css';
 import { AddQuestions, fetchQuestionsCategory, baseApiUrl } from '../api/api';
 import { connect } from 'react-redux';
-import { ToastContainer, toast } from 'react-toastify';
+import {  toast } from 'react-toastify';
   import 'react-toastify/dist/ReactToastify.css';
 import { store } from '../App'
 
@@ -146,14 +146,15 @@ class AddQuestion extends React.Component {
         const display = this.props.questionscategoryList.response &&
             this.props.questionscategoryList.response
                 .map((data, id) =>
-                    <><div className="form-check">
+                    <><div  key={id} className="form-check">
 
                         <input
                             className="form-check-input"
                             onChange={this.onRadioChange}
                             value={data.id}
                             type="radio" name="category"
-                            checked={this.state.category == data.id} / >
+                            checked={this.state.category == data.id} 
+                            />
                         <label className="form-check-label" >
                             {data.title}
                         </label>
@@ -161,7 +162,7 @@ class AddQuestion extends React.Component {
 
                         {data.children.length >= 1 ?
                             data.children.map((child, i) =>
-                                <div className="form-check form-check-inline mr-4 ml-4">
+                                <div key={i} className="form-check form-check-inline mr-4 ml-4">
                                     <input
                                         className="form-check-input"
                                         onChange={this.onRadioChange}
@@ -274,11 +275,10 @@ class AddQuestion extends React.Component {
                     </fieldset>
 
                     {this.state.question_type === "FILE" || this.state.question_type === "TEXT" ? "" : this.state.suggested_answers.map((question, index) => (
-                        <div className="form-group row">
+                        <div key={index} className="form-group row">
                             <label className="col-sm-2 col-form-label font-weight-bold">Answer {index + 1}:</label>
                             <div className="col-sm-9">
                                 <input
-                                    //onChange={this.handleChange}
                                     type="text"
                                     onChange={this.handleText(index)}
                                     value={question.answer}

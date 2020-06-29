@@ -86,7 +86,6 @@ class AddOrganization extends React.Component {
        
     }
     onRadioChange = (e) => {
-        // const { name, value } = e.target;
         this.setState({
             gender: e.currentTarget.value
         });
@@ -100,8 +99,7 @@ class AddOrganization extends React.Component {
             <div className="container-fluid">
                 <form className="" onSubmit={this.addORG}>
                     <div className="row p-2 bg-primary text-white">
-                        {/* {id ? "Edit" : "Add"}  */}
-                        Organization</div><br />
+                         Organization</div><br />
                     
                     <div className=" ml-4">
                     {this.state.error &&

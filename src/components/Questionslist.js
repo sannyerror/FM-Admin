@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import '../App.css';
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import axios from 'axios'
-import { ToastContainer, toast } from 'react-toastify';
+import {  toast } from 'react-toastify';
   import 'react-toastify/dist/ReactToastify.css';
 import { store } from '../App'
 
@@ -87,7 +87,7 @@ export class QuestionsList extends React.Component {
     }
 
     handleSubChange = async (e) => {
-        const { name, value } = e.target;
+        const {  value } = e.target;
         const response = await fetchQuestions(value);
         this.setState({
             Questions: response,
@@ -120,10 +120,7 @@ export class QuestionsList extends React.Component {
                 headers: {
                     'Authorization': `Bearer ${currentUser}`
                 }
-            })
-                .then(response => {
-                    return response.data;
-                })
+            });
             if (response.status === "failed") {
                 this.setState({
                     error: response.status,
@@ -152,8 +149,8 @@ export class QuestionsList extends React.Component {
             const src = list[srcI].id;
             const des = list[desI].id;
             list.splice(desI, 0, list.splice(srcI, 1)[0]);
-            await this.saveList(list);
-           const response = await alterQuestions(src, des)
+             this.saveList(list);
+           await alterQuestions(src, des)
         }
         this.setState({
             showPOPUP: false,
@@ -161,20 +158,7 @@ export class QuestionsList extends React.Component {
         })
    
     } 
-
-    Question = () => {
-        const Question = this.state.Questions.response &&
-            this.state.Questions.response.map((data, idx) =>
-                <div className="row">
-                    <div className="list-group-item col-10  mt-1 text-primary ">
-                        {data.question}</div>
-                    <div className="list-group-item col-1  ml-1 mt-1 text-primary text-center ">
-                        <a data-id={data.id} onClick={this.handleDelete}>Delete</a></div>
-                </div>
-            )
-        return Question
-    }
-    category = () => {
+category = () => {
         const category = this.state.QuestionsCategory.response &&
             this.state.QuestionsCategory.response.map((data, idx) =>
                 <option value={data.id}>{data.title}</option>
@@ -247,7 +231,7 @@ export class QuestionsList extends React.Component {
                                 <div ref={provided.innerRef} {...provided.droppableProps}>
                                     {list &&
                                         list.map((item, i) => (
-                                            <div className="row">
+                                            <div key={i} className="row">
                                                 <Draggable
                                                     key={item.id}
                                                     draggableId={"draggable-" + item.id}
@@ -274,7 +258,7 @@ export class QuestionsList extends React.Component {
                                                                 right: "-60px",
                                                                 width: "auto",
                                                                 height: "49px",
-                                                                border: "1px solid rgba(0,0,0,.125);",
+                                                                border: "1px solid rgba(0,0,0,.125)",
                                                                 // backgroundColor: "#d9534f",
                                                                 borderRadius: "5px 5px",
                                                                 textAlign: "center",
@@ -288,7 +272,7 @@ export class QuestionsList extends React.Component {
                                                                 right: "-100px",
                                                                 width: "auto",
                                                                 height: "25px",
-                                                                border: "1px solid rgba(0,0,0,.125);",
+                                                                border: "1px solid rgba(0,0,0,.125)",
                                                                 curser: "pointer",
                                                                 // backgroundColor: "#5bc0de",
                                                                 borderRadius: "5px 5px",
@@ -301,7 +285,7 @@ export class QuestionsList extends React.Component {
                                                             </div>
                                                         </div>
 
-                                                            {/* <div className="list-group-item col-1  mt-1 text-primary text-center ">Delete</div> */}
+                                                           
                                                         </>
                                                     )}
 

@@ -36,16 +36,15 @@ import { addUsersFailure, addUsersRequest, addUsersSuccess }
   from '../redux/AddUsers/AddUsersAction'
 import { getUsersFailure, getUsersRequest, getUsersSuccess }
   from '../redux/GetUsers/GetUsersAction'
-  import { getOrganizationsFailure,getOrganizationsRequest, getOrganizationsSuccess }
+import { getOrganizationsFailure, getOrganizationsRequest, getOrganizationsSuccess }
   from '../redux/GetOrganizations/GetOrganizationsAction'
-  import { addOrganizationsFailure, addOrganizationsRequest, addOrganizationsSuccess }
+import { addOrganizationsFailure, addOrganizationsRequest, addOrganizationsSuccess }
   from '../redux/AddOrganization/AddOrganizationsAction'
 import createAuthRefreshInterceptor from "axios-auth-refresh"
 import { update } from '../redux/login/loginAction'
 import { clearUser } from '../redux/login/loginAction'
 import { store } from '../App'
 export const baseApiUrl = "http://3.7.135.210:8005";
-//export const baseApiUrl = "https://819f0acc214a.ngrok.io";
 
 const refreshAuthLogic = async failedRequest => {
   //  const { store } = store
@@ -79,7 +78,7 @@ export const login = async (email, password) => {
   try {
     dispatch(fetchUsersRequest)
     const response = await axios.post(`${baseApiUrl}/admin/login`, { username: email, password: password });
-    const { token, user_id, role_type,is_pwd_updated } = response.data.response
+    const { token, user_id, role_type, is_pwd_updated } = response.data.response
     const user = {
       email,
       token,
@@ -94,16 +93,15 @@ export const login = async (email, password) => {
     dispatch(fetchUsersFailure(error.message))
     throwError(error)
   }
-}; 
+};
 
 export const forgotPassWord = async (email_id) => {
   const { dispatch } = store
-  
+
   try {
     return await axios.get(`${baseApiUrl}/admin/forgot-password?email_id=${email_id}`)
       .then(response => {
-        const checkdomain = response.data
-       return response.data;
+        return response.data;
       })
   }
 
@@ -118,7 +116,7 @@ export const forgotPassWord = async (email_id) => {
 export const checkDomain = async (domain) => {
   const { dispatch } = store
   const data = `${domain}`
-  
+
   try {
     dispatch(checkDomainRequest)
     return await axios.post(`${baseApiUrl}/check/domain`, { domain: data })
@@ -147,7 +145,7 @@ export const fetchQuestions = async (value) => {
         'Authorization': `Bearer ${currentUser}`
       }
     })
-    .then(response => {
+      .then(response => {
         const questionsList = response.data
 
         dispatch(fetchQuestionsSuccess(questionsList))
@@ -164,17 +162,15 @@ export const fetchQuestions = async (value) => {
 };
 
 export const fetchEmails = async () => {
-  const { dispatch } = store
   const currentUser = store.getState().loginData.user.token;
-  
+
   try {
-       return await axios.get(`${baseApiUrl}/admin/email-statuses`, {
+    return await axios.get(`${baseApiUrl}/admin/email-statuses`, {
       headers: {
         'Authorization': `Bearer ${currentUser}`
       }
     })
       .then(response => {
-        const emailsList = response.data
         return response.data;
       })
 
@@ -182,31 +178,269 @@ export const fetchEmails = async () => {
 
   catch (error) {
     console.log('error')
-    
+
     throwError(error)
 
   }
 };
 
-export const alterQuestions = async (srcI,desI) => {
-  const { dispatch } = store
+export const fetchBillingStatus = async (id) => {
+  const currentUser = store.getState().loginData.user.token;
+  console.log(id, "id")
+  console.log(currentUser)
+  try {
+    return await axios.get(`${baseApiUrl}/billing-status/?customer=${id}`, {
+      headers: {
+        'Authorization': `Bearer ${currentUser}`
+      }
+    })
+      .then(response => {
+        const bill = response.data
+        console.log(bill, "bill")
+        return response.data;
+      })
+
+  }
+
+  catch (error) {
+    console.log('error')
+
+    throwError(error)
+
+  }
+};
+
+export const isPrediction = async (id) => {
+   const currentUser = store.getState().loginData.user.token;
+
+  console.log(currentUser)
+  try {
+    const myHeaders = new Headers();
+    myHeaders.append("Authorization", `Bearer ${currentUser}`);
+
+    const formdata = new FormData();
+    formdata.append("customer", id);
+
+    const requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: formdata,
+      redirect: 'follow'
+    };
+
+    fetch(`${baseApiUrl}/billing-status/`, requestOptions)
+      .then(response => response.text())
+      .then(result => console.log(result))
+      .catch(error => console.log('error', error));
+
+  }
+
+  catch (error) {
+    console.log('error')
+
+    throwError(error)
+
+  }
+};
+
+export const fetchAllRecords = async (id, sDate, EDate) => {
+  const currentUser = store.getState().loginData.user.token;
+  console.log(sDate, EDate, "id")
+  console.log(currentUser)
+  try {
+    return await axios.get(`${baseApiUrl}/orders/?customer=${id}&start_date=${sDate}&end_date=${EDate}`, {
+      headers: {
+        'Authorization': `Bearer ${currentUser}`
+      }
+    })
+      .then(response => {
+        const bill = response.data
+        console.log(bill, "getrecords")
+        return response.data;
+      })
+
+  }
+
+  catch (error) {
+    console.log('error')
+
+    throwError(error)
+
+  }
+};
+
+export const getRecord = async (id) => {
+ const currentUser = store.getState().loginData.user.token;
+  console.log(id, "id")
+  console.log(currentUser)
+  try {
+    return await axios.get(`${baseApiUrl}/orders/${id}/`, {
+      headers: {
+        'Authorization': `Bearer ${currentUser}`
+      }
+    })
+      .then(response => {
+        const bill = response.data
+        console.log(bill, "getrecord")
+        return response.data;
+      })
+
+  }
+
+  catch (error) {
+    console.log('error')
+
+    throwError(error)
+
+  }
+};
+
+export const configureBilling = async (data, update) => {
+  console.log(update, "update")
+ const currentUser = store.getState().loginData.user.token;
+  console.log(currentUser)
+  try {
+    if (update) {
+      return await axios.put(`${baseApiUrl}/billing/${data.customer}/`, {
+        billing_cycle: data.billing_cycle,
+        base_fare: data.base_fare,
+        other_fare_per_cycle: data.other_fare_per_cycle
+      }, {
+        headers: {
+          'Authorization': `Bearer ${currentUser}`
+        }
+      })
+        .then(response => {
+          const bill = response.data
+          console.log(bill, "billingconfddd")
+          return response.data;
+        })
+    } else {
+      return await axios.post(`${baseApiUrl}/billing/`, data, {
+        headers: {
+          'Authorization': `Bearer ${currentUser}`
+        }
+      })
+        .then(response => {
+          const bill = response.data
+          console.log(bill, "billingconf")
+          return response.data;
+        })
+    }
+
+
+
+  }
+
+  catch (error) {
+    console.log('error')
+
+    throwError(error)
+
+  }
+};
+
+export const downloadAllRecords = async (id) => {
+  const currentUser = store.getState().loginData.user.token;
+   console.log(id, "id")
+   console.log(currentUser)
+   try {
+     return await axios.get(`${baseApiUrl}/download/?customer=${id}`, {
+       headers: {
+         'Authorization': `Bearer ${currentUser}`
+       }
+     })
+       .then(response => {
+        const path = response.data.response
+        window.open(`${baseApiUrl}/${path}`);
+         const records = response.data
+         console.log(records, "getrecord")
+         return response.data;
+       })
+     }
+ 
+   catch (error) {
+     console.log('error')
+ 
+     throwError(error)
+ 
+   }
+ };
+
+ export const getOrderDownload = async (id,sDate, eDate) => {
+  const currentUser = store.getState().loginData.user.token;
+   console.log(id, "id")
+   console.log(currentUser)
+   try {
+     return await axios.get(`${baseApiUrl}/download/?customer=${id}&start_date=${sDate}&end_date=${eDate}`, {
+       headers: {
+         'Authorization': `Bearer ${currentUser}`
+       }
+     })
+       .then(response => {
+        const path = response.data.response
+        window.open(`${baseApiUrl}/${path}`);
+         const records = response.data
+         console.log(records, "getrecord")
+         return response.data;
+       })
+     }
+ 
+   catch (error) {
+     console.log('error')
+ 
+     throwError(error)
+ 
+   }
+ };
+
+ export const downloadReportCSV = async (id) => {
+  const currentUser = store.getState().loginData.user.token;
+   console.log(id, "id")
+   console.log(currentUser)
+   try {
+     return await axios.get(`${baseApiUrl}/download/${id}/`, {
+       headers: {
+         'Authorization': `Bearer ${currentUser}`
+       }
+     })
+       .then(response => {
+         const bill = response.data
+         const path = response.data.response
+        window.open(`${baseApiUrl}/${path}`);
+         console.log(bill, "getrecord")
+         return response.data;
+       })
+ 
+   }
+ 
+   catch (error) {
+     console.log('error')
+ 
+     throwError(error)
+ 
+   }
+ };
+ 
+
+export const alterQuestions = async (srcI, desI) => {
   const currentUser = store.getState().loginData.user.token;
   const data = {
-    parent_question: srcI, 
+    parent_question: srcI,
     child_question_id: desI
   }
-  return await axios.post(`${baseApiUrl}/questionsrelation/`,data , {
+  return await axios.post(`${baseApiUrl}/questionsrelation/`, data, {
     headers: {
       'Authorization': `Bearer ${currentUser}`
     }
   })
-  
+
 };
 
 export const fetchUsers = async () => {
   const { dispatch } = store
   const currentUser = store.getState().loginData.user.token;
-  
+
   try {
     dispatch(getUsersRequest)
     return await axios.get(`${baseApiUrl}/users/`, {
@@ -216,7 +450,7 @@ export const fetchUsers = async () => {
     })
       .then(response => {
         const usersList = response.data
-        
+
         dispatch(getUsersSuccess(usersList))
         return response.data;
       })
@@ -234,7 +468,7 @@ export const fetchUsers = async () => {
 export const fetchOrganizations = async () => {
   const { dispatch } = store
   const currentUser = store.getState().loginData.user.token;
-  
+
   try {
     dispatch(getOrganizationsRequest)
     return await axios.get(`${baseApiUrl}/customers/`, {
@@ -244,7 +478,7 @@ export const fetchOrganizations = async () => {
     })
       .then(response => {
         const organizationsList = response.data
-        
+
         dispatch(getOrganizationsSuccess(organizationsList))
         return response.data;
       })
@@ -263,7 +497,7 @@ export const fetchEiflist = async () => {
 
   const { dispatch } = store
   const currentUser = store.getState().loginData.user.token;
-  
+
   try {
     dispatch(fetchEifListRequest)
     return await axios.get(`${baseApiUrl}/staging?category=1`, {
@@ -332,7 +566,7 @@ export const fetchQuestionsCategory = async () => {
   }
 };
 
-export const AddQuestions = async (data,id) => {
+export const AddQuestions = async (data, id) => {
   const { dispatch } = store
   const currentUser = store.getState().loginData.user.token;
   if (id) {
@@ -349,14 +583,14 @@ export const AddQuestions = async (data,id) => {
           return response.data;
         })
     }
-  
+
     catch (error) {
       console.log('error')
       dispatch(addQuestionsFailure(error.message))
       throwError(error)
-  
+
     }
-  }else{
+  } else {
     try {
       dispatch(addQuestionsRequest)
       return await axios.post(`${baseApiUrl}/questions/`, data, {
@@ -370,15 +604,15 @@ export const AddQuestions = async (data,id) => {
           return response.data;
         })
     }
-  
+
     catch (error) {
       console.log('error')
       dispatch(addQuestionsFailure(error.message))
       throwError(error)
-  
+
     }
   }
-  
+
 };
 
 export const AddUsers = async (data, id) => {
@@ -395,16 +629,16 @@ export const AddUsers = async (data, id) => {
         .then(response => {
           const addedusers = response.data
           dispatch(addUsersSuccess(addedusers))
-          
+
           return response.data;
         })
     }
-  
+
     catch (error) {
       console.log('error')
       dispatch(addUsersFailure(error.message))
       throwError(error)
-  
+
     }
   } else {
     try {
@@ -417,88 +651,88 @@ export const AddUsers = async (data, id) => {
         .then(response => {
           const addedusers = response.data
           dispatch(addUsersSuccess(addedusers))
-          
+
           return response.data;
         })
     }
-  
+
     catch (error) {
       console.log('error')
       dispatch(addUsersFailure(error.message))
       throwError(error)
-  
+
     }
   }
-  
+
 };
 
-export const AddOrganizations = async (data,id) => {
+export const AddOrganizations = async (data, id) => {
   const { dispatch } = store
   const currentUser = store.getState().loginData.user.token;
-  if(id){
-    try{
-      
-      dispatch(addOrganizationsRequest) 
-         const d ={
-           name: data.name,
-           country: data.country,
-           org_name: data.org_name,
-           mobile: data.mobile,
-           email_id: data.email_id,
-           gender: "2"
-         }
-         
-         return await axios.put(`${baseApiUrl}/customers/${id}/`, d, {
-           headers: {
-             'Authorization': `Bearer ${currentUser}`
-           }
-         })
-           .then(response => {
-             const addedOrganizations = response.data
-             dispatch(addOrganizationsSuccess(addedOrganizations))
-             
-             return response.data;
-           })
-       }
-     
-       catch (error) {
-         console.log(error,'error')
-         dispatch(addOrganizationsFailure(error.message))
-         throwError(error)
-       }
-  }else{
-    try{
+  if (id) {
+    try {
+
       dispatch(addOrganizationsRequest)
-         const d ={
-           name: data.name,
-           country: data.country,
-           org_name: data.org_name,
-           mobile: data.mobile,
-           email_id: data.email_id,
-           gender: "2"
-         }
-         return await axios.post(`${baseApiUrl}/customers/`, d, {
-           headers: {
-             'Authorization': `Bearer ${currentUser}`
-           }
-         })
-           .then(response => {
-             const addedOrganizations = response.data
-             dispatch(addOrganizationsSuccess(addedOrganizations))
-             
-             return response.data;
-           })
-       }
-     
-       catch (error) {
-         console.log(error,'error')
-         dispatch(addOrganizationsFailure(error.message))
-         throwError(error)
-       }
+      const d = {
+        name: data.name,
+        country: data.country,
+        org_name: data.org_name,
+        mobile: data.mobile,
+        email_id: data.email_id,
+        gender: "2"
+      }
+
+      return await axios.put(`${baseApiUrl}/customers/${id}/`, d, {
+        headers: {
+          'Authorization': `Bearer ${currentUser}`
+        }
+      })
+        .then(response => {
+          const addedOrganizations = response.data
+          dispatch(addOrganizationsSuccess(addedOrganizations))
+
+          return response.data;
+        })
+    }
+
+    catch (error) {
+      console.log(error, 'error')
+      dispatch(addOrganizationsFailure(error.message))
+      throwError(error)
+    }
+  } else {
+    try {
+      dispatch(addOrganizationsRequest)
+      const d = {
+        name: data.name,
+        country: data.country,
+        org_name: data.org_name,
+        mobile: data.mobile,
+        email_id: data.email_id,
+        gender: "2"
+      }
+      return await axios.post(`${baseApiUrl}/customers/`, d, {
+        headers: {
+          'Authorization': `Bearer ${currentUser}`
+        }
+      })
+        .then(response => {
+          const addedOrganizations = response.data
+          dispatch(addOrganizationsSuccess(addedOrganizations))
+
+          return response.data;
+        })
+    }
+
+    catch (error) {
+      console.log(error, 'error')
+      dispatch(addOrganizationsFailure(error.message))
+      throwError(error)
+    }
   }
-  
-   
- };
+
+
+};
 
 
 export const submitEIF = async (data) => {
@@ -644,7 +878,7 @@ export const logOut = () => {
 
 export const register = async (data) => {
   const { dispatch } = store
-  
+
   try {
     await axios.post("http://52.64.1.72/signup/",
       {

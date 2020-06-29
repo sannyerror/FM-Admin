@@ -50,7 +50,7 @@ export class EIF extends React.Component {
         for (let k in data) {
             newArray.push({ 'id': parseInt(k), 'answer': data[k] });
         }
-        //let newArray1 = JSON.stringify(newArray);
+        
         if (!data) {
             return this.setState({
                 error: "Please provide Email ID / Password"
@@ -89,7 +89,7 @@ export class EIF extends React.Component {
                     :
                     data.suggested_answers.map((suggested, idy) =>
                         <div className="form-group form-check">
-                            {idy === 0 ? <label className="form-check-label" for='suggestedanswer'>{data.question}</label> : null}
+                            {idy === 0 ? <label className="form-check-label" >{data.question}</label> : null}
                             <input className="form-check-input" id='check' type='checkbox' name={suggested.question_id} value={suggested.answer} onChange={this.handleCheckboxChange} required /> {suggested.answer}
                         </div>)
             )

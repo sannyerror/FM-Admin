@@ -8,7 +8,6 @@ export class Login extends Component {
     constructor(props) {
         super(props);
         const isLoggedIn = props.user && props.user;
-       
     if (isLoggedIn && isLoggedIn.length>0&&isLoggedIn.token !== "") {
        this.props.history.push(`${isLoggedIn.role_type === "Coordinator" ? "/eiflist" : "/configure"}`);
     }
@@ -76,9 +75,7 @@ export class Login extends Component {
                         })
                         this.props.history.push(`${role_type === "Coordinator" ? "/eiflist" : "/configure"}`);
 
-                    } else {
-                        
-                    }
+                    } 
                 } else {
                     this.props.history.push("/changepassword");
                 }
@@ -113,7 +110,7 @@ export class Login extends Component {
         };
         return (
             <div className="shadow-lg p-5 mb-5 bg-white rounded">
-                <form>
+                <form >
                     <div className="text-center"><h2>Login</h2></div>
                     <div className="form-group row">
                         <label className="col-md-4 col-form-label text-md-right">Email ID:</label>
@@ -137,7 +134,7 @@ export class Login extends Component {
                     }
                     <div className="row ">
                         <div className="col text-center mb-3">
-                            <a href="#" onClick={this.handleShow} >Forgot Password</a>
+                            <span className="btn btn-link text-primary" onClick={this.handleShow} >Forgot Password</span>
                         </div>
                     </div>
                     <div className="row ">

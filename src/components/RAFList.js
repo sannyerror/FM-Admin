@@ -140,7 +140,7 @@ export class RAFList extends React.Component {
                             {this.state.RafList.response && this.state.RafList.response.map((ques, index) =>
 
                                 (
-                                    <li className="list-group-item mb-1" data-id={ques.id} onClick={this.getDetails}>
+                                    <li key={index} className="list-group-item mb-1" data-id={ques.id} onClick={this.getDetails}>
                                         <span className="text-primary ">{ques.org_name}</span> <br />
                                         <span className=" ">Created On: </span> <span className="text-primary font-weight-bold">{ques.date_created}</span>
                                         <br />

@@ -7,15 +7,6 @@ import { connect } from 'react-redux';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-const validEmailRegex = RegExp(/^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i);
-const validateForm = (errors) => {
-    let valid = true;
-    Object.values(errors).forEach(
-        (val) => val.length > 0 && (valid = false)
-    );
-    return valid;
-}
-
 class AddUser extends React.Component {
     constructor() {
         super();
@@ -112,7 +103,6 @@ class AddUser extends React.Component {
     handleChange = (e) => {
         e.preventDefault();
         const { name, value } = e.target;
-        let error = this.state.error;
         if (name === "email_id") {
             this.setState({
                 [name]: value
@@ -125,7 +115,6 @@ class AddUser extends React.Component {
 
     }
     onRadioChange = (e) => {
-        // const { name, value } = e.target;
         this.setState({
             gender: e.currentTarget.value
         });
@@ -135,23 +124,15 @@ class AddUser extends React.Component {
     render() {
         toast.configure()
         const { id } = this.props.match.params
-        const { role_type } = this.props.user
-        const { error } = this.state
-
         return (
             <div className="container-fluid">
                 <div className="row p-2 bg-primary text-white">{id ? "Edit" : "Add"} User</div><br />
                 <form onSubmit={this.addUser}>
-                    {/* {this.state.error &&
-                        <div className="col text-center text-danger mb-3 font-weight-bold">
-                            {this.state.error}
-                        </div>
-                    } */}
                     <div className=" ml-4">
                         <div className="form-group row">
                             <label className="col-sm-2 col-form-label font-weight-bold ">First name</label>
                             <div className="col-sm-4">
-                                <input type="text" class="form-control" id="validationDefault01" onChange={this.handleChange}
+                                <input type="text" className="form-control" id="validationDefault01" onChange={this.handleChange}
                                     value={this.state.first_name}
                                     name="first_name" required />
                             </div>
@@ -232,7 +213,7 @@ class AddUser extends React.Component {
                             <div className="col-sm-4">
                                 <select name="group_id" className="form-control" id="exampleFormControlSelect1" onChange={this.handleChange} required>
                                     <option value="" >Select</option>
-                                    {this.state.Roles.map(role => <option value={role.id} selected={this.state.role_type === role.name}>{role.name}</option>)}
+                                    {this.state.Roles.map((role,i) => <option key={i} value={role.id} selected={this.state.role_type === role.name}>{role.name}</option>)}
 
                                 </select>
                             </div>

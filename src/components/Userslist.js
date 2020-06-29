@@ -93,17 +93,17 @@ export class UsersList extends React.Component {
                             {this.props.usersList &&
                                 this.state.Users.map((ques, index) => (
 
-                                    <tr>
+                                    <tr key={index}>
                                         <td>{ques.full_name}</td>
                                         <td>{ques.email_id}</td>
                                         <td>{ques.role_type}</td>
-                                        <td>{ques.role_type === "Super Admin" ? "-":(<a href="" data-id={ques.id} onClick={this.handleEdit}>Edit</a>)}</td>
+                                        <td>{ques.role_type === "Super Admin" ? "-":(<button className="btn btn-link" data-id={ques.id} onClick={this.handleEdit}>Edit</button>)}</td>
                                         <td>{ques.role_type === "Super Admin" ? "-":(
-                                             <a href="" data-id={ques.id}
+                                             <button className="btn btn-link"  data-id={ques.id}
                                              onClick={e =>
                                                  window.confirm("Are you sure you wish to delete this User?") &&
                                                  this.handleDelete(e)
-                                             }>Delete</a>
+                                             }>Delete</button>
                                         )}
                                         </td>
                                     </tr>

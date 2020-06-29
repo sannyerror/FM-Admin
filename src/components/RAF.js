@@ -4,9 +4,9 @@ import { rafQuestions, submitRAF, baseApiUrl } from '../api/api';
 import { connect } from 'react-redux';
 import axios from 'axios'
 import Modal from 'react-modal';
-import { ToastContainer, toast } from 'react-toastify';
+import {  toast } from 'react-toastify';
   import 'react-toastify/dist/ReactToastify.css';
-import { BounceLoader, BarLoader, BeatLoader } from 'react-spinners'
+import { BeatLoader } from 'react-spinners'
 
 
 class RAF extends Component {
@@ -28,15 +28,14 @@ class RAF extends Component {
         e.returnValue = '';
      }
     async componentDidMount() {
-        window.addEventListener("beforeunload", this.onUnload);
-        const { customer } = this.props.match.params;
+       const { customer } = this.props.match.params;
         this.setState({ customer: customer })
         this.setState({ loading: true })
         const response = await rafQuestions(customer);
-        if(response&&response.message&&response.message==="form already submitted"){
+        if(response && response.message && response.message==="form already submitted"){
             this.setState({
                 loading: false, 
-                error: "You have already submitted all data.",
+                error: "You have already submitted all data.", 
             })
         }else{
             response.response.map(data=>data.questions.map(ques=>ques.customer_answers?ques.customer_answers.map(q=>this.setState({
@@ -53,11 +52,7 @@ class RAF extends Component {
         }) 
        
     }
-    componentWillUnmount() {
-        window.removeEventListener("beforeunload", this.onUnload);
-    }
-
-      
+     
     onChange = async (e) => {
         e.preventDefault()
         //this.setState({file:e.target.files[0]})
@@ -127,7 +122,7 @@ class RAF extends Component {
             newArray.push({ "id": parseInt(k), "answer": data[k] });
         }
         try {
-           const res = await submitRAF(newArray, customer, is_completely_filled);
+          await submitRAF(newArray, customer, is_completely_filled);
            {is_completely_filled === "true" ? this.props.history.push('/rafmsg') :
            toast.info('Data saved successfully.', { position: toast.POSITION.TOP_CENTER,autoClose:1500 }) }
             
@@ -147,20 +142,20 @@ class RAF extends Component {
     display = () => {
         const display = this.state.loadrafquestions.response && this.state.loadrafquestions.response
             .map((data, id) =>
-                <><div className="row p-2 mb-3 bg-primary text-white">{data.title}</div>
+                <><div key={id} className="row p-2 mb-3 bg-primary text-white">{data.title}</div>
                     {data.questions.map((quest, idx) =>  
                         quest.question_type === 'TEXT' ?
-                            <><div className="form-group">
-                                <label key={idx} className="font-weight-bold">{quest.id - 6}. {quest.question}</label>
+                            <><div key={idx} className="form-group">
+                                <label className="font-weight-bold">{quest.id - 6}. {quest.question}</label>
                                 
                                     <input className="form-control col-10 ml-3" type='TEXT'
                                         name={quest.id} value={this.state.data[quest.id]} onChange={this.handleChange} /></div></>
                             : quest.question_type === 'RADIO' ? (
-                            <fieldset class="form-group">
-                                <legend class="col-form-label font-weight-bold pt-0">{quest.id - 6}. {quest.question}</legend>
+                            <fieldset className="form-group">
+                                <legend className="col-form-label font-weight-bold pt-0">{quest.id - 6}. {quest.question}</legend>
                                {quest.suggested_answers.map((suggested, idy) =>
                                            <>
-                                           <div className="form-check form-check-inline ml-4">
+                                           <div key={idy}  className="form-check form-check-inline ml-4">
                                         <input type="radio"
                                             className="form-check-input"
                                             name={quest.id}
@@ -177,11 +172,11 @@ class RAF extends Component {
 
                                         </div></>
                                     : quest.question_type === 'CHECKBOX' ? (
-                                        <fieldset class="form-group">
-                                            <legend class="col-form-label font-weight-bold pt-0">{quest.id - 6}. {quest.question}</legend>
+                                        <fieldset className="form-group">
+                                            <legend className="col-form-label font-weight-bold pt-0">{quest.id - 6}. {quest.question}</legend>
                                            {quest.suggested_answers.map((suggested, idy) =>
                                                        <>
-                                                       <div className="form-check form-check-inline ml-4">
+                                                       <div key={idy} className="form-check form-check-inline ml-4">
                                                     <input type="checkbox"
                                                         className="form-check-input"
                                                         name={quest.id}
@@ -197,7 +192,7 @@ class RAF extends Component {
                                                     <select name={quest.id} className="form-control col-5" id="exampleFormControlSelect1" onChange={this.handleChange}>
                                                     <option value="">Select...</option>
                                                         {quest.suggested_answers.map((suggested, idy) =>
-                                                            <option value={suggested.answer} selected={this.state.data[quest.id]===suggested.answer}>{suggested.answer}</option>
+                                                            <option key={idy}  value={suggested.answer} selected={this.state.data[quest.id]===suggested.answer}>{suggested.answer}</option>
                                                         )}</select></div> </>) : '')}
                 </>
             )
@@ -220,7 +215,6 @@ class RAF extends Component {
         const loading = this.state.loading
         return (
             <div className="cotainer-fluid">
-                {/* <Beforeunload onBeforeunload={() => "You'll lose your data!"} /> */}
                 <div className="text-center"><h2>Readiness Assessment FORM</h2></div>
                 <div className="text-center col-sm text-info">Thanks for your interest in being part of the FirstMatch initiative. Please fill in the assessment form below.</div>
                 {loading?<div className="form-group mt-5 row d-flex justify-content-center"><span className="font-weight-bold h5">Loading</span><BeatLoader size={24} color='#0099CC' loading={loading}/><BeatLoader size={24} color='#0099CC' loading={loading}/></div> :""}

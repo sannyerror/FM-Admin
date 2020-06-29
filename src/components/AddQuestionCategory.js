@@ -52,7 +52,7 @@ class AddQuestionCategory extends React.Component {
     }
 
     onRadioChange = async (e) => {
-        const { name, value } = e.target;
+        const {  value } = e.target;
         if (value === "sub") {
             const response = await fetchQuestionsCategory();
             this.setState({
@@ -75,7 +75,7 @@ class AddQuestionCategory extends React.Component {
     }
 
     render() {
-        const { CheckedSub, Category_list } = this.state;
+        const { CheckedSub } = this.state;
         return (
 
             <div className="container-fluid">
@@ -129,7 +129,7 @@ class AddQuestionCategory extends React.Component {
                         
                         <div className="row p-2 bd-highlight align">
                             <div className="col col-2">
-                                <label for="inputEmail3" className="form-label font-weight-bold ">
+                                <label className="form-label font-weight-bold ">
                                     Question Category:</label>
                             </div>
                             <div className="col col-4 form-group row">
