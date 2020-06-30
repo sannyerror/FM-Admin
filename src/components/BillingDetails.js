@@ -217,7 +217,7 @@ class BillingDetails extends React.Component {
                                 </div>
 
                                 <div className="form-check">
-                                    <input className="form-check-input" type="radio" name="billing_cycle" onChange={this.onRadioChange} id="exampleRadios1" value="15th to 15th" checked={this.state.billing_cycle == "15to15"} />
+                                    <input className="form-check-input" type="radio" name="billing_cycle" onChange={this.onRadioChange} id="exampleRadios1" value="15th to 15th" checked={this.state.billing_cycle == "15th to 15th"} />
                                     <label className="form-check-label" >
                                         15th to 15th
                                         </label>
