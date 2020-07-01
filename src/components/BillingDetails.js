@@ -155,7 +155,8 @@ class BillingDetails extends React.Component {
             this.setState({
                 allRecords: response,
                 config: false,
-                error: ""
+                error: "",
+                singlerecord:[]
             })
         }
 
@@ -400,10 +401,7 @@ class BillingDetails extends React.Component {
                         </div>
                     </>
                 }
-
-
-
-            </div>
+</div>
 
         );
     }
