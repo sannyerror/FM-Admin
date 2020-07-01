@@ -347,7 +347,6 @@ class BillingDetails extends React.Component {
                                             </table>
                                             <div className="form-group row d-flex justify-content-center mr-3">
                             <button className="btn btn-primary mr-3" onClick={this.downloadOrder}>Download CSV</button>
-                            {/* <button className="btn btn-primary" onClick={this.onBack} >back</button> */}
                         </div>
                                         </div>
                                     </>
