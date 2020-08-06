@@ -135,6 +135,51 @@ export const checkDomain = async (domain) => {
   }
 };
 
+export const saveClientConfigure = async (data) => {
+  const currentUser = store.getState().loginData.user.token;
+  try {
+    return await axios.post(`${baseApiUrl}/client-config`, {
+      customer: data.customer,
+      sections: data.sections
+    }, {
+      headers: {
+        'Authorization': `Bearer ${currentUser}`
+      }
+    })
+      .then(response => {
+        const saveConfig = response.data
+        return response.data;
+      })
+  }
+
+  catch (error) {
+    console.log('error')
+    throwError(error)
+
+  }
+};
+
+export const fetchConfigureQuestions = async (value) => {
+  const currentUser = store.getState().loginData.user.token;
+  try {
+    return await axios.get(`${baseApiUrl}/client-config?customer=${value}`, {
+      headers: {
+        'Authorization': `Bearer ${currentUser}`
+      }
+    })
+      .then(response => {
+        const questionsList = response.data
+        return response.data;
+      })
+  }
+
+  catch (error) {
+    console.log('error')
+    throwError(error)
+
+  }
+};
+
 export const fetchQuestions = async (value) => {
   const { dispatch } = store
   const currentUser = store.getState().loginData.user.token;
@@ -186,8 +231,6 @@ export const fetchEmails = async () => {
 
 export const fetchBillingStatus = async (id) => {
   const currentUser = store.getState().loginData.user.token;
-  console.log(id, "id")
-  console.log(currentUser)
   try {
     return await axios.get(`${baseApiUrl}/billing-status/?customer=${id}`, {
       headers: {
@@ -196,7 +239,6 @@ export const fetchBillingStatus = async (id) => {
     })
       .then(response => {
         const bill = response.data
-        console.log(bill, "bill")
         return response.data;
       })
 
@@ -211,10 +253,8 @@ export const fetchBillingStatus = async (id) => {
 };
 
 export const isPrediction = async (id) => {
-   const currentUser = store.getState().loginData.user.token;
-
-  console.log(currentUser)
-  try {
+  const currentUser = store.getState().loginData.user.token;
+try {
     const myHeaders = new Headers();
     myHeaders.append("Authorization", `Bearer ${currentUser}`);
 
@@ -245,8 +285,6 @@ export const isPrediction = async (id) => {
 
 export const fetchAllRecords = async (id, sDate, EDate) => {
   const currentUser = store.getState().loginData.user.token;
-  console.log(sDate, EDate, "id")
-  console.log(currentUser)
   try {
     return await axios.get(`${baseApiUrl}/orders/?customer=${id}&start_date=${sDate}&end_date=${EDate}`, {
       headers: {
@@ -255,7 +293,6 @@ export const fetchAllRecords = async (id, sDate, EDate) => {
     })
       .then(response => {
         const bill = response.data
-        console.log(bill, "getrecords")
         return response.data;
       })
 
@@ -263,16 +300,13 @@ export const fetchAllRecords = async (id, sDate, EDate) => {
 
   catch (error) {
     console.log('error')
-
     throwError(error)
 
   }
 };
 
 export const getRecord = async (id) => {
- const currentUser = store.getState().loginData.user.token;
-  console.log(id, "id")
-  console.log(currentUser)
+  const currentUser = store.getState().loginData.user.token;
   try {
     return await axios.get(`${baseApiUrl}/orders/${id}/`, {
       headers: {
@@ -281,7 +315,6 @@ export const getRecord = async (id) => {
     })
       .then(response => {
         const bill = response.data
-        console.log(bill, "getrecord")
         return response.data;
       })
 
@@ -296,9 +329,7 @@ export const getRecord = async (id) => {
 };
 
 export const configureBilling = async (data, update) => {
-  console.log(update, "update")
- const currentUser = store.getState().loginData.user.token;
-  console.log(currentUser)
+  const currentUser = store.getState().loginData.user.token;
   try {
     if (update) {
       return await axios.put(`${baseApiUrl}/billing/${data.customer}/`, {
@@ -312,7 +343,6 @@ export const configureBilling = async (data, update) => {
       })
         .then(response => {
           const bill = response.data
-          console.log(bill, "billingconfddd")
           return response.data;
         })
     } else {
@@ -323,7 +353,6 @@ export const configureBilling = async (data, update) => {
       })
         .then(response => {
           const bill = response.data
-          console.log(bill, "billingconf")
           return response.data;
         })
     }
@@ -342,86 +371,104 @@ export const configureBilling = async (data, update) => {
 
 export const downloadAllRecords = async (id) => {
   const currentUser = store.getState().loginData.user.token;
-   console.log(id, "id")
-   console.log(currentUser)
-   try {
-     return await axios.get(`${baseApiUrl}/download/?customer=${id}`, {
-       headers: {
-         'Authorization': `Bearer ${currentUser}`
-       }
-     })
-       .then(response => {
+  try {
+    return await axios.get(`${baseApiUrl}/download/?customer=${id}`, {
+      headers: {
+        'Authorization': `Bearer ${currentUser}`
+      }
+    })
+      .then(response => {
         const path = response.data.response
         window.open(`${baseApiUrl}/${path}`);
-         const records = response.data
-         console.log(records, "getrecord")
-         return response.data;
-       })
-     }
- 
-   catch (error) {
-     console.log('error')
- 
-     throwError(error)
- 
-   }
- };
+        const records = response.data
+        return response.data;
+      })
+  }
 
- export const getOrderDownload = async (id,sDate, eDate) => {
+  catch (error) {
+    console.log('error')
+
+    throwError(error)
+
+  }
+};
+
+export const getOrderDownload = async (id, sDate, eDate) => {
   const currentUser = store.getState().loginData.user.token;
-   console.log(id, "id")
-   console.log(currentUser)
-   try {
-     return await axios.get(`${baseApiUrl}/download/?customer=${id}&start_date=${sDate}&end_date=${eDate}`, {
-       headers: {
-         'Authorization': `Bearer ${currentUser}`
-       }
-     })
-       .then(response => {
+  try {
+    return await axios.get(`${baseApiUrl}/download/?customer=${id}&start_date=${sDate}&end_date=${eDate}`, {
+      headers: {
+        'Authorization': `Bearer ${currentUser}`
+      }
+    })
+      .then(response => {
         const path = response.data.response
         window.open(`${baseApiUrl}/${path}`);
-         const records = response.data
-         console.log(records, "getrecord")
-         return response.data;
-       })
-     }
- 
-   catch (error) {
-     console.log('error')
- 
-     throwError(error)
- 
-   }
- };
+        const records = response.data
+        return response.data;
+      })
+  }
 
- export const downloadReportCSV = async (id) => {
+  catch (error) {
+    console.log('error')
+
+    throwError(error)
+
+  }
+};
+
+export const downloadReportCSV = async (id) => {
   const currentUser = store.getState().loginData.user.token;
-   console.log(id, "id")
-   console.log(currentUser)
-   try {
-     return await axios.get(`${baseApiUrl}/download/${id}/`, {
-       headers: {
-         'Authorization': `Bearer ${currentUser}`
-       }
-     })
-       .then(response => {
-         const bill = response.data
-         const path = response.data.response
+  try {
+    return await axios.get(`${baseApiUrl}/download/${id}/`, {
+      headers: {
+        'Authorization': `Bearer ${currentUser}`
+      }
+    })
+      .then(response => {
+        const bill = response.data
+        const path = response.data.response
         window.open(`${baseApiUrl}/${path}`);
-         console.log(bill, "getrecord")
-         return response.data;
-       })
- 
-   }
- 
-   catch (error) {
-     console.log('error')
- 
-     throwError(error)
- 
-   }
- };
- 
+        return response.data;
+      })
+
+  }
+
+  catch (error) {
+    console.log('error')
+
+    throwError(error)
+
+  }
+};
+
+export const uploadLogo = async (data) => {
+  const currentUser = store.getState().loginData.user.token;
+  try {
+    const myHeaders = new Headers();
+    myHeaders.append("Authorization", `Bearer ${currentUser}`);
+    const requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: data,
+      redirect: 'follow'
+    };
+    return await fetch(`${baseApiUrl}/logos`, requestOptions)
+      .then(response => {
+        const logo = response.json();
+
+        return logo;
+      })
+
+  }
+
+  catch (error) {
+    console.log('error')
+
+    throwError(error)
+
+  }
+};
 
 export const alterQuestions = async (srcI, desI) => {
   const currentUser = store.getState().loginData.user.token;

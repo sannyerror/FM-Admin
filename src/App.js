@@ -26,7 +26,9 @@ import Organizationlist from "./components/Organizationlist";
 import ChangePassword from "./components/ChangePassword";
 import AddOrganization from "./components/AddOrganization"
 import EmailList from "./components/Emaillist";
-import BillingDetails from "./components/BillingDetails"
+import BillingDetails from "./components/BillingDetails";
+import FormConfigure from "./components/FormConfigure";
+import ConfigureOrg from "./components/ConfigureOrg";
 
 export const { store , persistor } = configureStore(createHistory());
 function App() {
@@ -66,6 +68,8 @@ function App() {
                 <PrivateRoute path="/eiflist" component={EIFList}/>
                 <PrivateRoute path="/raflist" component={RAFList}/>
                 <PrivateRoute path="/configure/emailslist" component={EmailList}/>
+                <PrivateRoute path="/org-configure/" component={ConfigureOrg}/>
+                <PrivateRoute path="/questions-configure/Org=:Org&id=:id" component={FormConfigure}/>
                 <PrivateRoute path="/configure/questioncategorylist" component={QuestionsCategorylist}/>
                 </Switch>
                </Router>

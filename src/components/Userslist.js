@@ -97,13 +97,14 @@ export class UsersList extends React.Component {
                                         <td>{ques.full_name}</td>
                                         <td>{ques.email_id}</td>
                                         <td>{ques.role_type}</td>
-                                        <td>{ques.role_type === "Super Admin" ? "-":(<button className="btn btn-link" data-id={ques.id} onClick={this.handleEdit}>Edit</button>)}</td>
-                                        <td>{ques.role_type === "Super Admin" ? "-":(
-                                             <button className="btn btn-link"  data-id={ques.id}
+                                        <td className="text-center">{ques.role_type === "Super Admin" ? "-":(
+                                        <i className="fa fa-edit" style={{fontSize:"20px", color:"#000000"}} data-id={ques.id} onClick={this.handleEdit}></i>)}</td> 
+                                        <td className="text-center">{ques.role_type === "Super Admin" ? "-":(
+                                             <i className="fa fa-trash" style={{fontSize:"20px", color:"red"}} data-id={ques.id}
                                              onClick={e =>
                                                  window.confirm("Are you sure you wish to delete this User?") &&
                                                  this.handleDelete(e)
-                                             }>Delete</button>
+                                             }></i>
                                         )}
                                         </td>
                                     </tr>

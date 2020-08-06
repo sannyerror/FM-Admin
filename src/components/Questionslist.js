@@ -252,37 +252,37 @@ category = () => {
                                                         >
                                                             {/* <DragHandle {...provided.dragHandleProps} /> */}
                                                             <span className="text-primary "> {item.question}</span>
-                                                            <div style={{
+                                                            <i style={{
                                                                 position: "absolute",
                                                                 top: "10px",
-                                                                right: "-60px",
+                                                                right: "-35px",
                                                                 width: "auto",
                                                                 height: "49px",
-                                                                border: "1px solid rgba(0,0,0,.125)",
+                                                               // border: "1px solid rgba(0,0,0,.125)",
                                                                 // backgroundColor: "#d9534f",
                                                                 borderRadius: "5px 5px",
                                                                 textAlign: "center",
-                                                                color: "#0275d8",
-                                                            }} className="text-center "
+                                                                color: "red",
+                                                                fontSize:"24px"
+                                                            }} className="text-center fa fa-trash"
                                                                 data-id={item.id}
-                                                                onClick={this.handleShow} >Delete</div>
-                                                            <div style={{
+                                                                onClick={this.handleShow} ></i>
+                                                            <i style={{
                                                                 position: "absolute",
                                                                 top: "10px",
                                                                 right: "-100px",
                                                                 width: "auto",
                                                                 height: "25px",
-                                                                border: "1px solid rgba(0,0,0,.125)",
+                                                                //border: "1px solid rgba(0,0,0,.125)",
                                                                 curser: "pointer",
                                                                 // backgroundColor: "#5bc0de",
                                                                 borderRadius: "5px 5px",
                                                                 textAlign: "center",
-                                                                color: "#0275d8"
-                                                            }} className=" text-center "
+                                                                fontSize:"24px",
+                                                                color: "#000000"
+                                                            }} className="text-center fa fa-edit"
                                                                 data-id={item.id}
-                                                                onClick={this.handleEdit} >
-                                                                / Edit
-                                                            </div>
+                                                                onClick={this.handleEdit} ></i>
                                                         </div>
 
                                                            

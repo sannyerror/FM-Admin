@@ -13,26 +13,26 @@ class Configure extends React.Component {
                         <div className="row p-2 bg-primary text-white">Forms</div>
                         <div className="row p-2 bd-highlight">
                             <div className="col col-3"><a href="/configure/questioncategorylist">Question Categories</a></div>
-                            <div className="col col-2"><a href="/configure/questioncategory">Add</a></div>
+                            <div className="col col-2"><a href="/configure/questioncategory"><i className="fa fa-plus" style={{color:"#000000", fontSize:"13px"}}></i> Add</a></div>
                             
                         </div>
                         <div className="row p-2 bd-highlight">
                             <div className="col col-3"><a href="/configure/questions">Questions</a></div>
-                            <div className="col col-2"><a href="/configure/addquestion">Add</a></div>
+                            <div className="col col-2"><a href="/configure/addquestion"><i className="fa fa-plus" style={{color:"#000000", fontSize:"13px"}}></i> Add</a></div>
                             
                         </div>
                         {role_type === "Super Admin" || role_type === "Admin" ? (
                             <><div className="row p-2 bg-primary text-white">Users</div>
                             <div className="row p-2 bd-highlight">
                                 <div className="col col-3"><a href="/configure/userslist">Users List</a></div>
-                                <div className="col col-2"><a href="/configure/adduser">Add</a></div>
+                                <div className="col col-2"><a href="/configure/adduser"><i className="fa fa-plus" style={{color:"#000000", fontSize:"13px"}}></i> Add</a></div>
                                 
                                 
                             </div>
                             <div className="row p-2 bg-primary text-white">Organizations</div>
                             <div className="row p-2 bd-highlight">
                                 <div className="col col-3"><a href="/configure/organizationlist">Organizations List</a></div>
-                                <div className="col col-2"><a href="/configure/addorganization">Add</a></div>
+                                <div className="col col-2"><a href="/configure/addorganization"><i className="fa fa-plus" style={{color:"#000000", fontSize:"13px"}}></i> Add</a></div>
                                 
                                 
                             </div>

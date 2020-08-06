@@ -163,12 +163,12 @@ export class OrganizationList extends React.Component {
                                         <td className="text-center text-primary"><button className="btn btn-link" data-id={q.id} data-org={q.org_name} onClick={this.handleShow} >Billing</button></td>
                                         {/* <td>{q.role_type === "Super Admin" ? "-":(<a href="" data-id={q.id} onClick={this.handleEdit}>
                                             Edit</a>)}</td> */}
-                                        <td>
-                                            <button className="btn btn-link" data-id={q.id}
+                                        <td className="text-center">
+                                            <i className="fa fa-trash" style={{fontSize:"24px", color:"red"}} data-id={q.id}
                                                 onClick={e =>
                                                     window.confirm("Are you sure you wish to delete this Organization?") &&
                                                     this.handleDelete(e)
-                                                }>Delete</button>
+                                                }></i>
 
                                         </td>
                                     </tr>
