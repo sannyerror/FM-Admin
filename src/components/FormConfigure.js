@@ -39,7 +39,8 @@ class FormConfigure extends React.Component {
     }
       componentDidMount= async() => {
         const { Org, id } = this.props.match.params
-        const response = await fetchConfigureQuestions(id);
+        // const response = await fetchConfigureQuestions(id);
+        //console.log(response,"res")
         this.setState({
             Org_id : id,
             // sections: response.response
@@ -337,7 +338,7 @@ this.setState((prevState) => ({
                                                                     data-name="answer_type"
                                                                     id={typeId}
                                                                     type="radio"
-                                                                     checked={this.state.answer_type === "SELECT"}
+                                                                    checked={sections[id].questions[idx].answer_type === "SELECT"}
                                                                     // disabled={this.state.answer_type !== "SELECT" ? true : false}
                                                                     value="SELECT" required />
                                                                 <label className="form-check-label" >
