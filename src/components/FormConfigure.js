@@ -17,7 +17,8 @@ class FormConfigure extends React.Component {
                 questions: [{
                     question_id: 0, question: "Client Code/ID", description: "",
                     answer_type: "NUMBER", suggested_answers: [""], suggested_jump: [""], 
-                    validation1: "100", validation2: "99999", error_msg: "Should be range between 100 - 99999", required: "yes"
+                    validation1: "100", validation2: "99999",
+                     error_msg: "Should be range between 100 - 99999", required: "yes"
                 },
                 {
                     question_id: 1, question: "First Name", description: "",
@@ -39,11 +40,11 @@ class FormConfigure extends React.Component {
     }
       componentDidMount= async() => {
         const { Org, id } = this.props.match.params
-        // const response = await fetchConfigureQuestions(id);
-        //console.log(response,"res")
+        const response = await fetchConfigureQuestions(id);
+        console.log(response,"res")
         this.setState({
             Org_id : id,
-            // sections: response.response
+             sections: response.response
         })
       }
     handleDelete = idx => e => {
@@ -210,7 +211,8 @@ this.setState((prevState) => ({
         let id = this.state.lastSectionId;
         const { Org } = this.props.match.params
         const sectionLength = this.state.sections.length - 1
-        return (
+      console.log(this.state.sections,"pp")
+      return (
             <div className="container-fluid">
                 <div className="row p-2 mb-2 bg-primary text-white">Configure FirstMatch Tool for {Org}: Add Questions</div>
                 {this.state.sections.length > 0 ?
@@ -444,10 +446,10 @@ this.setState((prevState) => ({
                                                         </div>
                                                     </div>
                                                 </fieldset>
-                                                
+                            
                                                 {this.state.sections[id].questions[idx].answer_type === "" || this.state.sections[id].questions[idx].answer_type === "TEXT" || this.state.sections[id].questions[idx].answer_type === "NUMBER"
                                                     || this.state.sections[id].questions[idx].answer_type === "RELATED" || this.state.sections[id].questions[idx].answer_type === "DATE" || this.state.sections[id].questions[idx].answer_type === "FILE" ?
-                                                    "" : this.state.sections[id].questions.filter(p => p.question_id == idx).map((q,i) => q.suggested_answers.map((question, idy) => (
+                                                    "" : this.state.sections[id].questions.filter(p => p.question == this.state.sections[id].questions[idx].question).map((q,i) => q.suggested_answers.map((question, idy) => (
                                                        <div key={idy} className="form-group row">
                                                      <label className="col-sm-2 col-form-label font-weight-bold">Answer {idy + 1}:</label>
                                                             <div className="col-sm-4">
