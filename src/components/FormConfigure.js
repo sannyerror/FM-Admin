@@ -42,10 +42,13 @@ class FormConfigure extends React.Component {
         const { Org, id } = this.props.match.params
         const response = await fetchConfigureQuestions(id);
         console.log(response,"res")
-        this.setState({
-            Org_id : id,
-             sections: response.response
-        })
+        if(!response.message === "sections not available"){
+            this.setState({
+                Org_id : id,
+                 sections: response.response
+            })
+        }
+        
       }
     handleDelete = idx => e => {
         const index = e.target.dataset.id
