@@ -160,7 +160,11 @@ export class OrganizationList extends React.Component {
                                     <tr key={index}>
                                         <td>{q.org_name}</td>
                                         <td>{q.name}</td>
-                                        <td className="text-center text-primary"><button className="btn btn-link" data-id={q.id} data-org={q.org_name} onClick={this.handleShow} >Billing</button></td>
+                                        <td className="text-center text-primary">
+                                        <i className="fa fa-file-invoice-dollar" style={{fontSize:"24px", color:"black"}} data-id={q.id} data-org={q.org_name} onClick={this.handleShow}></i>
+                                            {/* <button className="btn btn-link" data-id={q.id} data-org={q.org_name} onClick={this.handleShow} >
+                                                Billing</button> */}
+                                                </td>
                                         {/* <td>{q.role_type === "Super Admin" ? "-":(<a href="" data-id={q.id} onClick={this.handleEdit}>
                                             Edit</a>)}</td> */}
                                         <td className="text-center">
