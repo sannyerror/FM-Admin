@@ -161,7 +161,7 @@ export class OrganizationList extends React.Component {
                                         <td>{q.org_name}</td>
                                         <td>{q.name}</td>
                                         <td className="text-center text-primary">
-                                        <i className="fa fa-file-invoice-dollar" style={{fontSize:"24px", color:"black"}} data-id={q.id} data-org={q.org_name} onClick={this.handleShow}></i>
+                                        <i className="fa fa-money" style={{fontSize:"24px", color:""}} data-id={q.id} data-org={q.org_name} onClick={this.handleShow}></i>
                                             {/* <button className="btn btn-link" data-id={q.id} data-org={q.org_name} onClick={this.handleShow} >
                                                 Billing</button> */}
                                                 </td>
