@@ -39,13 +39,17 @@ class FormConfigure extends React.Component {
         }
     }
       componentDidMount= async() => {
-        const { Org, id } = this.props.match.params
+        let { Org, id } = this.props.match.params
         const response = await fetchConfigureQuestions(id);
-        console.log(response,"res")
-        if(!response.message === "sections not available"){
+       if(response.message !== "sections not available"){
             this.setState({
                 Org_id : id,
                  sections: response.response
+            })
+        }else{
+            this.setState({
+                Org_id : id,
+                 
             })
         }
         
@@ -195,11 +199,14 @@ this.setState((prevState) => ({
     }
     handleSubmit = async(e) => {
         e.preventDefault()
+        console.log(this.state,"this.state.Org_id")
         let data = {
             customer: this.state.Org_id,
             sections: this.state.sections
         }
+        console.log(data,"data")
        const response = await saveClientConfigure(data);
+       console.log(response,"res1")
        if(response.status === "success"){
         toast.info(`Questions configured successfully. `, { position: toast.POSITION.TOP_CENTER, autoClose: 3000 })
 
@@ -214,7 +221,7 @@ this.setState((prevState) => ({
         let id = this.state.lastSectionId;
         const { Org } = this.props.match.params
         const sectionLength = this.state.sections.length - 1
-      console.log(this.state.sections,"pp")
+      console.log(this.state,"pp")
       return (
             <div className="container-fluid">
                 <div className="row p-2 mb-2 bg-primary text-white">Configure FirstMatch Tool for {Org}: Add Questions</div>
@@ -696,7 +703,7 @@ this.setState((prevState) => ({
                         <button className="btn btn-primary" onClick={this.addSection}>Add Section</button>
                     </div>
                     <div className="col col-sm-3">
-                        <button onClick={this.handleSubmit} className="btn btn-primary" type="submit" disabled={sectionLength > -1 ? false : true}  >Submit</button>
+                        <button onClick={this.handleSubmit} className="btn btn-primary" disabled={sectionLength > -1 ? false : true}  >Submit</button>
                     </div>
                     
                 </div>
