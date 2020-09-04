@@ -203,15 +203,15 @@ class RAF extends Component {
                      quest.is_related === "true" ? "" :  
                         quest.question_type === 'TEXT' ?
                             <><div key={idx} className="form-group">
-                                <label className="font-weight-bold">{idx+1}. {quest.question}</label>
+                                <label className="font-weight-bold">{quest.question}</label>
                                 
                                     <input className="form-control col-10 ml-3" type='TEXT'
                                     data-jump={quest.suggested_jump}
-                                    data-id={id}
+                                    data-id={id} 
                                     name={quest.id} value={this.state.data[quest.id]} onChange={this.handleChange} /></div></>
                             : quest.question_type === 'RADIO' ? (
                             <fieldset className="form-group">
-                                <legend className="col-form-label font-weight-bold pt-0">{quest.id - 6}. {quest.question}</legend>
+                                <legend className="col-form-label font-weight-bold pt-0">{quest.question}</legend>
                                {quest.suggested_answers.map((suggested, idy) =>
                                            <>
                                            <div key={idy}  className="form-check form-check-inline ml-4">
@@ -220,21 +220,22 @@ class RAF extends Component {
                                             name={quest.id}
                                             data-jump={quest.suggested_jump[idy]}
                                             data-id={id}
-                                            value={this.state.data[quest.id]===suggested?suggested:suggested==="yes"? "yes": "no"}
+                                            // value={this.state.data[quest.id]===suggested?suggested:suggested==="yes"? "yes": "no"}
+                                            value={suggested}
                                             checked={this.state.data[quest.id]===suggested}
                                             onChange={this.handleCheckboxChange} />
-                                        <label className="form-check-label">{suggested}</label>
+                                        <label className="form-check-label">{suggested}</label> 
                                         </div>
                                    </>
                                 )} </fieldset>) : quest.question_type === 'FILE' ?
-                                    <><label key={idx} className="font-weight-bold">{quest.id - 6}. {quest.question}</label>
+                                    <><label key={idx} className="font-weight-bold">{quest.question}</label>
                                         <div className="form-group ml-4">
                                             <input type="file" name={quest.id}  />
 
                                         </div></>
                                     : quest.question_type === 'CHECKBOX' ? (
                                         <fieldset className="form-group">
-                                            <legend className="col-form-label font-weight-bold pt-0">{quest.id - 6}. {quest.question}</legend>
+                                            <legend className="col-form-label font-weight-bold pt-0">{quest.question}</legend>
                                            {quest.suggested_answers.map((suggested, idy) =>
                                                        <>
                                                        <div key={idy} className="form-check form-check-inline ml-4">
@@ -250,7 +251,7 @@ class RAF extends Component {
                                                     </div>
                                                </>
                                             )} </fieldset>) : quest.question_type === 'SELECT' ? (
-                                            <> <label className="font-weight-bold" >{quest.id - 6}. {quest.question}</label>
+                                            <> <label className="font-weight-bold" >{quest.question}</label>
                                                 <div className="form-group ml-4">
                                                     <select name={quest.id} data-type="select" className="form-control col-5" id="exampleFormControlSelect1" onChange={this.handleChange}>
                                                     <option value="">Select...</option>

@@ -68,7 +68,6 @@ class FormConfigure extends React.Component {
     }; 
 
     alterID = (id) => {
-        console.log(id, this.state)
         let sections = [...this.state.sections]
         sections[id].questions = sections[id].questions.map((item, id) => {
             return {
@@ -77,7 +76,6 @@ class FormConfigure extends React.Component {
                 suggested_jump: item.suggested_jump, validation1: item.validation1, validation2: item.validation2, error_msg: item.error_msg, required: item.required, required: item.required
             }
         })
-        console.log(this.state)
         this.setState({ sections });
     }
 

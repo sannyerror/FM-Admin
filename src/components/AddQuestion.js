@@ -119,6 +119,7 @@ class AddQuestion extends React.Component {
             suggested_jump: this.state.suggested_jump
 
         }
+       
         try {
             const response = await AddQuestions(data, id);
             if (response.status === "failed") {
@@ -208,7 +209,7 @@ class AddQuestion extends React.Component {
         return display
     }
     render() {
-        const { id } = this.props.match.params
+const { id } = this.props.match.params
         const { relatedQuestions } = this.state;
         toast.configure();
         return (
