@@ -19,7 +19,8 @@ class RAF extends Component {
             customer: "",
             showPOPUP: false,
             btnAction:"",
-            error:""
+            error:"",
+            prevJump:[]
         }
 
     }
@@ -32,13 +33,17 @@ class RAF extends Component {
         this.setState({ customer: customer })
         this.setState({ loading: true })
         const response = await rafQuestions(customer);
-        if(response && response.message && response.message==="form already submitted"){
+        console.log(response)
+        if(response && response.message && response.message==="form already submitted" || response.message === "invalid customer"){
             this.setState({
                 loading: false, 
                 error: "You have already submitted all data.", 
             })
         }else{
-            response.response.map(data=>data.questions.map(ques=>ques.customer_answers?ques.customer_answers.map(q=>this.setState({
+            response.response.map(data=>
+                data.questions.map(ques=>
+                    ques.customer_answers?ques.customer_answers.map
+                    (q=>this.setState({
                 data: {
                     ...this.state.data,
                     [ques.id]: q.answer
@@ -80,6 +85,43 @@ class RAF extends Component {
     }
     handleChange = (e) => {
         const { name, value } = e.target;
+        const type = e.target.dataset.type;
+        if(type){
+            const length = e.target.dataset.length;
+            var optionElement = e.target.childNodes[e.target.selectedIndex]
+            let id = optionElement.getAttribute('data-id');
+            let jump = optionElement.getAttribute('data-jump');
+            console.log(id,jump)
+            const loadrafquestions = this.state.loadrafquestions.response;
+       loadrafquestions[id].questions.map((ques,i)=> ques.question === jump ? (
+            loadrafquestions[id].questions[i].is_related = "false"
+            
+        ):
+          ques.question === this.state.prevJump[name] && (
+          loadrafquestions[id].questions[i].is_related = "true")
+        )
+        this.setState({
+            prevJump: {
+                [name]: jump,
+               },
+        })
+        }else{
+            const jump = e.target.dataset.jump;
+            const id = e.target.dataset.id;
+            const loadrafquestions = this.state.loadrafquestions.response;
+            loadrafquestions[id].questions.map((ques,i)=> ques.question === jump ? (
+                 loadrafquestions[id].questions[i].is_related = "false"
+                 
+             ):
+               ques.question === this.state.prevJump[name] && (
+               loadrafquestions[id].questions[i].is_related = "true")
+             )
+             this.setState({
+                prevJump: {
+                    [name]: jump,
+                   },
+            })
+        }
         
         this.setState({
             data: {
@@ -91,7 +133,21 @@ class RAF extends Component {
 
     handleCheckboxChange = (e) => {
         const { name, value } = e.target;
-        this.setState({
+        const jump = e.target.dataset.jump;
+        const id = e.target.dataset.id;
+       console.log(jump,id)
+       const loadrafquestions = this.state.loadrafquestions.response;
+       loadrafquestions[id].questions.map((ques,i)=> ques.question === jump ? (
+            loadrafquestions[id].questions[i].is_related = "false"
+            
+        ):
+          ques.question === this.state.prevJump[name] && (
+          loadrafquestions[id].questions[i].is_related = "true")
+        )
+       this.setState({
+            prevJump: {
+                [name]: jump,
+               },
             data: {
                 ...this.state.data,
                 [name]: value,
@@ -144,12 +200,15 @@ class RAF extends Component {
             .map((data, id) =>
                 <><div key={id} className="row p-2 mb-3 bg-primary text-white">{data.title}</div>
                     {data.questions.map((quest, idx) =>  
+                     quest.is_related === "true" ? "" :  
                         quest.question_type === 'TEXT' ?
                             <><div key={idx} className="form-group">
-                                <label className="font-weight-bold">{quest.id - 6}. {quest.question}</label>
+                                <label className="font-weight-bold">{idx+1}. {quest.question}</label>
                                 
                                     <input className="form-control col-10 ml-3" type='TEXT'
-                                        name={quest.id} value={this.state.data[quest.id]} onChange={this.handleChange} /></div></>
+                                    data-jump={quest.suggested_jump}
+                                    data-id={id}
+                                    name={quest.id} value={this.state.data[quest.id]} onChange={this.handleChange} /></div></>
                             : quest.question_type === 'RADIO' ? (
                             <fieldset className="form-group">
                                 <legend className="col-form-label font-weight-bold pt-0">{quest.id - 6}. {quest.question}</legend>
@@ -159,10 +218,12 @@ class RAF extends Component {
                                         <input type="radio"
                                             className="form-check-input"
                                             name={quest.id}
-                                            value={this.state.data[quest.id]===suggested.answer?suggested.answer:suggested.answer==="yes"? "yes": "no"}
-                                            checked={this.state.data[quest.id]===suggested.answer}
+                                            data-jump={quest.suggested_jump[idy]}
+                                            data-id={id}
+                                            value={this.state.data[quest.id]===suggested?suggested:suggested==="yes"? "yes": "no"}
+                                            checked={this.state.data[quest.id]===suggested}
                                             onChange={this.handleCheckboxChange} />
-                                        <label className="form-check-label">{suggested.answer}</label>
+                                        <label className="form-check-label">{suggested}</label>
                                         </div>
                                    </>
                                 )} </fieldset>) : quest.question_type === 'FILE' ?
@@ -180,19 +241,25 @@ class RAF extends Component {
                                                     <input type="checkbox"
                                                         className="form-check-input"
                                                         name={quest.id}
-                                                        value={this.state.data[quest.id]===suggested.answer}
-                                                        checked={this.state.data[quest.id]===suggested.answer}
+                                                        data-jump={quest.suggested_jump[idy]}
+                                                        data-id={id}
+                                                        value={this.state.data[quest.id]===suggested}
+                                                        checked={this.state.data[quest.id]===suggested}
                                                         onChange={this.handleCheckboxChange} />
-                                                    <label className="form-check-label">{suggested.answer}</label>
+                                                    <label className="form-check-label">{suggested}</label>
                                                     </div>
                                                </>
                                             )} </fieldset>) : quest.question_type === 'SELECT' ? (
                                             <> <label className="font-weight-bold" >{quest.id - 6}. {quest.question}</label>
                                                 <div className="form-group ml-4">
-                                                    <select name={quest.id} className="form-control col-5" id="exampleFormControlSelect1" onChange={this.handleChange}>
+                                                    <select name={quest.id} data-type="select" className="form-control col-5" id="exampleFormControlSelect1" onChange={this.handleChange}>
                                                     <option value="">Select...</option>
                                                         {quest.suggested_answers.map((suggested, idy) =>
-                                                            <option key={idy}  value={suggested.answer} selected={this.state.data[quest.id]===suggested.answer}>{suggested.answer}</option>
+                                                            <option key={idy} 
+                                                            data-jump={quest.suggested_jump[idy]}
+                                                            data-id={id} 
+                                                            value={suggested} 
+                                                            selected={this.state.data[quest.id]===suggested}>{suggested}</option>
                                                         )}</select></div> </>) : '')}
                 </>
             )
@@ -213,6 +280,7 @@ class RAF extends Component {
         };
         toast.configure()
         const loading = this.state.loading
+        console.log(this.state)
         return (
             <div className="cotainer-fluid">
                 <div className="text-center"><h2>Readiness Assessment FORM</h2></div>

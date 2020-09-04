@@ -15,7 +15,7 @@ class FormConfigure extends React.Component {
                 section_id: 0,
                 related: "false",
                 questions: [{
-                    question_id: 0, question: "Client Code/ID", description: "",
+                    question_id: 0, question: "Client Code", description: "",
                     answer_type: "NUMBER", suggested_answers: [""], suggested_jump: [""], 
                     validation1: "100", validation2: "99999",
                      error_msg: "Should be range between 100 - 99999", required: "yes"
@@ -28,7 +28,7 @@ class FormConfigure extends React.Component {
                 {
                     question_id: 2, question: "Last Name", description: "",
                     answer_type: "TEXT", suggested_answers: [""], suggested_jump: [""], 
-                    validation1: "", validation2: "", error_msg: "", required: "yes"
+                    validation1: "Contains", validation2: "Both", error_msg: "Should not contain special characters", required: "yes"
                 },]
             }],
             suggested_answers: [""],
@@ -65,7 +65,21 @@ class FormConfigure extends React.Component {
             sections,
         })
 
-    };
+    }; 
+
+    alterID = (id) => {
+        console.log(id, this.state)
+        let sections = [...this.state.sections]
+        sections[id].questions = sections[id].questions.map((item, id) => {
+            return {
+                question_id: id, question: item.question, description: item.description,
+                answer_type: item.answer_type, suggested_answers: item.suggested_answers,
+                suggested_jump: item.suggested_jump, validation1: item.validation1, validation2: item.validation2, error_msg: item.error_msg, required: item.required, required: item.required
+            }
+        })
+        console.log(this.state)
+        this.setState({ sections });
+    }
 
     quesDelete = i => e => {
         e.preventDefault()
@@ -76,8 +90,9 @@ class FormConfigure extends React.Component {
             ...sections[idi].questions.slice(i + 1)
         ]
         let id = sections[idi].questions.length
+        this.alterID(idi);
         this.setState({
-            sections,
+            //sections,
             lastItemId: id
 
         })
@@ -199,14 +214,11 @@ this.setState((prevState) => ({
     }
     handleSubmit = async(e) => {
         e.preventDefault()
-        console.log(this.state,"this.state.Org_id")
         let data = {
             customer: this.state.Org_id,
             sections: this.state.sections
         }
-        console.log(data,"data")
        const response = await saveClientConfigure(data);
-       console.log(response,"res1")
        if(response.status === "success"){
         toast.info(`Questions configured successfully. `, { position: toast.POSITION.TOP_CENTER, autoClose: 3000 })
 
@@ -219,12 +231,12 @@ this.setState((prevState) => ({
         toast.configure();
         let { section, questions, sections, } = this.state
         let id = this.state.lastSectionId;
-        const { Org } = this.props.match.params
+        console.log(this.props)
+        const  { Org } =  this.props.match.params
         const sectionLength = this.state.sections.length - 1
-      console.log(this.state,"pp")
       return (
             <div className="container-fluid">
-                <div className="row p-2 mb-2 bg-primary text-white">Configure FirstMatch Tool for {Org}: Add Questions</div>
+                {/* <div className="row p-2 mb-2 bg-primary text-white">Configure FirstMatch Tool for {Org}: Add Questions</div> */}
                 {this.state.sections.length > 0 ?
                     <div style={{ border: '1px solid #007bff', }}>
                         <form onChange={this.handleChange} className="m-3" >
@@ -244,7 +256,21 @@ this.setState((prevState) => ({
 
                                 </div>
                                 {/* <div className="col-sm-1"> */}
-                                {id === 0 ? "" : 
+                                {id === 0 ?  <div
+                                        style={{
+                                            position: "relative",
+                                            top: "1px",
+                                            right: "-0px",
+                                            width: "50px",
+                                            height: "25px",
+                                        }}
+                                         className="ml-3"
+                                        data-id={id}
+                                        onClick={this.sectionDelete(id)} >
+                                        <a data-id={id} className="btn btn-danger" href="#">
+                                            <i data-id={id} className="fa fa-trash-o fa-lg"></i>
+                                        </a>
+                                    </div> : 
                                     <div
                                         style={{
                                             position: "relative",
@@ -474,7 +500,7 @@ this.setState((prevState) => ({
                                                                     value={question} 
                                                                     className="form-control" required
                                                                 />
-                                                                {idy !== 0 && <div
+                                                               {idy !== 0 && <div
                                                                     style={{
                                                                         position: "absolute",
                                                                         top: "1px",
@@ -488,12 +514,13 @@ this.setState((prevState) => ({
                                                                     data-secid={id} data-id={idy}
                                                                     onClick={this.handleDelete(idx, idy)} >
                                                                     <i className="fa fa-remove" data-secid={id} data-id={idy}></i>
-                                                                </div>}
-                                                                {idy === 0 && <div
+                                                                </div>
+                                                }
+                                                                {idy === this.state.sections[id].questions[idx].suggested_answers.length-1 && <div
                                                                     style={{
                                                                         position: "absolute",
                                                                         top: "1px",
-                                                                        right: "-10px",
+                                                                        right: "-25px",
                                                                         width: "25px",
                                                                         height: "25px",
                                                                         fontSize: "24px",
@@ -501,12 +528,12 @@ this.setState((prevState) => ({
                                                                     className="font-text-bold text-center "
                                                                     data-secid={id} data-id={idy}
                                                                     onClick={this.addAnswer(idx)} >
-                                                                    <i className="fa fa-plus" data-secid={id} data-id={idy}></i>
+                                                                    <i className="fa fa-plus" style={{fontSize:"28px"}} data-secid={id} data-id={idy}></i>
                                                                 </div>}
                                                             </div>
                                                             {this.state.sections[id].questions[idx].answer_type === "CHECKBOX" ? "" :
                                                             <>
-                                                            <label className="col-sm-1 col-form-label font-weight-bold " >Jump to:</label>
+                                                            <label className="col-sm-1 col-form-label font-weight-bold ml-3" >Jump to:</label>
                                                             <div className="col-sm-3">
                                                                 <select name="jumpto"
                                                                  className="form-control" id="exampleFormControlSelect1" 
@@ -537,11 +564,10 @@ this.setState((prevState) => ({
                                                                     id={validationId1} className="form-control" id="exampleFormControlSelect1" onChange={this.handleChange} required>
                                                                     <option value="">Select</option>
                                                                     <option value="Contains" selected={sections[id].questions[idx].validation1 === "Contains"}>Contains</option>
-                                                                    <option value="Not Contains" selected={sections[id].questions[idx].validation2 === "Not Contains"}>Doesn't contains</option>
+                                                                    <option value="Not Contains" selected={sections[id].questions[idx].validation2 === "Not Contains"}>Does not contain</option>
                                                                 </select>
                                                             </div>
-
-                                                            <div className="col-sm-2">
+                                                             <div className="col-sm-2">
                                                                 {/* <input
                                                                     type="text"
                                                                     name={validationId2}

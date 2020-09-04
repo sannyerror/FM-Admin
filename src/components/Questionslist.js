@@ -26,6 +26,8 @@ export class QuestionsList extends React.Component {
     }
     async componentDidMount() {
         const response = await fetchQuestionsCategory();
+        console.log(response)
+
         this.setState({
             QuestionsCategory: response,
         })
@@ -89,6 +91,7 @@ export class QuestionsList extends React.Component {
     handleSubChange = async (e) => {
         const {  value } = e.target;
         const response = await fetchQuestions(value);
+        console.log(response)
         this.setState({
             Questions: response,
             subCategoryVal: value

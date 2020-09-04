@@ -1,10 +1,10 @@
 import React from 'react';
 import axios from 'axios'
 import '../App.css';
-import { AddQuestions, fetchQuestionsCategory, baseApiUrl } from '../api/api';
+import { AddQuestions, fetchQuestionsCategory, baseApiUrl, fetchQuestions } from '../api/api';
 import { connect } from 'react-redux';
-import {  toast } from 'react-toastify';
-  import 'react-toastify/dist/ReactToastify.css';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { store } from '../App'
 
 class AddQuestion extends React.Component {
@@ -18,8 +18,11 @@ class AddQuestion extends React.Component {
             suggested_answers: [""],
             error: "",
             disabled: true,
-            is_mandatory: "false"
-             
+            is_mandatory: "false",
+            is_related: "false",
+            suggested_jump: [],
+            relatedQuestions: []
+
         }
     }
 
@@ -39,24 +42,41 @@ class AddQuestion extends React.Component {
 
                         return response.data;
                     })
+                const res = await fetchQuestions(response.category);
                 this.setState({
                     question: response.question,
                     question_type: response.question_type,
                     category: response.category,
                     suggested_answers: response.suggested_answers,
-                    is_mandatory: response.is_mandatory
-
+                    suggested_jump: response.suggested_jump,
+                    is_mandatory: response.is_mandatory ? response.is_mandatory : "false",
+                    is_related: response.is_related,
+                    relatedQuestions: res.response
                 })
             }
             catch (error) {
                 console.log(error, 'error')
             }
-        }else{
+        } else {
             this.setState({
-                
+
 
             })
         }
+    }
+
+    handleJump = i => e => {
+        let suggested_jump = [...this.state.suggested_jump]
+
+        if (i >= 0) {
+            suggested_jump[i] = e.target.value
+        } else {
+            suggested_jump = e.target.value
+        }
+        //suggested_jump[i] = e.target.value
+        this.setState({
+            suggested_jump
+        })
     }
 
     handleText = i => e => {
@@ -88,15 +108,17 @@ class AddQuestion extends React.Component {
     addQues = async (e) => {
         e.preventDefault();
         const { id } = this.props.match.params;
-      const data = {
-        question: this.state.question,
-        question_type: this.state.question_type,
-        category: this.state.category,
-        free_text: this.state.free_text,
-        suggested_answers: [this.state.suggested_answers],
-        is_mandatory: this.state.is_mandatory.toString()
-         
-    }
+        const data = {
+            question: this.state.question,
+            question_type: this.state.question_type,
+            category: this.state.category,
+            free_text: this.state.free_text,
+            suggested_answers: this.state.suggested_answers,
+            is_mandatory: this.state.is_mandatory.toString(),
+            is_related: this.state.is_related.toString(),
+            suggested_jump: this.state.suggested_jump
+
+        }
         try {
             const response = await AddQuestions(data, id);
             if (response.status === "failed") {
@@ -104,7 +126,7 @@ class AddQuestion extends React.Component {
                     error: response.message.question
                 });
             } else {
-                toast.info(`Question ${id ? "updated" : "added"}  successfully.`, { position: toast.POSITION.TOP_CENTER,autoClose:3000 })
+                toast.info(`Question ${id ? "updated" : "added"}  successfully.`, { position: toast.POSITION.TOP_CENTER, autoClose: 3000 })
                 this.props.history.push('/configure/questions');
             }
 
@@ -123,38 +145,42 @@ class AddQuestion extends React.Component {
             [name]: value
         });
     }
-    onRadioChange = (e) => {
+
+    onRadioChange = async (e) => {
         const { name, value } = e.target;
         if (name === "category") {
+            const response = await fetchQuestions(value);
             this.setState({
-                category: value
+                [name]: value,
+                relatedQuestions: response.response
             })
         } else {
-            if (name === "is_mandatory") {
-                const val = value === "true" ? false : true
+            if (name === "is_mandatory" || name === "is_related") {
                 this.setState({
-                    is_mandatory: val
+                    [name]: value === "true" ? false : true
                 })
             } else {
+
                 this.setState({
-                    question_type: value
+                    [name]: value
                 })
             }
         }
     }
+
     display = () => {
         const display = this.props.questionscategoryList.response &&
             this.props.questionscategoryList.response
                 .map((data, id) =>
-                    <><div  key={id} className="form-check">
+                    <><div key={id} className="form-check">
 
                         <input
                             className="form-check-input"
                             onChange={this.onRadioChange}
                             value={data.id}
                             type="radio" name="category"
-                            checked={this.state.category == data.id} 
-                            />
+                            checked={this.state.category == data.id}
+                        />
                         <label className="form-check-label" >
                             {data.title}
                         </label>
@@ -183,7 +209,8 @@ class AddQuestion extends React.Component {
     }
     render() {
         const { id } = this.props.match.params
-        toast.configure()
+        const { relatedQuestions } = this.state;
+        toast.configure();
         return (
             <div className="container-fluid">
                 <form className="" onSubmit={this.addQues}>
@@ -204,7 +231,7 @@ class AddQuestion extends React.Component {
                     </fieldset>
                     <div className="form-group row">
                         <label className="col-sm-2 col-form-label font-weight-bold ">Question:</label>
-                        <div className="col-sm-9">
+                        <div className="col-sm-5">
                             <input type="text"
                                 onChange={this.handleChange}
                                 value={this.state.question}
@@ -214,7 +241,7 @@ class AddQuestion extends React.Component {
                     </div>
                     <fieldset className="form-group">
                         <div className="row">
-                            <legend className="col-form-label col-sm-2 font-weight-bold">Question Type:</legend>
+                            <legend className="col-form-label col-sm-2 font-weight-bold">Answer type:</legend>
                             <div className="col-sm-10">
                                 <div className="form-check form-check-inline">
                                     <input
@@ -243,7 +270,7 @@ class AddQuestion extends React.Component {
                                         className="form-check-input" name="question_type"
                                         checked={this.state.question_type === "CHECKBOX"}
                                         type="radio" value="CHECKBOX"
-                                        disabled={id && this.state.question_type !== "CHECKBOX" ? true : false} required/>
+                                        disabled={id && this.state.question_type !== "CHECKBOX" ? true : false} required />
                                     <label className="form-check-label" >
                                         Checkbox
                                     </label>
@@ -254,7 +281,7 @@ class AddQuestion extends React.Component {
                                         className="form-check-input" name="question_type"
                                         checked={this.state.question_type === "RADIO"}
                                         type="radio" value="RADIO"
-                                        disabled={id && this.state.question_type !== "RADIO" ? true : false} required/>
+                                        disabled={id && this.state.question_type !== "RADIO" ? true : false} required />
                                     <label className="form-check-label" >
                                         Radio
                                     </label>
@@ -265,7 +292,7 @@ class AddQuestion extends React.Component {
                                         className="form-check-input" name="question_type" type="radio"
                                         value="FILE"
                                         disabled={id && this.state.question_type !== "FILE" ? true : false}
-                                        required/>
+                                        required />
                                     <label className="form-check-label" >
                                         Upload File
                                     </label>
@@ -274,17 +301,17 @@ class AddQuestion extends React.Component {
                         </div>
                     </fieldset>
 
-                    {this.state.question_type === "FILE" || this.state.question_type === "TEXT" ? "" : this.state.suggested_answers.map((question, index) => (
+                    {this.state.question_type === "FILE" || this.state.question_type === "TEXT" || this.state.question_type === "" ? "" : this.state.suggested_answers.map((question, index) => (
                         <div key={index} className="form-group row">
-                            <label className="col-sm-2 col-form-label font-weight-bold">Answer {index + 1}:</label>
-                            <div className="col-sm-9">
+                            <label className="col-sm-2 col-form-label font-weight-bold">Answer {index + 1}:{question.answer}</label>
+                            <div className="col-sm-3">
                                 <input
                                     type="text"
                                     onChange={this.handleText(index)}
-                                    value={question.answer}
+                                    value={question}
                                     className="form-control" required
                                 />
-                                <div style={{
+                                {index !== 0 && <div style={{
                                     position: "absolute",
                                     top: "1px",
                                     right: "-0px",
@@ -296,31 +323,85 @@ class AddQuestion extends React.Component {
                                     textAlign: "center",
                                     color: "white"
                                 }} className="font-text-bold text-center "
-                                    onClick={this.handleDelete(index)} ><b>X</b></div>
+                                    onClick={this.handleDelete(index)} ><b>X</b></div>}
+                                {this.state.question_type === "FILE" || this.state.question_type === "TEXT" ?
+                                    "" : index === this.state.suggested_answers.length - 1 && <div
+                                        style={{
+                                            position: "absolute",
+                                            top: "1px",
+                                            right: "-30px",
+                                            width: "25px",
+                                            height: "25px",
+                                            // fontSize: "24px",
+                                            //borderRadius: "200px",
+                                            // backgroundColor: "#000000",
+                                            textAlign: "center",
+                                            color: "#000000"
+                                        }}
+                                        className="font-text-bold text-center "
+                                        onClick={this.addQuestion} >
+                                        <i className="fa fa-plus" style={{ fontSize: "36px" }} ></i>
+                                    </div>}
+
                             </div>
 
+                            <>
+                                <label className="col-sm-1 col-form-label font-weight-bold ml-5" >Jump to:</label>
+                                <div className="col-sm-3"> 
+                                    <select name="jumpto"
+                                        className="form-control" id="exampleFormControlSelect1"
+                                        data-name="suggested_jump"
+                                        onChange={this.handleJump(index)}
+                                    >
+                                        <option value="" >Select</option>
+                                        {relatedQuestions.filter((sec, key) => sec.is_related === true).map((ques, i) => 
+                                        <option key={i} value={ques.question} selected={ques.question === this.state.suggested_jump[index]}>
+                                            {ques.question}</option>
+                                        )}
+                                    </select>
+                                </div>
+                            </>
                         </div>
-
                     ))}
-                    <div className="form-check form-check-inline">
+                    {this.state.question_type === "TEXT" ?
+                        <div className="form-group row">
+                            <label className="col-sm-2 col-form-label font-weight-bold" >Jump to:</label>
+                            <div className="col-sm-3">
+                                <select name="jumpto"
+                                    className="form-control" id="exampleFormControlSelect1"
+                                    data-name="suggested_jump"
+                                    onChange={this.handleJump()}
+                                >
+                                    <option value="" >Select</option>
+                                    {relatedQuestions.map((sec, key) => sec.is_related === true && <option key={key} value={sec.question} selected={sec.question === this.state.suggested_jump}>{sec.question}</option>
+                                    )}
+                                </select>
+                            </div>
+                        </div>
+                        : ""}
+                    <div className="form-check form-check">
+                        <input type="checkbox"
+                            className="form-check-input"
+                            name="is_related"
+                            value={this.state.is_related}
+                            checked={this.state.is_related === true}
+                            onChange={this.onRadioChange} />
+                        <label className="form-check-label font-weight-bold">Related</label>
+
+                    </div>
+                    <div className="form-check form-check">
                         <input type="checkbox"
                             className="form-check-input"
                             name="is_mandatory"
-                            value={this.state.is_mandatory }
-                            checked={this.state.is_mandatory === true }
-                            onChange={this.onRadioChange}   />
+                            value={this.state.is_mandatory}
+                            checked={this.state.is_mandatory === true}
+                            onChange={this.onRadioChange} />
                         <label className="form-check-label font-weight-bold">Mandatory</label>
-                        
+
                     </div>
-                    {this.state.question_type === "FILE" || this.state.question_type === "TEXT" ?
-                        "" : <div className="form-group row d-flex justify-content-center">
-                            <div className="">
-                                <button className="btn btn-primary" onClick={this.addQuestion}>Click here to Add Answers</button>
-                            </div>
-                        </div>}
-                    <div className="form-group row d-flex justify-content-center ">
-                        <div className="mb-3">
-                            <button type="submit" className="btn btn-primary" >Submit</button>
+                    <div className="form-group">
+                        <div className="mb-3 mt-3">
+                            <button type="submit" className="btn btn-primary btn-block font-weight-bold" >Submit</button>
                         </div>
                     </div>
 

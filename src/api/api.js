@@ -45,6 +45,7 @@ import { update } from '../redux/login/loginAction'
 import { clearUser } from '../redux/login/loginAction'
 import { store } from '../App'
 export const baseApiUrl = "http://3.7.135.210:8005";
+//export const baseApiUrl = "http://4308fbd821b8.ngrok.io"; 
 
 const refreshAuthLogic = async failedRequest => {
   //  const { store } = store
@@ -254,7 +255,7 @@ export const fetchBillingStatus = async (id) => {
 
 export const isPrediction = async (id) => {
   const currentUser = store.getState().loginData.user.token;
-try {
+  try {
     const myHeaders = new Headers();
     myHeaders.append("Authorization", `Bearer ${currentUser}`);
 
@@ -445,6 +446,7 @@ export const downloadReportCSV = async (id) => {
 export const uploadLogo = async (data) => {
   const currentUser = store.getState().loginData.user.token;
   try {
+    console.log(data,"data")
     const myHeaders = new Headers();
     myHeaders.append("Authorization", `Bearer ${currentUser}`);
     const requestOptions = {
@@ -456,7 +458,7 @@ export const uploadLogo = async (data) => {
     return await fetch(`${baseApiUrl}/logos`, requestOptions)
       .then(response => {
         const logo = response.json();
-
+        console.log(logo,"data")
         return logo;
       })
 
@@ -911,16 +913,21 @@ export const AddQuestionsCategory = async (data) => {
 export const logOut = () => {
   const { dispatch } = store
   const currentUser = store.getState().loginData.user.token;
-  axios.post(`${baseApiUrl}/admin/logout`, {
+  console.log(currentUser, "lg")
+  var config = {
+    method: 'post',
+    url: `${baseApiUrl}/admin/logout`,
     headers: {
       'Authorization': `Bearer ${currentUser}`
     }
-  })
+  };
+ axios(config)
     .then(response => {
+      console.log(response, "lg")
       dispatch(clearUser())
       return response.data;
     })
-
+    
 };
 
 export const register = async (data) => {
@@ -948,13 +955,19 @@ export const register = async (data) => {
 function throwError(error) {
   if (error.response) {
     console.log(error.response.data);
-    console.log(error.response.status);
+    console.log(error.response.status,"status");
     console.log(error.response.headers);
-    const errorResponse = {
-      data: error.response.data || undefined,
-      status: error.response.status || undefined
-    };
-    throw errorResponse;
+    if(error.response.status === 403) {
+      const { dispatch } = store
+      dispatch(clearUser())
+    }else {
+      const errorResponse = {
+        data: error.response.data || undefined,
+        status: error.response.status || undefined
+      };
+      throw errorResponse;
+    }
+    
   } else if (error.request) {
     console.log(error.request);
     const errorResponse = {
