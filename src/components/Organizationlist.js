@@ -7,6 +7,18 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Modal from 'react-modal';
 import { store } from '../App'
+
+const customStyles = {
+    content: {
+        top: '50%',
+        left: '50%',
+        right: 'auto',
+        bottom: 'auto',
+        marginRight: '-50%',
+        transform: 'translate(-50%, -50%)'
+    }
+};
+
 export class OrganizationList extends React.Component {
     constructor() {
         super();
@@ -130,16 +142,6 @@ export class OrganizationList extends React.Component {
 
     render() {
         toast.configure()
-        const customStyles = {
-            content: {
-                top: '50%',
-                left: '50%',
-                right: 'auto',
-                bottom: 'auto',
-                marginRight: '-50%',
-                transform: 'translate(-50%, -50%)'
-            }
-        };
         return (
             <div className="container-fluid">
                 <div className="row p-2 bg-primary text-white">Organizations List</div>

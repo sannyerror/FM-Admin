@@ -73,7 +73,7 @@ class FormConfigure extends React.Component {
             return {
                 question_id: id, question: item.question, description: item.description,
                 answer_type: item.answer_type, suggested_answers: item.suggested_answers,
-                suggested_jump: item.suggested_jump, validation1: item.validation1, validation2: item.validation2, error_msg: item.error_msg, required: item.required, required: item.required
+                suggested_jump: item.suggested_jump, validation1: item.validation1, validation2: item.validation2, error_msg: item.error_msg, required: item.required
             }
         })
         this.setState({ sections });
@@ -174,7 +174,7 @@ class FormConfigure extends React.Component {
         const secid = e.target.dataset.id
         let ques = {
             question_id: id, question: "", description: "",
-            answer_type: "", suggested_answers: [""], suggested_jump: [""], validation1: "", validation2: "", error_msg: "", required: "no"
+            answer_type: "", suggested_answers: [""], suggested_jump: [""], validation1: "", validation2: "", error_msg: "", required: "yes"
         }
         let sections = [...this.state.sections]
         sections[secid].questions = [...sections[secid].questions, ques]
@@ -192,7 +192,7 @@ this.setState((prevState) => ({
                 related: "false",
                 questions: [{
                     question_id: 0, question: "", description: "",
-                    answer_type: "", suggested_answers: [""], suggested_jump: [""], validation1: "", validation2: "", error_msg: "", required: "no"
+                    answer_type: "", suggested_answers: [""], suggested_jump: [""], validation1: "", validation2: "", error_msg: "", required: "yes"
                 }]
             }],
             lastItemId: 1,
@@ -371,7 +371,7 @@ this.setState((prevState) => ({
                                                                     className="form-check-input" name={typeId}
                                                                     data-id={idx}
                                                                     data-secid={id}
-                                                                    data-name="answer_type"
+                                                                    data-name="answer_type" 
                                                                     id={typeId}
                                                                     type="radio"
                                                                     checked={sections[id].questions[idx].answer_type === "SELECT"}

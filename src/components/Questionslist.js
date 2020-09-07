@@ -9,6 +9,17 @@ import {  toast } from 'react-toastify';
   import 'react-toastify/dist/ReactToastify.css';
 import { store } from '../App'
 
+const customStyles = {
+    content: {
+        top: '50%',
+        left: '50%',
+        right: 'auto',
+        bottom: 'auto',
+        marginRight: '-50%',
+        transform: 'translate(-50%, -50%)'
+    }
+};
+
 export class QuestionsList extends React.Component {
     constructor() {
         super();
@@ -178,16 +189,7 @@ category = () => {
         return subcategory
     }
     render() {
-        const customStyles = {
-            content: {
-                top: '50%',
-                left: '50%',
-                right: 'auto',
-                bottom: 'auto',
-                marginRight: '-50%',
-                transform: 'translate(-50%, -50%)'
-            }
-        };
+        
         toast.configure()
         const list = this.state.Questions.response
         return (

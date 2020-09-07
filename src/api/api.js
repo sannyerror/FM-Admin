@@ -446,7 +446,6 @@ export const downloadReportCSV = async (id) => {
 export const uploadLogo = async (data) => {
   const currentUser = store.getState().loginData.user.token;
   try {
-    console.log(data,"data")
     const myHeaders = new Headers();
     myHeaders.append("Authorization", `Bearer ${currentUser}`);
     const requestOptions = {
@@ -458,7 +457,6 @@ export const uploadLogo = async (data) => {
     return await fetch(`${baseApiUrl}/logos`, requestOptions)
       .then(response => {
         const logo = response.json();
-        console.log(logo,"data")
         return logo;
       })
 

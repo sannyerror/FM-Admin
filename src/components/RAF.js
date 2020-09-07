@@ -8,6 +8,16 @@ import {  toast } from 'react-toastify';
   import 'react-toastify/dist/ReactToastify.css';
 import { BeatLoader } from 'react-spinners'
 
+const customStyles = {
+    content: {
+        top: '50%',
+        left: '50%',
+        right: 'auto',
+        bottom: 'auto',
+        marginRight: '-50%',
+        transform: 'translate(-50%, -50%)'
+    }
+};
 
 class RAF extends Component {
     constructor(props) {
@@ -269,16 +279,7 @@ class RAF extends Component {
 
     render() {
        
-        const customStyles = {
-            content: {
-                top: '50%',
-                left: '50%',
-                right: 'auto',
-                bottom: 'auto',
-                marginRight: '-50%',
-                transform: 'translate(-50%, -50%)'
-            }
-        };
+        
         toast.configure()
         const loading = this.state.loading
         console.log(this.state)
