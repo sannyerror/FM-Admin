@@ -37,8 +37,6 @@ export class QuestionsList extends React.Component {
     }
     async componentDidMount() {
         const response = await fetchQuestionsCategory();
-        console.log(response)
-
         this.setState({
             QuestionsCategory: response,
         })
@@ -102,7 +100,6 @@ export class QuestionsList extends React.Component {
     handleSubChange = async (e) => {
         const {  value } = e.target;
         const response = await fetchQuestions(value);
-        console.log(response)
         this.setState({
             Questions: response,
             subCategoryVal: value
@@ -160,12 +157,13 @@ export class QuestionsList extends React.Component {
         e.preventDefault();
         const {srcI, desI, list} = this.state;
         if (desI) {
-            const src = list[srcI].id;
+            
+        }
+        const src = list[srcI].id;
             const des = list[desI].id;
             list.splice(desI, 0, list.splice(srcI, 1)[0]);
              this.saveList(list);
-           await alterQuestions(src, des)
-        }
+          const res= await alterQuestions(src, des);
         this.setState({
             showPOPUP: false,
             btnAction:""
@@ -215,46 +213,10 @@ category = () => {
                         </div>
                     }
                 </div>
-                <DragDropContext
-                    onDragEnd={async (param, props) => {
-                        const srcI = param.source.index;
-                        const desI = param.destination?.index;
-                        if (desI) {
-                            this.setState({
-                                showPOPUP: true,
-                                srcI: srcI,
-                                desI: desI,
-                                list: list
-                            })
-                           
-                        }
-                    }}
-                >
-                    <div className="form-group ml-4">
-                        <Droppable droppableId="droppable-1">
-                            {(provided, _) => (
-                                <div ref={provided.innerRef} {...provided.droppableProps}>
-                                    {list &&
-                                        list.map((item, i) => (
+                <div className="form-group ml-4">
+                        {list && list.map((item, i) => (
                                             <div key={i} className="row">
-                                                <Draggable
-                                                    key={item.id}
-                                                    draggableId={"draggable-" + item.id}
-                                                    index={i}
-
-                                                >
-                                                    {(provided, snapshot) => (
-                                                        <> <div className="list-group-item col-10  mt-1 "
-                                                            {...provided.dragHandleProps}
-                                                            ref={provided.innerRef}
-                                                            {...provided.draggableProps}
-                                                            style={{
-                                                                ...provided.draggableProps.style,
-                                                                boxShadow: snapshot.isDragging
-                                                                    ? "0 0 .4rem #666"
-                                                                    : "none",
-                                                            }}
-                                                        >
+                                                <div className="list-group-item col-10  mt-1 ">
                                                             {/* <DragHandle {...provided.dragHandleProps} /> */}
                                                             <span className="text-primary "> {item.question}</span>
                                                             <i style={{
@@ -290,44 +252,13 @@ category = () => {
                                                                 onClick={this.handleEdit} ></i>
                                                         </div>
 
-                                                           
-                                                        </>
-                                                    )}
-
-                                                </Draggable>
-
-                                            </div>
+                                                 </div>
                                         ))}
-                                    {provided.placeholder}
+                                   
                                 </div>
-                            )}
-
-                        </Droppable>
-
-                    </div>
-                </DragDropContext>
-                <Modal
-                    isOpen={this.state.showPOPUP}
-                    //   onAfterOpen={afterOpenModal}
-                    onRequestClose={this.handleClose}
-                    style={customStyles}
-                    contentLabel="Forgot Password"
-                    ariaHideApp={false}
-                >
-                    <h4 className="text-primary">Are you sure to {this.state.btnAction ? "delete":"move"} this question?</h4>
-                    <div className="form-group row d-flex justify-content-center">
-
-                    </div>
-                    <div className="row ">
-                        <div className="col-6 text-center ">
-                            <button className="button-pop" data-id={this.state.btnAction} onClick={this.state.btnAction?this.handleDelete:this.handleMove} >Yes</button>
                             
-                        </div>
-                        <div className="col-6 text-center ">
-                            <button className="button-pop" onClick={this.handleClose} >No</button>
-                        </div>
-                    </div>
-                </Modal>
+                
+                
                 
                 <div className="form-group row d-flex justify-content-center">
                     &nbsp;
