@@ -31,7 +31,7 @@ class RAF extends Component {
             btnAction:"",
             error:"",
             prevJump:[],
-            uploadMsg:""
+            uploadMsg:[]
         }
 
     }
@@ -82,7 +82,9 @@ class RAF extends Component {
                 ...this.state.data,
                 [name]: res.data.response,
                },
-            uploadMsg: res.data.message,
+               
+            uploadMsg: {
+               [name]: res.data.message},
         })
 
     }
@@ -243,8 +245,8 @@ class RAF extends Component {
                                     <><label key={idx} className="font-weight-bold">{quest.question}</label>
                                         <div className="form-group ml-4">
                                             <input type="file" name={quest.id} onChange={this.onChange}  />
-                                       {this.state.uploadMsg && (
-                                           <div className="text-danger">{this.state.uploadMsg}</div>
+                                       {this.state.uploadMsg[quest.id] && (
+                                           <div className="text-danger">{this.state.uploadMsg[quest.id]}</div>
                                        )}
                                         </div></>
                                     : quest.question_type === 'CHECKBOX' ? (

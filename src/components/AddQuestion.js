@@ -122,9 +122,10 @@ class AddQuestion extends React.Component {
        
         try {
             const response = await AddQuestions(data, id);
+            console.log(response)
             if (response.status === "failed") {
                 this.setState({
-                    error: response.message.question
+                    error: response.response.question
                 });
             } else {
                 toast.info(`Question ${id ? "updated" : "added"}  successfully.`, { position: toast.POSITION.TOP_CENTER, autoClose: 3000 })
@@ -181,6 +182,7 @@ class AddQuestion extends React.Component {
                             value={data.id}
                             type="radio" name="category"
                             checked={this.state.category == data.id}
+                            required
                         />
                         <label className="form-check-label" >
                             {data.title}
@@ -195,6 +197,7 @@ class AddQuestion extends React.Component {
                                         onChange={this.onRadioChange}
                                         value={child.id}
                                         type="radio" name="category"
+                                        required
                                         checked={this.state.category == child.id}
                                     />
                                     <label className="form-check-label" >
@@ -212,7 +215,6 @@ class AddQuestion extends React.Component {
 const { id } = this.props.match.params
         const { relatedQuestions } = this.state;
         toast.configure();
-		console.log(this.state)
         return (
             <div className="container-fluid">
                 <form className="" onSubmit={this.addQues}>
@@ -291,7 +293,8 @@ const { id } = this.props.match.params
                                 <div className="form-check form-check-inline">
                                     <input
                                         onChange={this.onRadioChange}
-                                        className="form-check-input" name="question_type" type="radio"
+                                        className="form-check-input" name="question_type" 
+                                        type="radio"
                                         value="FILE"
                                         disabled={id && this.state.question_type !== "FILE" ? true : false}
                                         checked={this.state.question_type === "FILE"}
