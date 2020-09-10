@@ -212,6 +212,7 @@ class AddQuestion extends React.Component {
 const { id } = this.props.match.params
         const { relatedQuestions } = this.state;
         toast.configure();
+		console.log(this.state)
         return (
             <div className="container-fluid">
                 <form className="" onSubmit={this.addQues}>
