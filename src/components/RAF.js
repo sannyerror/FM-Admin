@@ -30,7 +30,8 @@ class RAF extends Component {
             showPOPUP: false,
             btnAction:"",
             error:"",
-            prevJump:[]
+            prevJump:[],
+            uploadMsg:""
         }
 
     }
@@ -75,12 +76,13 @@ class RAF extends Component {
         let { name } = e.target;
         let file = e.target.files[0]
         let res = await this.uploadFile(file);
-
+       console.log(res)
         this.setState({
             data: {
                 ...this.state.data,
                 [name]: res.data.response,
-            }
+               },
+            uploadMsg: res.data.message,
         })
 
     }
@@ -240,8 +242,10 @@ class RAF extends Component {
                                 )} </fieldset>) : quest.question_type === 'FILE' ?
                                     <><label key={idx} className="font-weight-bold">{quest.question}</label>
                                         <div className="form-group ml-4">
-                                            <input type="file" name={quest.id}  />
-
+                                            <input type="file" name={quest.id} onChange={this.onChange}  />
+                                       {this.state.uploadMsg && (
+                                           <div className="text-danger">{this.state.uploadMsg}</div>
+                                       )}
                                         </div></>
                                     : quest.question_type === 'CHECKBOX' ? (
                                         <fieldset className="form-group">

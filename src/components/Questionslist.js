@@ -257,7 +257,27 @@ category = () => {
                                    
                                 </div>
                             
-                
+                <Modal
+                    isOpen={this.state.showPOPUP}
+                    onRequestClose={this.handleClose}
+                    style={customStyles}
+                    contentLabel="Forgot Password"
+                    ariaHideApp={false}
+                >
+                    <h4 className="text-primary">Are you sure to {this.state.btnAction ? "delete":"move"} this question?</h4>
+                    <div className="form-group row d-flex justify-content-center">
+
+                    </div>
+                    <div className="row ">
+                        <div className="col-6 text-center ">
+                            <button className="button-pop" data-id={this.state.btnAction} onClick={this.state.btnAction?this.handleDelete:this.handleMove} >Yes</button>
+                            
+                        </div>
+                        <div className="col-6 text-center "> 
+                            <button className="button-pop" onClick={this.handleClose} >No</button>
+                        </div>
+                    </div>
+                </Modal>
                 
                 
                 <div className="form-group row d-flex justify-content-center">

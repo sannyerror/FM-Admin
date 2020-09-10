@@ -229,7 +229,6 @@ this.setState((prevState) => ({
         toast.configure();
         let { section, questions, sections, } = this.state
         let id = this.state.lastSectionId;
-        console.log(this.props)
         const  { Org } =  this.props.match.params
         const sectionLength = this.state.sections.length - 1
       return (

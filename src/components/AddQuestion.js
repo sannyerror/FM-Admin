@@ -42,6 +42,7 @@ class AddQuestion extends React.Component {
 
                         return response.data;
                     })
+                    console.log(response)
                 const res = await fetchQuestions(response.category);
                 this.setState({
                     question: response.question,
@@ -73,8 +74,7 @@ class AddQuestion extends React.Component {
         } else {
             suggested_jump = e.target.value
         }
-        //suggested_jump[i] = e.target.value
-        this.setState({
+       this.setState({
             suggested_jump
         })
     }
@@ -293,6 +293,7 @@ const { id } = this.props.match.params
                                         className="form-check-input" name="question_type" type="radio"
                                         value="FILE"
                                         disabled={id && this.state.question_type !== "FILE" ? true : false}
+                                        checked={this.state.question_type === "FILE"}
                                         required />
                                     <label className="form-check-label" >
                                         Upload File
@@ -354,7 +355,7 @@ const { id } = this.props.match.params
                                         data-name="suggested_jump"
                                         onChange={this.handleJump(index)}
                                     >
-                                        <option value="" >Select</option>
+                                        <option value="">Select</option>
                                         {relatedQuestions.filter((sec, key) => sec.is_related === true).map((ques, i) => 
                                         <option key={i} value={ques.question} selected={ques.question === this.state.suggested_jump[index]}>
                                             {ques.question}</option>

@@ -911,8 +911,7 @@ export const AddQuestionsCategory = async (data) => {
 export const logOut = () => {
   const { dispatch } = store
   const currentUser = store.getState().loginData.user.token;
-  console.log(currentUser, "lg")
-  var config = {
+ let config = {
     method: 'post',
     url: `${baseApiUrl}/admin/logout`,
     headers: {
@@ -921,7 +920,6 @@ export const logOut = () => {
   };
  axios(config)
     .then(response => {
-      console.log(response, "lg")
       dispatch(clearUser())
       return response.data;
     })
