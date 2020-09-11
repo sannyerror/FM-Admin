@@ -48,7 +48,7 @@ class RAF extends Component {
         if(response && response.message && response.message==="form already submitted" || response.message === "invalid customer"){
             this.setState({
                 loading: false, 
-                error: "You have already submitted all data.", 
+                error: response.message === "invalid customer"? "invalid customer":"You have already submitted all data.", 
             })
         }else{
             response.response.map(data=>
