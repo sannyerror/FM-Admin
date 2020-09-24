@@ -42,7 +42,7 @@ class AddQuestion extends React.Component {
 
                         return response.data;
                     })
-                    console.log(response)
+                    
                 const res = await fetchQuestions(response.category);
                 this.setState({
                     question: response.question,
@@ -122,7 +122,6 @@ class AddQuestion extends React.Component {
        
         try {
             const response = await AddQuestions(data, id);
-            console.log(response)
             if (response.status === "failed") {
                 this.setState({
                     error: response.response.question

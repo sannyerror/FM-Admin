@@ -44,8 +44,7 @@ class RAF extends Component {
         this.setState({ customer: customer })
         this.setState({ loading: true })
         const response = await rafQuestions(customer);
-        console.log(response)
-        if(response && response.message && response.message==="form already submitted" || response.message === "invalid customer"){
+         if(response && response.message && response.message==="form already submitted" || response.message === "invalid customer"){
             this.setState({
                 loading: false, 
                 error: response.message === "invalid customer"? "invalid customer":"You have already submitted all data.", 
@@ -76,8 +75,7 @@ class RAF extends Component {
         let { name } = e.target;
         let file = e.target.files[0]
         let res = await this.uploadFile(file);
-       console.log(res)
-        this.setState({
+       this.setState({
             data: {
                 ...this.state.data,
                 [name]: res.data.response,
@@ -105,8 +103,7 @@ class RAF extends Component {
             var optionElement = e.target.childNodes[e.target.selectedIndex]
             let id = optionElement.getAttribute('data-id');
             let jump = optionElement.getAttribute('data-jump');
-            console.log(id,jump)
-            const loadrafquestions = this.state.loadrafquestions.response;
+             const loadrafquestions = this.state.loadrafquestions.response;
        loadrafquestions[id].questions.map((ques,i)=> ques.question === jump ? (
             loadrafquestions[id].questions[i].is_related = "false"
             
@@ -149,7 +146,6 @@ class RAF extends Component {
         const { name, value } = e.target;
         const jump = e.target.dataset.jump;
         const id = e.target.dataset.id;
-       console.log(jump,id)
        const loadrafquestions = this.state.loadrafquestions.response;
        loadrafquestions[id].questions.map((ques,i)=> ques.question === jump ? (
             loadrafquestions[id].questions[i].is_related = "false"
@@ -245,9 +241,9 @@ class RAF extends Component {
                                     <><label key={idx} className="font-weight-bold">{quest.question}</label>
                                         <div className="form-group ml-4">
                                             <input type="file" name={quest.id} onChange={this.onChange}  />
-                                       {this.state.uploadMsg[quest.id] && (
+                                       {this.state.uploadMsg[quest.id] ? (
                                            <div className="text-danger">{this.state.uploadMsg[quest.id]}</div>
-                                       )}
+                                       ): <><span className="font-weight-bold text-danger">Uploaded File:</span> {this.state.data[quest.id]}</>}
                                         </div></>
                                     : quest.question_type === 'CHECKBOX' ? (
                                         <fieldset className="form-group">
@@ -288,7 +284,6 @@ class RAF extends Component {
         
         toast.configure()
         const loading = this.state.loading
-        console.log(this.state)
         return (
             <div className="cotainer-fluid">
                 <div className="text-center"><h2>Readiness Assessment FORM</h2></div>

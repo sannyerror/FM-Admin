@@ -28,8 +28,7 @@ export class RAFList extends React.Component {
     async componentDidMount() {
         this.setState({ loading: true })
        const RafList =  await fetchRaflist();
-       console.log(RafList)
-        this.setState({
+       this.setState({
             RafList: RafList,
             loading: false
         })

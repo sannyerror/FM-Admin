@@ -198,18 +198,21 @@ this.setState((prevState) => ({
             lastItemId: 1,
         }));
     }
+    
     onPreviuos = () => {
         let id = this.state.lastSectionId
         this.setState({
             lastSectionId: id - 1
         })
     }
+
     onNext = () => {
         let id = this.state.lastSectionId
         this.setState({
             lastSectionId: id + 1
         })
     }
+
     handleSubmit = async(e) => {
         e.preventDefault()
         let data = {
@@ -225,13 +228,14 @@ this.setState((prevState) => ({
        }
         
     }
+
     render() {
         toast.configure();
         let { section, questions, sections, } = this.state
         let id = this.state.lastSectionId;
         const  { Org } =  this.props.match.params
         const sectionLength = this.state.sections.length - 1
-      return (
+       return (
             <div className="container-fluid">
                 {/* <div className="row p-2 mb-2 bg-primary text-white">Configure FirstMatch Tool for {Org}: Add Questions</div> */}
                 {this.state.sections.length > 0 ?
@@ -541,7 +545,10 @@ this.setState((prevState) => ({
                                                                  data-idy={idy} required>
                                                                     <option value="" >Select</option>
                                                                     {this.state.sections.filter((sec,key) => sec.related === "true").map(
-                                                                        (q,i) => <option key={i} value={q.section_id}>{q.section}</option>
+                                                                        (q,i) => 
+                                                                        <option key={i} value={q.section_id} selected={q.section_id.toString() === this.state.sections[id].questions[idx].suggested_jump[idy]}>
+                                                                              {q.section}
+                                                                              </option>
                                                                     )}
                                                                 </select>
                                                             </div>
