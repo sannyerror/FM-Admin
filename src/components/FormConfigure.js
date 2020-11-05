@@ -18,17 +18,20 @@ class FormConfigure extends React.Component {
                     question_id: 0, question: "Client Code", description: "",
                     answer_type: "NUMBER", suggested_answers: [""], suggested_jump: [""], 
                     validation1: "100", validation2: "99999",
-                     error_msg: "Should be range between 100 - 99999", required: "yes"
+                     error_msg: "Should be range between 100 - 99999", required: "yes",
+                     flag: "0"
                 },
                 {
                     question_id: 1, question: "First Name", description: "",
                     answer_type: "TEXT", suggested_answers: [""], suggested_jump: [""], 
-                    validation1: "Contains", validation2: "Both", error_msg: "Should not contain special characters", required: "yes"
+                    validation1: "Contains", validation2: "Both", error_msg: "Should not contain special characters", required: "yes",
+                    flag: "0"
                 },
                 {
                     question_id: 2, question: "Last Name", description: "",
                     answer_type: "TEXT", suggested_answers: [""], suggested_jump: [""], 
-                    validation1: "Contains", validation2: "Both", error_msg: "Should not contain special characters", required: "yes"
+                    validation1: "Contains", validation2: "Both", error_msg: "Should not contain special characters", required: "yes",
+                    flag: "0"
                 },]
             }],
             suggested_answers: [""],
@@ -122,13 +125,13 @@ class FormConfigure extends React.Component {
     handleChange = (e) => {
         let secid = e.target.dataset.secid
         if (["question", "suggested_answers","suggested_jump",
-            "description", "validation1", "validation2", "answer_type", "error_msg", "required"].includes(e.target.dataset.name)) {
+            "description", "validation1", "validation2", "answer_type", "error_msg", "required","flag"].includes(e.target.dataset.name)) {
             if (e.target.dataset.name === "suggested_answers" || e.target.dataset.name === "suggested_jump") {
                 let sections = [...this.state.sections]
                 if(e.target.dataset.name === "suggested_jump"){
-                    sections[secid].questions[e.target.dataset.id].suggested_jump[e.target.dataset.idy] = e.target.value
+                    sections[secid].questions[e.target.dataset.id].suggested_jump[e.target.dataset.idy] = {"answer": sections[secid].questions[e.target.dataset.id].suggested_answers[e.target.dataset.idy].value, "jumpto":e.target.value }
                 }else{
-                    sections[secid].questions[e.target.dataset.id].suggested_answers[e.target.dataset.idy] = e.target.value
+                    sections[secid].questions[e.target.dataset.id].suggested_answers[e.target.dataset.idy] = {"id":parseInt(e.target.dataset.idy), "value":e.target.value}
                 }
                 
                 this.setState({ sections })
@@ -174,7 +177,7 @@ class FormConfigure extends React.Component {
         const secid = e.target.dataset.id
         let ques = {
             question_id: id, question: "", description: "",
-            answer_type: "", suggested_answers: [""], suggested_jump: [""], validation1: "", validation2: "", error_msg: "", required: "yes"
+            answer_type: "", suggested_answers: [""], suggested_jump: [], validation1: "", validation2: "", error_msg: "", required: "yes",flag: ""
         }
         let sections = [...this.state.sections]
         sections[secid].questions = [...sections[secid].questions, ques]
@@ -192,7 +195,7 @@ this.setState((prevState) => ({
                 related: "false",
                 questions: [{
                     question_id: 0, question: "", description: "",
-                    answer_type: "", suggested_answers: [""], suggested_jump: [""], validation1: "", validation2: "", error_msg: "", required: "yes"
+                    answer_type: "", suggested_answers: [], suggested_jump: [], validation1: "", validation2: "", error_msg: "", required: "yes",flag:""
                 }]
             }],
             lastItemId: 1,
@@ -219,6 +222,7 @@ this.setState((prevState) => ({
             customer: this.state.Org_id,
             sections: this.state.sections
         }
+        
        const response = await saveClientConfigure(data);
        if(response.status === "success"){
         toast.info(`Questions configured successfully. `, { position: toast.POSITION.TOP_CENTER, autoClose: 3000 })
@@ -235,6 +239,7 @@ this.setState((prevState) => ({
         let id = this.state.lastSectionId;
         const  { Org } =  this.props.match.params
         const sectionLength = this.state.sections.length - 1
+        console.log(this.state)
        return (
             <div className="container-fluid">
                 {/* <div className="row p-2 mb-2 bg-primary text-white">Configure FirstMatch Tool for {Org}: Add Questions</div> */}
@@ -275,10 +280,10 @@ this.setState((prevState) => ({
                                     <div
                                         style={{
                                             position: "relative",
-                                            top: "1px",
+                                            top: "-5px",
                                             right: "-0px",
                                             width: "50px",
-                                            height: "25px",
+                                            height: "44px",
                                         }}
                                          className="ml-3"
                                         data-id={id}
@@ -295,7 +300,7 @@ this.setState((prevState) => ({
                                 sections[id].questions.map((val, idx) => {
                                     let catId = `cat-${idx}`, answerId = `answer-${idx}`, descId = `description-${idx}`,
                                         validationId1 = `validation1-${idx}`, validationId2 = `validation2-${idx}`, typeId = `type-${idx}`, errorId = `error-${idx}`,
-                                        requiredId = `required-${idx}`
+                                        requiredId = `required-${idx}`, flagId = `flag-${idx}`
                                     return (
                                         <div style={{ border: '1px solid #007bff' }} className="mb-2" >
                                             <div className="m-3 p-3"  >
@@ -498,7 +503,7 @@ this.setState((prevState) => ({
                                                                     data-name="suggested_answers"
                                                                     id={answerId}
                                                                     data-idy={idy}
-                                                                    value={question} 
+                                                                    value={question.value} 
                                                                     className="form-control" required
                                                                 />
                                                                {idy !== 0 && <div
@@ -546,7 +551,9 @@ this.setState((prevState) => ({
                                                                     <option value="" >Select</option>
                                                                     {this.state.sections.filter((sec,key) => sec.related === "true").map(
                                                                         (q,i) => 
-                                                                        <option key={i} value={q.section_id} selected={q.section_id.toString() === this.state.sections[id].questions[idx].suggested_jump[idy]}>
+                                                                        <option key={i} value={q.section} 
+                                                                        selected={q.section === `${this.state.sections[id].questions[idx].suggested_jump[idy]&&this.state.sections[id].questions[idx].suggested_jump[idy].jumpto}`}
+                                                                        >
                                                                               {q.section}
                                                                               </option>
                                                                     )}
@@ -699,6 +706,58 @@ this.setState((prevState) => ({
                                                                     value="no" />
                                                                 <label className="form-check-label" >
                                                                     No
+                                    </label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </fieldset>
+                                                <fieldset className="form-group">
+                                                    <div className="row">
+                                                        <legend className="col-form-label col-sm-2 font-weight-bold" htmlFor={requiredId}>Flag:</legend>
+                                                        <div className="col-sm-10">
+                                                            <div className="form-check form-check-inline">
+                                                                <input
+                                                                    type="radio"
+                                                                    name={flagId}
+                                                                    className="form-check-input"
+                                                                    data-id={idx}
+                                                                    data-secid={id}
+                                                                    data-name="flag"
+                                                                    id={flagId}
+                                                                    checked={sections[id].questions[idx].flag == "0"}
+                                                                    value="0" />
+                                                                <label className="form-check-label" >
+                                                                    Add
+                                    </label>
+                                                            </div>
+                                                            <div className="form-check form-check-inline">
+                                                                <input
+                                                                    type="radio"
+                                                                    name={flagId}
+                                                                    className="form-check-input"
+                                                                    data-id={idx}
+                                                                    data-secid={id}
+                                                                    data-name="flag"
+                                                                    id={flagId}
+                                                                    checked={sections[id].questions[idx].flag == "1"}
+                                                                    value="1" />
+                                                                <label className="form-check-label" >
+                                                                    Edit
+                                    </label>
+                                                            </div>
+                                                            <div className="form-check form-check-inline">
+                                                                <input
+                                                                    type="radio"
+                                                                    name={flagId}
+                                                                    className="form-check-input"
+                                                                    data-id={idx}
+                                                                    data-secid={id}
+                                                                    data-name="flag"
+                                                                    id={flagId}
+                                                                    checked={sections[id].questions[idx].flag == "2"}
+                                                                    value="2" />
+                                                                <label className="form-check-label" >
+                                                                    Custom
                                     </label>
                                                             </div>
                                                         </div>

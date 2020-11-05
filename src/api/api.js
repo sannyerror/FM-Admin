@@ -44,8 +44,8 @@ import createAuthRefreshInterceptor from "axios-auth-refresh"
 import { update } from '../redux/login/loginAction'
 import { clearUser } from '../redux/login/loginAction'
 import { store } from '../App'
-export const baseApiUrl = "http://3.7.135.210:8005";
-//export const baseApiUrl = "http://4308fbd821b8.ngrok.io"; 
+export const baseApiUrl = "http://3.7.135.210/api/";
+
 
 const refreshAuthLogic = async failedRequest => {
   //  const { store } = store
