@@ -94,6 +94,7 @@ export class OrganizationList extends React.Component {
                 }
             })
                 .then(response => {
+                    console.log(response)
                     return response.data;
                 })
 

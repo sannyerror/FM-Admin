@@ -36,33 +36,30 @@ class AddUser extends React.Component {
             Roles: res.data
         })
         const { id } = this.props.match.params;
+        console.log(id)
         const currentUser = store.getState().loginData.user.token;
         if (id) {
 
-            try {
-                const response = await axios.get(`${baseApiUrl}/users/${id}`, {
-                    headers: {
-                        'Authorization': `Bearer ${currentUser}`
-                    }
+            const response = await axios.get(`${baseApiUrl}/users/${id}/`, {
+                headers: {
+                    'Authorization': `Bearer ${currentUser}`
+                }
+            })
+                .then(response => {
+                    console.log(response)
+                    return response.data;
                 })
-                    .then(response => {
-
-                        return response.data;
-                    })
-                const role = res.data.filter(v => v.name === response.role_type)
-                this.setState({
-                    first_name: response.first_name,
-                    last_name: response.last_name,
-                    email_id: response.email_id,
-                    gender: `${response.gender}`,
-                    mobile: response.mobile,
-                    role_type: response.role_type,
-                    group_id: role[0].id,
-                })
-            }
-            catch (error) {
-                console.log(error, 'error')
-            }
+            const role = res.data.filter(v => v.name === response.role_type)
+            console.log(res.data)
+            this.setState({
+                first_name: response.first_name,
+                last_name: response.last_name,
+                email_id: response.email_id,
+                gender: `${response.gender}`,
+                mobile: response.mobile,
+                role_type: response.role_type,
+                group_id: role[0].id,
+            })
         }
     }
     getRoles = async () => {

@@ -33,13 +33,13 @@ class AddQuestion extends React.Component {
         if (id) {
 
             try {
-                const response = await axios.get(`${baseApiUrl}/questions/${id}`, {
+                const response = await axios.get(`${baseApiUrl}/questions/${id}/`, {
                     headers: {
                         'Authorization': `Bearer ${currentUser}`
                     }
                 })
                     .then(response => {
-
+                        console.log(`${baseApiUrl}/questions/${id}/`)
                         return response.data;
                     })
                     

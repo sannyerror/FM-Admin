@@ -18,11 +18,15 @@ class AddQuestionCategory extends React.Component {
     addCategory = async (e) => {
         e.preventDefault();
         const { title, description, parent } = this.state;
-        const data = {
+        const data = parent ? {
             title: title,
             description: description,
             parent: parent
-        }
+        } : {
+            title: title,
+            description: description,
+           
+        } 
         try {
             const response = await AddQuestionsCategory(data);
             if (response.status === "failed") {
@@ -57,7 +61,9 @@ class AddQuestionCategory extends React.Component {
             const response = await fetchQuestionsCategory();
             this.setState({
                 Category_list: response,
-                CheckedSub: true
+                CheckedSub: true,
+                title:"",
+                isUpdated: false,
             })
         } else {
             this.setState({
@@ -69,7 +75,7 @@ class AddQuestionCategory extends React.Component {
     categoryList = () => {
         const categoryList = this.state.Category_list.response &&
             this.state.Category_list.response.map((data, idx) =>
-                <option value={data.id}>{data.title}</option>
+               data.id !== 1 && <option value={data.id}>{data.title}</option>
             )
         return categoryList
     }
@@ -144,7 +150,7 @@ class AddQuestionCategory extends React.Component {
 
 
                             {this.state.isUpdated ?
-                                (<><div className="col col-1"> <span className="text-primary">Saved!{this.state.isUpdated}</span></div>
+                                (<><div className="col col-1"> <span className="text-primary">Saved!</span></div>
                                     <div className="col col-2"><button type="button" className="btn btn-primary" onClick={this.addAnother}>Add Another</button></div>
                                 </>) :
                                 (<div className="col col-1"><button className="btn btn-primary" onClick={this.addCategory}>Save{this.state.isUpdated}</button></div>)}

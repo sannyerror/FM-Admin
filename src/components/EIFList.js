@@ -65,6 +65,7 @@ export class EIFList extends React.Component {
               } 
         }      
         ).then(response=> {
+            console.log(response)
             return response.data;
         })
         

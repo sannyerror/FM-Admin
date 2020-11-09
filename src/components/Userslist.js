@@ -12,16 +12,18 @@ export class UsersList extends React.Component {
         this.state = {
             Users: [],
             userID: "",
-            prompt: false
+            prompt: false,
+            role_type: ""
 
         }
     }
 
     async componentDidMount() {
         const res = await fetchUsers();
-
+console.log(this.props.user) 
         this.setState({
             Users: res,
+            role_type: this.props.user.role_type
         })
     }
 
@@ -39,6 +41,7 @@ export class UsersList extends React.Component {
                 }
             })
                 .then(response => {
+                    console.log(response)
                    return response.data; 
                 })
 
@@ -75,6 +78,7 @@ export class UsersList extends React.Component {
 
     render() {
         toast.configure()
+        const {role_type} = this.state;
         return (
             <div className="container-fluid">
                 <div className="row p-2 bg-primary text-white">Users List</div>
@@ -97,15 +101,33 @@ export class UsersList extends React.Component {
                                         <td>{ques.full_name}</td>
                                         <td>{ques.email_id}</td>
                                         <td>{ques.role_type}</td>
-                                        <td className="text-center">{ques.role_type === "Super Admin" ? "-":(
-                                        <i className="fa fa-edit" style={{fontSize:"20px", color:"#000000"}} data-id={ques.id} onClick={this.handleEdit}></i>)}</td> 
-                                        <td className="text-center">{ques.role_type === "Super Admin" ? "-":(
-                                             <i className="fa fa-trash" style={{fontSize:"20px", color:"red"}} data-id={ques.id}
-                                             onClick={e =>
-                                                 window.confirm("Are you sure you wish to delete this User?") &&
-                                                 this.handleDelete(e)
-                                             }></i>
-                                        )}
+                                        <td className="text-center">
+                                            {ques.role_type === "Super Admin" ? "-":
+                                            role_type === "Admin" ? ques.role_type !== "Admin" ?(
+                                                <i className="fa fa-edit" style={{fontSize:"20px", color:"#000000"}} data-id={ques.id} onClick={this.handleEdit}></i>) :"-"
+                                                :(
+                                                    <i className="fa fa-edit" style={{fontSize:"20px", color:"#000000"}} data-id={ques.id} onClick={this.handleEdit}></i>)
+                                            
+                                            }</td> 
+                                        <td className="text-center">{ques.role_type === "Super Admin" ? "-":
+                                        
+                                        role_type === "Admin" ? ques.role_type !== "Admin" ?(
+                                            <i className="fa fa-trash" style={{fontSize:"20px", color:"red"}} data-id={ques.id}
+                                            onClick={e =>
+                                                window.confirm("Are you sure you wish to delete this User?") &&
+                                                this.handleDelete(e)
+                                            }></i>
+                                       ) :"-"
+                                            :(
+                                                <i className="fa fa-trash" style={{fontSize:"20px", color:"red"}} data-id={ques.id}
+                                                onClick={e =>
+                                                    window.confirm("Are you sure you wish to delete this User?") &&
+                                                    this.handleDelete(e)
+                                                }></i>
+                                           )
+                                        
+                                        }
+                                        
                                         </td>
                                     </tr>
 
@@ -127,6 +149,7 @@ export class UsersList extends React.Component {
 const mapStateToProps = state => {
     return {
         usersList: state.getusers.usersList,
+        user: state.loginData.user
     }
 }
 export default connect(mapStateToProps)(UsersList);

@@ -30,7 +30,7 @@ class AddOrganization extends React.Component {
                     }
                 })
                     .then(response => {
-
+                        console.log(response)
                         return response.data;
                     })
                this.setState({

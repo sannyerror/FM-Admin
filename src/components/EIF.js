@@ -96,6 +96,7 @@ export class EIF extends React.Component {
         return display
     }
     render() {
+        console.log(this.props.loadquestions.response)
         return (
 
             <div className="cotainer">

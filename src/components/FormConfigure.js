@@ -195,7 +195,7 @@ this.setState((prevState) => ({
                 related: "false",
                 questions: [{
                     question_id: 0, question: "", description: "",
-                    answer_type: "", suggested_answers: [], suggested_jump: [], validation1: "", validation2: "", error_msg: "", required: "yes",flag:""
+                    answer_type: "", suggested_answers: [""], suggested_jump: [], validation1: "", validation2: "", error_msg: "", required: "yes",flag:""
                 }]
             }],
             lastItemId: 1,
@@ -240,6 +240,7 @@ this.setState((prevState) => ({
         const  { Org } =  this.props.match.params
         const sectionLength = this.state.sections.length - 1
         console.log(this.state)
+        console.log(this.state.sections[0].questions[0])
        return (
             <div className="container-fluid">
                 {/* <div className="row p-2 mb-2 bg-primary text-white">Configure FirstMatch Tool for {Org}: Add Questions</div> */}
@@ -488,10 +489,9 @@ this.setState((prevState) => ({
                                                         </div>
                                                     </div>
                                                 </fieldset>
-                            
                                                 {this.state.sections[id].questions[idx].answer_type === "" || this.state.sections[id].questions[idx].answer_type === "TEXT" || this.state.sections[id].questions[idx].answer_type === "NUMBER"
                                                     || this.state.sections[id].questions[idx].answer_type === "RELATED" || this.state.sections[id].questions[idx].answer_type === "DATE" || this.state.sections[id].questions[idx].answer_type === "FILE" ?
-                                                    "" : this.state.sections[id].questions.filter(p => p.question == this.state.sections[id].questions[idx].question).map((q,i) => q.suggested_answers.map((question, idy) => (
+                                                    "" : this.state.sections[id].questions.filter(p => p.question === this.state.sections[id].questions[idx].question).map((q,i) => q.suggested_answers.map((question, idy) => (
                                                        <div key={idy} className="form-group row">
                                                      <label className="col-sm-2 col-form-label font-weight-bold">Answer {idy + 1}:</label>
                                                             <div className="col-sm-4">

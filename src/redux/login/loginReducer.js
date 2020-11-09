@@ -60,6 +60,7 @@ export const fetchUsers=(email, password)=>{
             password : password
         })
         .then(response =>{
+            console.log(response)
             const { refresh_token , access_token } = response.data
             const user ={ 
                 email,

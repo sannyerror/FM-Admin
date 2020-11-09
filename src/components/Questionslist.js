@@ -5,8 +5,8 @@ import { connect } from 'react-redux';
 import '../App.css';
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import axios from 'axios'
-import {  toast } from 'react-toastify';
-  import 'react-toastify/dist/ReactToastify.css';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { store } from '../App'
 
 const customStyles = {
@@ -32,7 +32,7 @@ export class QuestionsList extends React.Component {
             listID: "",
             showPOPUP: false,
             list: [],
-            btnAction:""
+            btnAction: ""
         }
     }
     async componentDidMount() {
@@ -47,14 +47,14 @@ export class QuestionsList extends React.Component {
 
         this.setState({
             showPOPUP: true,
-            btnAction:e.currentTarget.dataset.id
+            btnAction: e.currentTarget.dataset.id
         })
     }
 
     handleClose = () => {
         this.setState({
             showPOPUP: false,
-            btnAction:""
+            btnAction: ""
         })
     }
 
@@ -70,20 +70,20 @@ export class QuestionsList extends React.Component {
             subCategory: subCat
 
         })
-        
-        const param = subCat[0] ? subCat[0].children? subCat[0].children[0].id : "":""
-        if(param){
+
+        const param = subCat[0] ? subCat[0].children ? subCat[0].children[0].id : "" : ""
+        if (param) {
             const res = await fetchQuestions(param);
             this.setState({
                 Questions: res,
             })
-        }else{
+        } else {
             const response = await fetchQuestions(value);
             this.setState({
                 Questions: response,
             })
         }
-        
+
     }
 
     getList() {
@@ -98,7 +98,7 @@ export class QuestionsList extends React.Component {
     }
 
     handleSubChange = async (e) => {
-        const {  value } = e.target;
+        const { value } = e.target;
         const response = await fetchQuestions(value);
         this.setState({
             Questions: response,
@@ -132,45 +132,46 @@ export class QuestionsList extends React.Component {
                     'Authorization': `Bearer ${currentUser}`
                 }
             });
+            console.log(response)
             if (response.status === "failed") {
                 this.setState({
                     error: response.status,
                     showPOPUP: false,
-                    btnAction:""
+                    btnAction: ""
                 });
             } else {
                 const res = await fetchQuestions(this.state.subCategoryVal);
                 this.setState({
                     Questions: res,
                     showPOPUP: false,
-                    btnAction:""
+                    btnAction: ""
                 })
-                toast.info('Question deleted successfully.', { position: toast.POSITION.TOP_CENTER,autoClose:3000 })
+                toast.info('Question deleted successfully.', { position: toast.POSITION.TOP_CENTER, autoClose: 3000 })
             }
         }
         catch (error) {
             console.log(error, 'error')
         }
     }
-    
-    handleMove=async(e)=>{
+
+    handleMove = async (e) => {
         e.preventDefault();
-        const {srcI, desI, list} = this.state;
+        const { srcI, desI, list } = this.state;
         if (desI) {
-            
+
         }
         const src = list[srcI].id;
-            const des = list[desI].id;
-            list.splice(desI, 0, list.splice(srcI, 1)[0]);
-             this.saveList(list);
-          const res= await alterQuestions(src, des);
+        const des = list[desI].id;
+        list.splice(desI, 0, list.splice(srcI, 1)[0]);
+        this.saveList(list);
+        const res = await alterQuestions(src, des);
         this.setState({
             showPOPUP: false,
-            btnAction:""
+            btnAction: ""
         })
-   
-    } 
-category = () => {
+
+    }
+    category = () => {
         const category = this.state.QuestionsCategory.response &&
             this.state.QuestionsCategory.response.map((data, idx) =>
                 <option value={data.id}>{data.title}</option>
@@ -187,7 +188,7 @@ category = () => {
         return subcategory
     }
     render() {
-        
+
         toast.configure()
         const list = this.state.Questions.response
         return (
@@ -214,49 +215,53 @@ category = () => {
                     }
                 </div>
                 <div className="form-group ml-4">
-                        {list && list.map((item, i) => (
-                                            <div key={i} className="row">
-                                                <div className="list-group-item col-10  mt-1 ">
-                                                            {/* <DragHandle {...provided.dragHandleProps} /> */}
-                                                            <span className="text-primary "> {item.question}</span>
-                                                            <i style={{
-                                                                position: "absolute",
-                                                                top: "10px",
-                                                                right: "-35px",
-                                                                width: "auto",
-                                                                height: "49px",
-                                                               // border: "1px solid rgba(0,0,0,.125)",
-                                                                // backgroundColor: "#d9534f",
-                                                                borderRadius: "5px 5px",
-                                                                textAlign: "center",
-                                                                color: "red",
-                                                                fontSize:"24px"
-                                                            }} className="text-center fa fa-trash"
-                                                                data-id={item.id}
-                                                                onClick={this.handleShow} ></i>
-                                                            <i style={{
-                                                                position: "absolute",
-                                                                top: "10px",
-                                                                right: "-100px",
-                                                                width: "auto",
-                                                                height: "25px",
-                                                                //border: "1px solid rgba(0,0,0,.125)",
-                                                                curser: "pointer",
-                                                                // backgroundColor: "#5bc0de",
-                                                                borderRadius: "5px 5px",
-                                                                textAlign: "center",
-                                                                fontSize:"24px",
-                                                                color: "#000000"
-                                                            }} className="text-center fa fa-edit"
-                                                                data-id={item.id}
-                                                                onClick={this.handleEdit} ></i>
-                                                        </div>
+                    {list && list.map((item, i) => (
+                        <div key={i} className="row">
+                            <div className="list-group-item col-10  mt-1 ">
+                                {/* <DragHandle {...provided.dragHandleProps} /> */}
+                                <span className="text-primary "> {item.question}</span>
+                                <i style={{
+                                    position: "absolute",
+                                    top: "10px",
+                                    right: "-35px",
+                                    width: "auto",
+                                    height: "49px",
+                                    // border: "1px solid rgba(0,0,0,.125)",
+                                    // backgroundColor: "#d9534f",
+                                    borderRadius: "5px 5px",
+                                    textAlign: "center",
+                                    color: "red",
+                                    fontSize: "24px"
+                                }} className="text-center fa fa-trash"
+                                    data-id={item.id}
+                                    onClick={this.handleShow} ></i>
+                                {this.state.Category !== "1" &&
+                                    <i style={{
+                                        position: "absolute",
+                                        top: "10px",
+                                        right: "-100px",
+                                        width: "auto",
+                                        height: "25px",
+                                        //border: "1px solid rgba(0,0,0,.125)",
+                                        curser: "pointer",
+                                        // backgroundColor: "#5bc0de",
+                                        borderRadius: "5px 5px",
+                                        textAlign: "center",
+                                        fontSize: "24px",
+                                        color: "#000000"
+                                    }} className="text-center fa fa-edit"
+                                        data-id={item.id}
+                                        onClick={this.handleEdit} >
 
-                                                 </div>
-                                        ))}
-                                   
-                                </div>
-                            
+                                    </i>
+                                }
+                            </div>
+
+                        </div>
+                    ))}
+
+                </div>
+
                 <Modal
                     isOpen={this.state.showPOPUP}
                     onRequestClose={this.handleClose}
@@ -264,22 +269,22 @@ category = () => {
                     contentLabel="Forgot Password"
                     ariaHideApp={false}
                 >
-                    <h4 className="text-primary">Are you sure to {this.state.btnAction ? "delete":"move"} this question?</h4>
+                    <h4 className="text-primary">Are you sure to {this.state.btnAction ? "delete" : "move"} this question?</h4>
                     <div className="form-group row d-flex justify-content-center">
 
                     </div>
                     <div className="row ">
                         <div className="col-6 text-center ">
-                            <button className="button-pop" data-id={this.state.btnAction} onClick={this.state.btnAction?this.handleDelete:this.handleMove} >Yes</button>
-                            
+                            <button className="button-pop" data-id={this.state.btnAction} onClick={this.state.btnAction ? this.handleDelete : this.handleMove} >Yes</button>
+
                         </div>
-                        <div className="col-6 text-center "> 
+                        <div className="col-6 text-center ">
                             <button className="button-pop" onClick={this.handleClose} >No</button>
                         </div>
                     </div>
                 </Modal>
-                
-                
+
+
                 <div className="form-group row d-flex justify-content-center">
                     &nbsp;
                             </div>
