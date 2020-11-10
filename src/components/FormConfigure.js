@@ -7,9 +7,6 @@ class FormConfigure extends React.Component {
     constructor() {
         super();
         this.state = {
-            questions: [],
-            question: "",
-            section: "",
             sections: [ {
                 section: "Demographics",
                 section_id: 0,
@@ -34,7 +31,6 @@ class FormConfigure extends React.Component {
                     flag: "0"
                 },]
             }],
-            suggested_answers: [""],
             lastItemId: 3,
             lastSectionId: 0,
             Org_id:""
@@ -137,8 +133,18 @@ class FormConfigure extends React.Component {
                 this.setState({ sections })
             } else {
                 let sections = [...this.state.sections]
-                sections[secid].questions[e.target.dataset.id][e.target.dataset.name] = e.target.value
-                this.setState({ sections })
+                
+                if(e.target.dataset.name === "answer_type"){
+                    sections[secid].questions[e.target.dataset.id][e.target.dataset.name] = e.target.value
+                    console.log(sections[secid].questions[e.target.dataset.id])
+                    sections[secid].questions[e.target.dataset.id].suggested_answers = sections[secid].questions[e.target.dataset.id].suggested_answers.length === 0 ? [""]:
+                                                                                       sections[secid].questions[e.target.dataset.id].suggested_answers
+                    this.setState({ sections })
+                }else{
+                    sections[secid].questions[e.target.dataset.id][e.target.dataset.name] = e.target.value
+                    this.setState({ sections })
+                }
+               
             }
 
         } else {
@@ -376,7 +382,6 @@ this.setState((prevState) => ({
                                                         <div className="col-sm-8">
                                                             <div className="form-check form-check-inline">
                                                                 <input
-                                                                    onChange={this.onRadioChange}
                                                                     className="form-check-input" name={typeId}
                                                                     data-id={idx}
                                                                     data-secid={id}
@@ -392,7 +397,6 @@ this.setState((prevState) => ({
                                                             </div>
                                                             <div className="form-check form-check-inline">
                                                                 <input
-                                                                    onChange={this.onRadioChange}
                                                                     className="form-check-input" name={typeId}
                                                                     data-id={idx}
                                                                     data-secid={id}
@@ -408,7 +412,6 @@ this.setState((prevState) => ({
                                                             </div>
                                                             <div className="form-check form-check-inline">
                                                                 <input
-                                                                    onChange={this.onRadioChange}
                                                                     className="form-check-input" name={typeId}
                                                                     data-id={idx}
                                                                     data-secid={id}
@@ -424,7 +427,6 @@ this.setState((prevState) => ({
                                                             </div>
                                                             <div className="form-check form-check-inline">
                                                                 <input
-                                                                    onChange={this.onRadioChange}
                                                                     className="form-check-input" name={typeId}
                                                                     data-id={idx}
                                                                     data-secid={id}
@@ -440,7 +442,6 @@ this.setState((prevState) => ({
                                                             </div>
                                                             <div className="form-check form-check-inline">
                                                                 <input
-                                                                    onChange={this.onRadioChange}
                                                                     className="form-check-input" name={typeId}
                                                                     data-id={idx}
                                                                     data-secid={id}
@@ -456,7 +457,6 @@ this.setState((prevState) => ({
                                                             </div>
                                                             <div className="form-check form-check-inline">
                                                                 <input
-                                                                    onChange={this.onRadioChange}
                                                                     className="form-check-input" name={typeId}
                                                                     data-id={idx}
                                                                     data-secid={id}
@@ -472,7 +472,6 @@ this.setState((prevState) => ({
                                                             </div>
                                                             <div className="form-check form-check-inline">
                                                                 <input
-                                                                    onChange={this.onRadioChange}
                                                                     className="form-check-input" name={typeId}
                                                                     data-id={idx}
                                                                     data-secid={id}
@@ -503,7 +502,7 @@ this.setState((prevState) => ({
                                                                     data-name="suggested_answers"
                                                                     id={answerId}
                                                                     data-idy={idy}
-                                                                    value={question.value} 
+                                                                    value={question.value?question.value:""} 
                                                                     className="form-control" required
                                                                 />
                                                                {idy !== 0 && <div
