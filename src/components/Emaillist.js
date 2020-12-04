@@ -39,7 +39,7 @@ export class EmailList extends React.Component {
                 }
             })
                 .then(response => {
-                    console.log(response)
+                    
                     return response.data;
                 })
             if (response.status === "failed") {

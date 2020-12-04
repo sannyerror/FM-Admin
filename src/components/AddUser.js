@@ -36,7 +36,6 @@ class AddUser extends React.Component {
             Roles: res.data
         })
         const { id } = this.props.match.params;
-        console.log(id)
         const currentUser = store.getState().loginData.user.token;
         if (id) {
 
@@ -46,11 +45,9 @@ class AddUser extends React.Component {
                 }
             })
                 .then(response => {
-                    console.log(response)
                     return response.data;
                 })
             const role = res.data.filter(v => v.name === response.role_type)
-            console.log(res.data)
             this.setState({
                 first_name: response.first_name,
                 last_name: response.last_name,

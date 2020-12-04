@@ -39,7 +39,6 @@ class AddQuestion extends React.Component {
                     }
                 })
                     .then(response => {
-                        console.log(`${baseApiUrl}/questions/${id}/`)
                         return response.data;
                     })
                     

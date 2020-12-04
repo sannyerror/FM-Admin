@@ -38,7 +38,6 @@ class ChangePassword extends React.Component {
                     }
                 })
                     .then(response => {
-                        console.log(response)
                         return response.data;
                     })
                  

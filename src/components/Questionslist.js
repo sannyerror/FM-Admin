@@ -132,7 +132,7 @@ export class QuestionsList extends React.Component {
                     'Authorization': `Bearer ${currentUser}`
                 }
             });
-            console.log(response)
+            
             if (response.status === "failed") {
                 this.setState({
                     error: response.status,

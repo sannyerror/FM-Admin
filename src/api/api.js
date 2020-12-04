@@ -122,7 +122,6 @@ export const checkDomain = async (domain) => {
     dispatch(checkDomainRequest)
     return await axios.post(`${baseApiUrl}/check/domain`, { domain: data })
       .then(response => {
-        console.log(response)
         const checkdomain = response.data
         dispatch(checkDomainSuccess(checkdomain))
         return response.data;
@@ -149,7 +148,6 @@ export const saveClientConfigure = async (data) => {
       }
     })
       .then(response => {
-        console.log(response)
         const saveConfig = response.data
         return response.data;
       })
@@ -171,7 +169,7 @@ export const fetchConfigureQuestions = async (value) => {
       }
     })
       .then(response => {
-        console.log(response)
+        
         const questionsList = response.data
         return response.data;
       })
@@ -195,7 +193,7 @@ export const fetchQuestions = async (value) => {
       }
     })
       .then(response => {
-        console.log(response)
+        
         const questionsList = response.data
 
         dispatch(fetchQuestionsSuccess(questionsList))
@@ -221,7 +219,7 @@ export const fetchEmails = async () => {
       }
     })
       .then(response => {
-        console.log(response)
+        
         return response.data;
       })
 
@@ -244,7 +242,7 @@ export const fetchBillingStatus = async (id) => {
       }
     })
       .then(response => {
-        console.log(response)
+        
         const bill = response.data
         return response.data;
       })
@@ -299,7 +297,7 @@ export const fetchAllRecords = async (id, sDate, EDate) => {
       }
     })
       .then(response => {
-        console.log(response)
+        
         const bill = response.data
         return response.data;
       })
@@ -322,7 +320,7 @@ export const getRecord = async (id) => {
       }
     })
       .then(response => {
-        console.log(response)
+        
         const bill = response.data
         return response.data;
       })
@@ -351,7 +349,7 @@ export const configureBilling = async (data, update) => {
         }
       })
         .then(response => {
-          console.log(response)
+          
           const bill = response.data
           return response.data;
         })
@@ -362,7 +360,7 @@ export const configureBilling = async (data, update) => {
         }
       })
         .then(response => {
-          console.log(response)
+          
           const bill = response.data
           return response.data;
         })
@@ -389,7 +387,7 @@ export const downloadAllRecords = async (id) => {
       }
     })
       .then(response => {
-        console.log(response)
+        
         const path = response.data.response
         window.open(`${baseApiUrl}/${path}`);
         const records = response.data
@@ -415,7 +413,7 @@ export const getOrderDownload = async (id, sDate, eDate) => {
     })
       .then(response => {
         const path = response.data.response
-        console.log(response)
+        
         window.open(`${baseApiUrl}/${path}`);
         const records = response.data
         return response.data;
@@ -439,7 +437,7 @@ export const downloadReportCSV = async (id) => {
       }
     })
       .then(response => {
-        console.log(response)
+        
         const bill = response.data
         const path = response.data.response
         window.open(`${baseApiUrl}/${path}`);
@@ -509,7 +507,7 @@ export const fetchUsers = async () => {
       }
     })
       .then(response => {
-        console.log(response)
+        
         const usersList = response.data
 
         dispatch(getUsersSuccess(usersList))
@@ -538,7 +536,7 @@ export const fetchOrganizations = async () => {
       }
     })
       .then(response => {
-        console.log(response)
+        
         const organizationsList = response.data
 
         dispatch(getOrganizationsSuccess(organizationsList))
@@ -568,7 +566,7 @@ export const fetchEiflist = async () => {
       }
     })
       .then(response => {
-        console.log(response)
+        
         const EifList = response.data
         dispatch(fetchEifListSuccess(EifList))
         return response.data;
@@ -595,7 +593,7 @@ export const fetchRaflist = async () => {
       }
     })
       .then(response => {
-        console.log(response)
+        
         const RafList = response.data
         dispatch(fetchRafListSuccess(RafList))
         return response.data;
@@ -616,7 +614,7 @@ export const fetchQuestionsCategory = async () => {
     dispatch(fetchQuestionscategoryRequest)
     return await axios.get(`${baseApiUrl}/questionscategory/`)
       .then(response => {
-        console.log(response)
+        
         const questionscategoryList = response.data
         dispatch(fetchQuestionscategorySuccess(questionscategoryList))
         return response.data;
@@ -634,7 +632,6 @@ export const fetchQuestionsCategory = async () => {
 export const AddQuestions = async (data, id) => {
   const { dispatch } = store
   const currentUser = store.getState().loginData.user.token;
-  console.log(`${baseApiUrl}/questions/${id}/`)
   if (id) {
     try {
       dispatch(addQuestionsRequest)
@@ -644,7 +641,7 @@ export const AddQuestions = async (data, id) => {
         }
       })
         .then(response => {
-          console.log(response)
+          
           const addedquestions = response.data
           dispatch(addQuestionsSuccess(addedquestions))
           return response.data;
@@ -666,7 +663,7 @@ export const AddQuestions = async (data, id) => {
         }
       })
         .then(response => {
-          console.log(response)
+          
           const addedquestions = response.data
           dispatch(addQuestionsSuccess(addedquestions))
           return response.data;
@@ -695,7 +692,7 @@ export const AddUsers = async (data, id) => {
         }
       })
         .then(response => {
-          console.log(response)
+          
           const addedusers = response.data
           dispatch(addUsersSuccess(addedusers))
 
@@ -718,7 +715,7 @@ export const AddUsers = async (data, id) => {
         }
       })
         .then(response => {
-          console.log(response)
+          
           const addedusers = response.data
           dispatch(addUsersSuccess(addedusers))
 
@@ -758,7 +755,7 @@ export const AddOrganizations = async (data, id) => {
         }
       })
         .then(response => {
-          console.log(response)
+          
           const addedOrganizations = response.data
           dispatch(addOrganizationsSuccess(addedOrganizations))
 
@@ -788,7 +785,7 @@ export const AddOrganizations = async (data, id) => {
         }
       })
         .then(response => {
-          console.log(response)
+          
           const addedOrganizations = response.data
           dispatch(addOrganizationsSuccess(addedOrganizations))
 
@@ -824,7 +821,7 @@ export const submitEIF = async (data) => {
       }
     })
       .then(response => {
-        console.log(response)
+        
         const addeif = response.data
         dispatch(addEifSuccess(addeif))
         return response.data;
@@ -853,7 +850,7 @@ export const submitRAF = async (data, customer, is_completely_filled) => {
       }
     })
       .then(response => {
-        console.log(response)
+        
         const addraf = response.data
         dispatch(addRafSuccess(addraf))
         return response.data;
@@ -875,7 +872,7 @@ export const eifQuestions = async () => {
     dispatch(eifQuestionsRequest)
     await axios.get(`${baseApiUrl}/stages?category=1`)
       .then(response => {
-        console.log(response)
+        
         const loadquestions = response.data
         dispatch(eifQuestionsSuccess(loadquestions))
         return response.data;
@@ -896,7 +893,7 @@ export const rafQuestions = async (customer) => {
     dispatch(rafQuestionsRequest)
     return await axios.get(`${baseApiUrl}/stages?category=2&customer=${customer}`)
       .then(response => {
-        console.log(response)
+        
         const loadrafquestions = response.data
         dispatch(rafQuestionsSuccess(loadrafquestions))
         return response.data;
@@ -923,7 +920,7 @@ console.log(data)
       }
     })
       .then(response => {
-        console.log(response)
+        
         const addquestionscategory = response.data
         dispatch(addQuestionsCategorySuccess(addquestionscategory))
         return response.data;
@@ -950,7 +947,7 @@ export const logOut = () => {
   };
  axios(config)
     .then(response => {
-      console.log(response)
+      
       dispatch(clearUser())
       return response.data;
     })

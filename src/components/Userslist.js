@@ -3,8 +3,8 @@ import { fetchUsers, baseApiUrl } from '../api/api';
 import axios from 'axios'
 import { connect } from 'react-redux';
 import '../App.css';
-import {  toast } from 'react-toastify';
-  import 'react-toastify/dist/ReactToastify.css';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { store } from '../App'
 export class UsersList extends React.Component {
     constructor() {
@@ -20,7 +20,6 @@ export class UsersList extends React.Component {
 
     async componentDidMount() {
         const res = await fetchUsers();
-console.log(this.props.user) 
         this.setState({
             Users: res,
             role_type: this.props.user.role_type
@@ -41,8 +40,8 @@ console.log(this.props.user)
                 }
             })
                 .then(response => {
-                    console.log(response)
-                   return response.data; 
+                    
+                    return response.data;
                 })
 
             if (response.status === "failed") {
@@ -50,9 +49,9 @@ console.log(this.props.user)
                     error: response.status
                 });
             } else {
-                toast.info(`User deleted successfully.`, { position: toast.POSITION.TOP_CENTER,autoClose:3000 })
+                toast.info(`User deleted successfully.`, { position: toast.POSITION.TOP_CENTER, autoClose: 3000 })
                 const res = await fetchUsers();
-               this.setState({
+                this.setState({
                     Users: res,
                 })
 
@@ -78,7 +77,7 @@ console.log(this.props.user)
 
     render() {
         toast.configure()
-        const {role_type} = this.state;
+        const { role_type } = this.state;
         return (
             <div className="container-fluid">
                 <div className="row p-2 bg-primary text-white">Users List</div>
@@ -102,32 +101,32 @@ console.log(this.props.user)
                                         <td>{ques.email_id}</td>
                                         <td>{ques.role_type}</td>
                                         <td className="text-center">
-                                            {ques.role_type === "Super Admin" ? "-":
-                                            role_type === "Admin" ? ques.role_type !== "Admin" ?(
-                                                <i className="fa fa-edit" style={{fontSize:"20px", color:"#000000"}} data-id={ques.id} onClick={this.handleEdit}></i>) :"-"
-                                                :(
-                                                    <i className="fa fa-edit" style={{fontSize:"20px", color:"#000000"}} data-id={ques.id} onClick={this.handleEdit}></i>)
-                                            
-                                            }</td> 
-                                        <td className="text-center">{ques.role_type === "Super Admin" ? "-":
-                                        
-                                        role_type === "Admin" ? ques.role_type !== "Admin" ?(
-                                            <i className="fa fa-trash" style={{fontSize:"20px", color:"red"}} data-id={ques.id}
-                                            onClick={e =>
-                                                window.confirm("Are you sure you wish to delete this User?") &&
-                                                this.handleDelete(e)
-                                            }></i>
-                                       ) :"-"
-                                            :(
-                                                <i className="fa fa-trash" style={{fontSize:"20px", color:"red"}} data-id={ques.id}
-                                                onClick={e =>
-                                                    window.confirm("Are you sure you wish to delete this User?") &&
-                                                    this.handleDelete(e)
-                                                }></i>
-                                           )
-                                        
+                                            {ques.role_type === "Super Admin" ? "-" :
+                                                role_type === "Admin" ? ques.role_type !== "Admin" ? (
+                                                    <i className="fa fa-edit" style={{ fontSize: "20px", color: "#000000" }} data-id={ques.id} onClick={this.handleEdit}></i>) : "-"
+                                                    : (
+                                                        <i className="fa fa-edit" style={{ fontSize: "20px", color: "#000000" }} data-id={ques.id} onClick={this.handleEdit}></i>)
+
+                                            }</td>
+                                        <td className="text-center">{ques.role_type === "Super Admin" ? "-" :
+
+                                            role_type === "Admin" ? ques.role_type !== "Admin" ? (
+                                                <i className="fa fa-trash" style={{ fontSize: "20px", color: "red" }} data-id={ques.id}
+                                                    onClick={e =>
+                                                        window.confirm("Are you sure you wish to delete this User?") &&
+                                                        this.handleDelete(e)
+                                                    }></i>
+                                            ) : "-"
+                                                : (
+                                                    <i className="fa fa-trash" style={{ fontSize: "20px", color: "red" }} data-id={ques.id}
+                                                        onClick={e =>
+                                                            window.confirm("Are you sure you wish to delete this User?") &&
+                                                            this.handleDelete(e)
+                                                        }></i>
+                                                )
+
                                         }
-                                        
+
                                         </td>
                                     </tr>
 

@@ -96,8 +96,7 @@ export class EIF extends React.Component {
         return display
     }
     render() {
-        console.log(this.props.loadquestions.response)
-        return (
+         return (
 
             <div className="cotainer">
                 <div className="text-center"><h2>EXPRESS INTREST FORM</h2></div>
