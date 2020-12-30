@@ -1,9 +1,10 @@
 import React from 'react';
-import { fetchRaflist, baseApiUrl } from '../api/api';
+import { fetchRaflist, baseApiUrl, UpdateDomain } from '../api/api';
 import { connect } from 'react-redux';
 import axios from 'axios'
+import { toast } from 'react-toastify';
 import '../App.css';
-import {BeatLoader } from 'react-spinners'
+import { BeatLoader } from 'react-spinners'
 import { store } from '../App'
 export class RAFList extends React.Component {
     constructor() {
@@ -20,6 +21,7 @@ export class RAFList extends React.Component {
             username: "",
             password: "",
             list_status: "",
+            domain_updated: false,
             Host: window.location.host
 
 
@@ -27,9 +29,9 @@ export class RAFList extends React.Component {
     }
     async componentDidMount() {
         this.setState({ loading: true })
-       const RafList =  await fetchRaflist();
-       this.setState({
-            RafList: RafList,
+        const RafList = await fetchRaflist();
+        this.setState({
+            RafList: this.props.RafList,
             loading: false
         })
 
@@ -67,7 +69,7 @@ export class RAFList extends React.Component {
             }
         })
             .then(response => {
-                
+
                 return response.data;
             })
         this.setState({
@@ -79,10 +81,41 @@ export class RAFList extends React.Component {
 
         });
     }
+    handleChange = (e) => {
+        this.setState({
+            [e.target.name]: e.target.value,
+            domain_updated: true
+        })
 
-
+    }
+    SendEmail = async(e) => {
+        e.preventDefault();
+        const {customerId,domain,domain_updated} = this.state;
+      let response = await UpdateDomain(customerId,domain,domain_updated)
+      if(response.status === "success"){
+        toast.info(response.message, { position: toast.POSITION.TOP_CENTER, autoClose: 3000 })
+        await fetchRaflist();
+        this.setState({
+            listID: "",
+            success: "",
+            domain: "",
+            username: "",
+            password: "",
+            domain_updated: false,
+            RafList: this.props.RafList,
+            loading: false
+        });
+        
+      }else {
+        toast.error(response.message, { position: toast.POSITION.TOP_CENTER, autoClose: 3000 })
+      }
+      
+    
+    }
     render() {
-        let { listID, success, domain, username, password, list_status,loading } = this.state;
+        toast.configure()
+        let { listID, success, domain, username, password, list_status, loading, domain_updated } = this.state;
+        
         if (listID !== "") {
             return (
                 <div className="container-fluid">
@@ -90,15 +123,15 @@ export class RAFList extends React.Component {
 
                     <ul className="list-group">
                         {this.state.listData.map(info => (info.children.map(r =>
-                            (r.questions.map(q => (q.answers.map(z => (
+                        (r.questions.map(q => (q.answers.map(z => (
                             <li className="list-group-item mb-1" >
                                 <span className="text-primary "> {q.question}</span> <br />
                                 <span className=" ">(A)</span> -
                                 {z.answer.includes('static') ? (<a href={`${baseApiUrl}/${z.answer}`} className="font-weight-bold">View File</a>) : (<span className="text-primary font-weight-bold">{z.answer}</span>)}
 
                             </li>
-                            )
-                            )))))))}
+                        )
+                        )))))))}
                     </ul>
                     {list_status === true ? "" : (
                         <div className="form-group row mt-3 mb-3">
@@ -127,31 +160,62 @@ export class RAFList extends React.Component {
                 return (
                     <div className="container-fluid">
                         <div className="row p-2 bg-primary text-white">New Organization Details</div><br />
-                         <div className="row d-flex justify-content-center text-left mb-4 mt-4"><span className="font-weight-bold">Domain Name:</span><span className="text-primary">http://3.7.135.210/{domain}</span> </div>
-                        <div className="row d-flex justify-content-center text-left mb-4 mt-4"><span className="font-weight-bold">User Name:</span><span className="text-primary"> {username}</span> </div>
-                        <div className="row d-flex justify-content-center text-left mb-4 mt-4"><span className="font-weight-bold"> Password:</span><span className="text-primary">{password}</span> </div>
+                        <form onSubmit={this.SendEmail}>
+                            <div className=" ml-4">
+                                <div className="form-group row">
+                                    <label className="col-sm-2 col-form-label font-weight-bold ">Domain:</label>
+                                    <div className="col-sm-4">
+                                        <input type="text" className="form-control" id="validationDefault01" onChange={this.handleChange}
+                                            value={this.state.domain}
+                                            name="domain" required />
+                                    </div>
+                                </div>
+                                <div className="form-group row">
+                                    <label className="col-sm-2 col-form-label font-weight-bold ">User Name:</label>
+                                    <div className="col-sm-4">
+                                        {username}
+                                    </div>
 
-                        <div>&nbsp;</div>
+                                </div>
+                                <div className="form-group row">
+                                    <label className="col-sm-2 col-form-label font-weight-bold ">Password:</label>
+                                    <div className="col-sm-4">
+                                        {password}
+                                    </div>
+                                </div>
+                                <div className="form-group row">
+                                    <label className="col-sm-2 col-form-label font-weight-bold "></label>
+                                    <div className="col-sm-4">
+                                        <button type="submit" className="btn btn-primary font-weight-bold btn-block" >
+                                            {domain_updated ? "Update Domain & Send Email" : "Send Email"}
+                                        </button>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </form>
                     </div>
                 );
             } else {
                 return (
                     <div className="container-fluid">
                         <div className="row p-2 bg-primary text-white mb-1">RAF List</div>
-                        {loading?<div className="form-group mt-5 row d-flex justify-content-center"><span className="font-weight-bold h5">Loading</span><BeatLoader size={24} color='#0099CC' loading={loading}/><BeatLoader size={24} color='#0099CC' loading={loading}/></div> :""}
+                        {loading ? <div className="form-group mt-5 row d-flex justify-content-center"><span className="font-weight-bold h5">Loading</span><BeatLoader size={24} color='#0099CC' loading={loading} /><BeatLoader size={24} color='#0099CC' loading={loading} /></div> : ""}
                         <ul className="list-group">
                             {this.state.RafList.response && this.state.RafList.response.map((ques, index) =>
 
-                                (
-                                    <li key={index} className="list-group-item mb-1" data-id={ques.id} onClick={this.getDetails}>
-                                        <span className="text-primary ">{ques.org_name}</span> <br />
-                                        <span className=" ">Created On: </span> <span className="text-primary font-weight-bold">{ques.date_created}</span>
-                                        <br />
-                                        <span className=" ">Status: </span> 
-                                        <span className="text-primary font-weight-bold">
+                            (
+                                <li key={index} className="list-group-item mb-1" data-id={ques.id} onClick={this.getDetails}>
+                                    <span className="text-primary ">{ques.org_name}</span> <br />
+                                    <span className=" ">Created On: </span>
+                                    <span className="text-primary font-weight-bold">{ques.date_created}</span>
+                                    <br />
+                                    <span className=" ">Status: </span>
+                                    <span className="text-primary font-weight-bold">
 
-                                            {ques.is_approved === ques.is_rejected ? "Pending" : ques.is_approved !== true ? "Rejected" : "Approved"}</span>
-                                    </li>))}
+                                        {ques.is_approved === ques.is_rejected ? "Pending" :
+                                            ques.is_approved !== true ? "Rejected" : "Approved"}</span>
+                                </li>))}
                         </ul>
 
                     </div>

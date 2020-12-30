@@ -79,8 +79,9 @@ export const login = async (email, password) => {
   try {
     dispatch(fetchUsersRequest)
     const response = await axios.post(`${baseApiUrl}/admin/login`, { username: email, password: password });
+    console.log(response)
     const { token, user_id, role_type, is_pwd_updated } = response.data.response
-    const user = {
+    const user = { 
       email,
       token,
       user_id,
@@ -104,6 +105,41 @@ export const forgotPassWord = async (email_id) => {
       .then(response => {
         return response.data;
       })
+  }
+
+  catch (error) {
+    console.log('error')
+    dispatch(checkDomainFailure(error.message))
+    throwError(error)
+
+  }
+};
+
+export const UpdateDomain = async (id,domain,isUpdated) => {
+  const { dispatch } = store
+const currentUser = store.getState().loginData.user.token;
+  try {
+    if(isUpdated){
+      return await axios.put(`${baseApiUrl}/after-raf/`, { customer: id, domain: domain }, {
+        headers: {
+          'Authorization': `Bearer ${currentUser}`
+        }
+      })
+      .then(response => {
+        return response.data;
+      })
+    }else{
+      return await axios.post(`${baseApiUrl}/after-raf/`, { customer: id}, {
+        headers: {
+          'Authorization': `Bearer ${currentUser}`
+        }
+      })
+      .then(response => {
+        console.log(response)
+        return response.data;
+      })
+    }
+    
   }
 
   catch (error) {
