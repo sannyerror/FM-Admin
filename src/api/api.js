@@ -590,7 +590,7 @@ export const fetchOrganizations = async () => {
 
 export const deleteOrganizations = async (customer,remove_type) => {
   const currentUser = store.getState().loginData.user.token;
-  (customer,remove_type)
+  
   let data = {
     customer: customer
   }
