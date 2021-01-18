@@ -63,7 +63,6 @@ class ConfigureOrg extends React.Component {
         formdata.append("customer", org_id);
         formdata.append("logo", this.state.selectedFile, this.state.selectedFile.name);
         const response = await uploadLogo(formdata);
-        const { message } = response;
          if (response.message === "logo uploaded successfully") {
             const res = await fetchOrganizations();
             let logoPath = res.filter(p=> p.id === org_id)
@@ -74,7 +73,7 @@ class ConfigureOrg extends React.Component {
             
         //     window.location.reload(true);
          } else {
-            toast.info(`Logo not uploaded successfully. Try again Later`, { position: toast.POSITION.TOP_CENTER, autoClose: 3000 })
+            toast.error(response.message, { position: toast.POSITION.TOP_CENTER, autoClose: 3000 })
           
         }
     }
@@ -128,8 +127,11 @@ class ConfigureOrg extends React.Component {
                                             />
                                             </div>
                                         </div>
-                                    <div className="row">
+                                        <div className="row">
                                            <span className="text-center">Click on above to select an Image</span>
+                                         </div>
+                                         <div className="row">
+                                           <span className="text-danger small">Logo should be in PNG/JPEG format and size should be less or equal to 10kb.</span>
                                          </div>
                                          <div className="row">
                                              <div className="col col-2">&nbsp;</div>

@@ -135,7 +135,6 @@ const currentUser = store.getState().loginData.user.token;
         }
       })
       .then(response => {
-        console.log(response)
         return response.data;
       })
     }
@@ -584,6 +583,36 @@ export const fetchOrganizations = async () => {
   catch (error) {
     console.log('error')
     dispatch(getOrganizationsFailure(error.message))
+    throwError(error)
+
+  }
+};
+
+export const deleteOrganizations = async (customer,remove_type) => {
+  const currentUser = store.getState().loginData.user.token;
+  (customer,remove_type)
+  let data = {
+    customer: customer
+  }
+try {
+  if(remove_type === "delete"){
+    return axios.delete(`${baseApiUrl}/customers/${customer}/`, {
+      headers: {
+          'Authorization': `Bearer ${currentUser}`
+      }
+  })
+  }else{
+    return axios.post(`${baseApiUrl}/customer/${remove_type.toLowerCase()}/`, data, {
+      headers: {
+          'Authorization': `Bearer ${currentUser}`
+      }
+  })
+  }
+    
+  }
+
+  catch (error) {
+    console.log('error')
     throwError(error)
 
   }

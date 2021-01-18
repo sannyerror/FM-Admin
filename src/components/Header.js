@@ -17,7 +17,7 @@ export class Header extends React.Component {
     render() {
         const { token, is_pwd_updated, role_type } = this.props.user
 
-        const url = "https://firstmatchcom.wpcomstaging.com/"
+        const url = "https://firstmatch.com/"
         return (
 
             <div id="app" className="container-fluid">
