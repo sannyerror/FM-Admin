@@ -100,12 +100,19 @@ class RAF extends Component {
      
     onChange = async (e) => {
         e.preventDefault()
+        let index = e.target.dataset.id
         let { name } = e.target;
         let file = e.target.files[0]
         let res = await this.uploadFile(file);
-        let files = this.state.data[name]?this.state.data[name].concat(res.data.response):res.data.response;
-        let message = this.state.uploadMsg[name]?this.state.uploadMsg[name].concat([res.data.message]):[res.data.message]
-        this.setState({
+        let file_path = res.data.status === "failed" ? res.data.response : res.data.response
+        let files = this.state.data[name]?
+        this.state.data[name][index]?(this.state.data[name][index]=[file_path])
+        :this.state.data[name].concat(file_path):file_path;
+        let Error_Msg = res.data.status === "failed" ? res.data.response.toString() : res.data.message;
+        let message = this.state.uploadMsg[name]?
+         this.state.uploadMsg[name][index]?(this.state.uploadMsg[name][index]=[Error_Msg]):
+                       this.state.uploadMsg[name].concat([Error_Msg]):[Error_Msg]
+        await this.setState({
             data: {
                 ...this.state.data,
                 [name]:  files
@@ -318,7 +325,7 @@ class RAF extends Component {
                                     Object.keys(this.state.addFile[quest.id]).map((a,index)=> 
                                         <div className="form-group ml-4">
                                             
-                                            <input type="file" name={quest.id} onChange={this.onChange}  />
+                                            <input type="file" name={quest.id} data-id={index} onChange={this.onChange}  />
                                          {this.state.addFile[quest.id].length-1 === index &&  <i className="fa fa-plus" onClick={this.addFiles(index)}
                                          style={{ fontSize: "24px",  }} data-id={quest.id} > 
                                     
