@@ -41,7 +41,6 @@ export class OrganizationList extends React.Component {
 
     async componentDidMount() {
         const res = await fetchOrganizations();
-        console.log(res)
         this.setState({
             Organizations: res,
         })
@@ -106,7 +105,6 @@ export class OrganizationList extends React.Component {
         let org_id = this.state.Org_Id
         let rmType = e.target.dataset.id;
         let response = await deleteOrganizations(org_id,rmType)
-        console.log(response)
         if (response.status === "failed") {
             this.setState({
                 error: response.status

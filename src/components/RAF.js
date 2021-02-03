@@ -31,35 +31,65 @@ class RAF extends Component {
             btnAction:"",
             error:"",
             prevJump:[],
+            addFile:{
+                 
+            }
+            ,
             uploadMsg:[]
         }
 
     }
-    onUnload = e => { // the method that will be used for both add and remove event
-        e.preventDefault();
-        e.returnValue = '';
-     }
+    
     async componentDidMount() {
        const { customer } = this.props.match.params;
         this.setState({ customer: customer })
         this.setState({ loading: true })
         const response = await rafQuestions(customer);
-         if(response && response.message && response.message==="form already submitted" || response.message === "invalid customer"){
+        if(response && response.message && response.message==="form already submitted" || response.message === "invalid customer"){
             this.setState({
                 loading: false, 
                 error: response.message === "invalid customer"? "invalid customer":"You have already submitted all data.", 
             })
         }else{
-            response.response.map(data=>
-                data.questions.map(ques=>
-                    ques.customer_answers?ques.customer_answers.map
-                    (q=>this.setState({
-                data: {
-                    ...this.state.data,
-                    [ques.id]: q.answer
-                }
-            })):""))
-            
+            let sections = response.response;
+            sections.map(questions=> 
+                    questions.questions.map(question=> {
+                        question.customer_answers.length>0 ?
+                            question.customer_answers.map(
+                                answers => {
+                                    this.setState({
+                                        data: {
+                                            ...this.state.data, 
+                                            [question.id]: question.question_type === "FILE"?this.state.data[question.id]?
+                                                           this.state.data[question.id].concat([answers.answer])
+                                                           :[answers.answer]: answers.answer
+                                        }, 
+                                        addFile:{
+                                            ...this.state.addFile,
+                                            [question.id]: question.question_type === "FILE"?this.state.addFile[question.id]?this.state.addFile[question.id].concat(['']):[""]:""
+                                          },
+                                          uploadMsg:{
+                                            ...this.state.uploadMsg,
+                                            [question.id]: question.question_type === "FILE"?this.state.uploadMsg[question.id]?this.state.uploadMsg[question.id].concat(['']):['']:""
+                                    }
+                                    })
+                                   
+                                }
+                                )
+                          : 
+                          this.setState({
+                            addFile:{
+                                ...this.state.addFile,
+                                [question.id]: question.question_type === "FILE"?[""]:""  
+                              },
+                            
+                          })  
+                            
+                    }
+                        
+                    
+                        ))
+                        
         }
         this.setState({
             loadrafquestions: response,
@@ -70,19 +100,20 @@ class RAF extends Component {
      
     onChange = async (e) => {
         e.preventDefault()
-        //this.setState({file:e.target.files[0]})
-
         let { name } = e.target;
         let file = e.target.files[0]
         let res = await this.uploadFile(file);
-       this.setState({
+        let files = this.state.data[name]?this.state.data[name].concat(res.data.response):res.data.response;
+        let message = this.state.uploadMsg[name]?this.state.uploadMsg[name].concat([res.data.message]):[res.data.message]
+        this.setState({
             data: {
                 ...this.state.data,
-                [name]: res.data.response,
+                [name]:  files
                },
-               
             uploadMsg: {
-               [name]: res.data.message},
+                ...this.state.uploadMsg,
+               [name]:  message
+            }
         })
 
     }
@@ -204,7 +235,50 @@ class RAF extends Component {
         }
 
     }
-    
+  
+    addFiles = i => e => {
+        e.preventDefault()
+         let id = e.target.dataset.id;
+         let addFile = this.state.addFile[id].concat([''])
+        this.setState({
+             addFile:{
+                 ...this.state.addFile,
+            [id]: addFile
+             }
+          })
+    }
+
+    deleteFile = i => e => {
+        e.preventDefault()
+        let id = e.target.dataset.id;
+        let data = this.state.data[id] ? [
+            ...this.state.data[id].slice(0, i),
+            ...this.state.data[id].slice(i + 1)
+          ]:[];
+          let uploadMsg = this.state.uploadMsg[id] ? [
+            ...this.state.uploadMsg[id].slice(0, i),
+            ...this.state.uploadMsg[id].slice(i + 1)
+          ]:[];
+        let addFile = [
+          ...this.state.addFile[id].slice(0, i),
+          ...this.state.addFile[id].slice(i + 1)
+        ]
+        this.setState({
+            addFile:{
+            ...this.state.addFile,
+            [id]: addFile,
+            },
+            data:{
+                ...this.state.data,
+                [id]: data,  
+            },
+            uploadMsg:{
+                ...this.state.uploadMsg,
+                [id]: uploadMsg,  
+            }
+        })
+      }
+
     display = () => {
         const display = this.state.loadrafquestions.response && this.state.loadrafquestions.response
             .map((data, id) =>
@@ -239,12 +313,32 @@ class RAF extends Component {
                                    </>
                                 )} </fieldset>) : quest.question_type === 'FILE' ?
                                     <><label key={idx} className="font-weight-bold">{quest.question}</label>
+                                    {
+                                    
+                                    Object.keys(this.state.addFile[quest.id]).map((a,index)=> 
                                         <div className="form-group ml-4">
+                                            
                                             <input type="file" name={quest.id} onChange={this.onChange}  />
-                                       {this.state.uploadMsg[quest.id] ? (
-                                           <div className="text-danger">{this.state.uploadMsg[quest.id]}</div>
-                                       ): <><span className="font-weight-bold text-danger">Uploaded File:</span> {this.state.data[quest.id]}</>}
-                                        </div></>
+                                         {this.state.addFile[quest.id].length-1 === index &&  <i className="fa fa-plus" onClick={this.addFiles(index)}
+                                         style={{ fontSize: "24px",  }} data-id={quest.id} > 
+                                    
+                                                           </i>
+                                                        }
+                                                           &nbsp;
+                                        <i className="fa fa-remove" onClick={this.deleteFile(index)}
+                                         style={{ fontSize: "24px", color: "red" }} data-id={quest.id} > 
+                                                           </i>
+                                        
+                                       {this.state.uploadMsg[quest.id]&&this.state.uploadMsg[quest.id][index]  ? (
+                                           
+                                           <div className="text-danger">{this.state.uploadMsg[quest.id][index]}</div> 
+                                       ): <>{this.state.data[quest.id]&&this.state.data[quest.id][index]&&<span className="font-weight-bold text-danger">Uploaded File: 
+                                       {this.state.data[quest.id]&&this.state.data[quest.id][index]}</span> }</>}
+                                      
+                                        </div>
+                                        )}
+                                                                               
+                                        </>
                                     : quest.question_type === 'CHECKBOX' ? (
                                         <fieldset className="form-group">
                                             <legend className="col-form-label font-weight-bold pt-0">{quest.question}</legend>
@@ -280,8 +374,6 @@ class RAF extends Component {
     }
 
     render() {
-       
-        
         toast.configure()
         const loading = this.state.loading
         return (
@@ -297,9 +389,7 @@ class RAF extends Component {
                         {loading ? "":
                         <form >
                         <fieldset className="form-group">
-                            
                             {this.display()}
-                            
                             <hr />
                             <div className="form-group row d-flex justify-content-center">
                                 <div className="col-sm-3">

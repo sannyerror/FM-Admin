@@ -524,7 +524,8 @@ class FormConfigure extends React.Component {
                                                                     <i className="fa fa-remove" data-secid={id} data-id={idy}></i>
                                                                 </div>
                                                                 }
-                                                                {idy === this.state.sections[id].questions[idx].suggested_answers.length - 1 && <div
+                                                                {idy === this.state.sections[id].questions[idx].suggested_answers.length - 1 && 
+                                                                <div
                                                                     style={{
                                                                         position: "absolute",
                                                                         top: "1px",

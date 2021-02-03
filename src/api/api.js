@@ -590,7 +590,6 @@ export const fetchOrganizations = async () => {
 
 export const deleteOrganizations = async (customer,remove_type) => {
   const currentUser = store.getState().loginData.user.token;
-  
   let data = {
     customer: customer
   }
@@ -915,7 +914,6 @@ export const submitRAF = async (data, customer, is_completely_filled) => {
       }
     })
       .then(response => {
-        
         const addraf = response.data
         dispatch(addRafSuccess(addraf))
         return response.data;
