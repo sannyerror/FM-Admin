@@ -31,9 +31,11 @@ class RAF extends Component {
             btnAction:"",
             error:"",
             prevJump:[],
-            addFile:{
-                 
-            }
+            addFile:{},
+            test:{183:[
+                    "static/assets/1612434440_Client_side_implementation_of_Chat_bot.pdf",
+                    "static/assets/1612434449_Copy_of_Upgrade__Maintenance_(1).xlsx"
+                ]}
             ,
             uploadMsg:[]
         }
@@ -97,33 +99,68 @@ class RAF extends Component {
         }) 
        
     }
-     
-    onChange = async (e) => {
-        e.preventDefault()
-        let index = e.target.dataset.id
-        let { name } = e.target;
-        let file = e.target.files[0]
-        let res = await this.uploadFile(file);
-        let file_path = res.data.status === "failed" ? res.data.response : res.data.response
-        let files = this.state.data[name]?
-        this.state.data[name][index]?(this.state.data[name][index]=[file_path])
-        :this.state.data[name].concat(file_path):file_path;
-        let Error_Msg = res.data.status === "failed" ? res.data.response.toString() : res.data.message;
-        let message = this.state.uploadMsg[name]?
-         this.state.uploadMsg[name][index]?(this.state.uploadMsg[name][index]=[Error_Msg]):
-                       this.state.uploadMsg[name].concat([Error_Msg]):[Error_Msg]
-        await this.setState({
+     updateData=(i,name,src,msg)=>{
+         let data = this.state.data[name];
+         data[i] = src;
+         let message = this.state.uploadMsg[name];
+         message[i] = msg;
+         this.setState({
             data: {
                 ...this.state.data,
-                [name]:  files
+                [name]:  data
                },
             uploadMsg: {
                 ...this.state.uploadMsg,
                [name]:  message
             }
+         })
+     }
+     updateData1=(name,src,msg)=>{
+        let data = this.state.data[name]?this.state.data[name].concat(src):[src]
+        let message = this.state.uploadMsg[name]?this.state.uploadMsg[name].concat(msg):[msg]
+        this.setState({
+           data: {
+               ...this.state.data,
+               [name]:  data
+              },
+              uploadMsg: {
+                ...this.state.uploadMsg,
+               [name]:  message
+            }  
         })
-
     }
+
+    onChange = async (e) => {
+        e.preventDefault()
+        let index = e.target.dataset.id
+        let { name } = e.target;
+        let file = e.target.files[0]
+        if(file){
+                    let res = await this.uploadFile(file);
+                    let file_path = res.data.status === "failed" ? res.data.response[0] : res.data.response[0]
+                    let Error_Msg = res.data.status === "failed" ? res.data.response.toString() : res.data.message;
+                    this.state.data[name]&&this.state.data[name][index]?
+                        this.updateData(index,name,file_path,Error_Msg):
+                        this.updateData1(name,file_path,Error_Msg)
+        }else{
+            let message = this.state.uploadMsg[name];
+            message[index] = [""];
+            let data = this.state.data[name];
+            data[index] =[ ""];
+            this.setState({
+                data: {
+                    ...this.state.data,
+                    [name]:  data
+                   },
+                uploadMsg: {
+                    ...this.state.uploadMsg,
+                   [name]:  message
+                }  
+            })
+        }
+        
+    }
+
     uploadFile = async (file) => {
         const formData = new FormData();
         formData.append('assets', file)
@@ -133,6 +170,7 @@ class RAF extends Component {
             }
         });
     }
+
     handleChange = (e) => {
         const { name, value } = e.target;
         const type = e.target.dataset.type;
@@ -381,12 +419,12 @@ class RAF extends Component {
     }
 
     render() {
-        toast.configure()
+       toast.configure()
         const loading = this.state.loading
         return (
             <div className="cotainer-fluid">
                 <div className="text-center"><h2>Readiness Assessment FORM</h2></div>
-                <div className="text-center col-sm text-info">Thanks for your interest in being part of the FirstMatch initiative. Please fill in the assessment form below.</div>
+                <div className="text-center col-sm text-info">Thanks for your interest in being part of the FirstMatch&trade; initiative. Please fill in the assessment form below.</div>
                 {loading?<div className="form-group mt-5 row d-flex justify-content-center"><span className="font-weight-bold h5">Loading</span><BeatLoader size={24} color='#0099CC' loading={loading}/><BeatLoader size={24} color='#0099CC' loading={loading}/></div> :""}
                 <div className="card-body shadow-sm p-3 m-3 bg-white rounded">
                     {this.state.error ? <div className="col-sm-12 d-flex shadow-lg p-3 mb-5 bg-white rounded justify-content-center text-info font-weight-bold h2">
