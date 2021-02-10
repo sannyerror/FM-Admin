@@ -34,7 +34,7 @@ export class UsersList extends React.Component {
         }
         const currentUser = store.getState().loginData.user.token;
         try {
-            const response = await axios.delete(`${baseApiUrl}/users/${userID}`, {
+            const response = await axios.delete(`${baseApiUrl}/users/${userID}/`, {
                 headers: {
                     'Authorization': `Bearer ${currentUser}`
                 }
