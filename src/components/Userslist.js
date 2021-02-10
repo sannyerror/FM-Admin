@@ -40,7 +40,6 @@ export class UsersList extends React.Component {
                 }
             })
                 .then(response => {
-                    
                     return response.data;
                 })
 

@@ -20,7 +20,7 @@ export class Login extends Component {
     constructor(props) {
         super(props);
         const isLoggedIn = props.user && props.user;
-    if (isLoggedIn && isLoggedIn.length>0&&isLoggedIn.token !== "") {
+    if (isLoggedIn && isLoggedIn.token) {
        this.props.history.push(`${isLoggedIn.role_type === "Coordinator" ? "/eiflist" : "/configure"}`);
     }
         this.state = {

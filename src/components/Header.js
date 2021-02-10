@@ -25,7 +25,7 @@ export class Header extends React.Component {
                     <a className="navbar-brand" href={`${token ? "/configure" : url}`}>
                         <img
                             className="navbar-brand"
-                            alt="First Match Logo"
+                            alt="FirstMatch Logo"
                             src="/img/logo_stroke.png"
                             width="40%" height="40%"
                         />

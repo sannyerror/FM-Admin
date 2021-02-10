@@ -20,12 +20,7 @@ class AddUser extends React.Component {
             role_type: "",
             Roles: [],
             error: {
-                first_name: "",
-                last_name: "",
-                email_id: "",
-                gender: '',
-                mobile: "",
-                group_id: "",
+               
             }
         }
     }
@@ -73,11 +68,11 @@ class AddUser extends React.Component {
         const data = this.state
         try {
             const response = await AddUsers(data, id);
+            console.log(response)
             if (response.status === "failed") {
-                const err = response.response
-                const msg = Object.keys(err).map(m => err[m])
+                const err = response.message
                 this.setState({
-                    error: msg
+                    error: err
                 })
             } else {
                 toast.info(`User ${id ? "updated" : "added"}  successfully.`, { position: toast.POSITION.TOP_CENTER, autoClose: 3000 })
@@ -141,9 +136,11 @@ class AddUser extends React.Component {
                                     value={this.state.last_name}
                                     name="last_name"
                                     className="form-control " placeholder="" required />
+                                    {this.state.error["last_name"] && 
+                            <span className="text-center text-danger">{this.state.error["last_name"]}
+                            </span>}
                             </div>
-                            {this.state.last_nameError && <div className="text-center text-danger">{this.state.last_nameError}
-                            </div>}
+                            
                         </div>
                         <div className="form-group row">
                             <label className="col-sm-2 col-form-label font-weight-bold ">Email ID:</label>
@@ -153,9 +150,12 @@ class AddUser extends React.Component {
                                     value={this.state.email_id}
                                     name="email_id"
                                     className="form-control " required />
+                                     {this.state.error["email_id"] && 
+                            <span className="text-center text-danger">
+                                {this.state.error["email_id"]}
+                            </span>}
                             </div>
-                            {this.state.email_idError && <div className="text-center text-danger">{this.state.email_idError}
-                            </div>}
+                           
                         </div>
                         <fieldset className="form-group">
                             <div className="row">
@@ -182,8 +182,9 @@ class AddUser extends React.Component {
                                         <label className="form-check-label" >
                                             Male
                                     </label>
-                                        {this.state.genderError && <div className="text-center text-danger ml-5">{this.state.genderError}
-                                        </div>}
+                                        {this.state.error["gender"] && 
+                                        <span className="text-center text-danger ml-5">{this.state.error["gender"]}
+                                        </span>}
                                     </div>
 
                                 </div>
@@ -198,9 +199,10 @@ class AddUser extends React.Component {
                                     value={this.state.mobile}
                                     name="mobile"
                                     className="form-control " required />
+                                    {this.state.error["mobile"] && <span className="text-center text-danger">{this.state.error["mobile"]}
+                            </span>}
                             </div>
-                            {this.state.mobileError && <div className="text-center text-danger">{this.state.mobileError}
-                            </div>}
+                            
                         </div>
                         <div className="form-group row">
                             <label className="col-sm-2 col-form-label font-weight-bold " >Role:</label>
@@ -211,7 +213,9 @@ class AddUser extends React.Component {
 
                                 </select>
                             </div>
-                            {this.state.group_idError && <div className="text-center text-danger">{this.state.group_idError}
+                            {this.state.error["group_id"] && 
+                            <div className="text-center text-danger">
+                                {this.state.error["group_id"]}
                             </div>}
                         </div>
                         <div className="form-group row">
