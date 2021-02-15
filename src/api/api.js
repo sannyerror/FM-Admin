@@ -171,6 +171,27 @@ export const checkDomain = async (domain) => {
   }
 };
 
+export const resendRAF = async (customer) => {
+  const { dispatch } = store
+  const currentUser = store.getState().loginData.user.token;
+   try {
+    return await axios.post(`${baseApiUrl}/resend-raf/`, { customer: customer }, {
+      headers: {
+        'Authorization': `Bearer ${currentUser}`
+      }
+    })
+      .then(response => {
+        return response.data;
+      })
+  }
+
+  catch (error) {
+    console.log('error')
+    throwError(error)
+
+  }
+};
+
 export const saveClientConfigure = async (data) => {
   const currentUser = store.getState().loginData.user.token;
   try {

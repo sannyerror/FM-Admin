@@ -47,6 +47,7 @@ class RAF extends Component {
         this.setState({ customer: customer })
         this.setState({ loading: true })
         const response = await rafQuestions(customer);
+        console.log(response)
         if(response && response.message && response.message==="form already submitted" || response.message === "invalid customer"){
             this.setState({
                 loading: false, 
@@ -425,7 +426,12 @@ class RAF extends Component {
             <div className="cotainer-fluid">
                 <div className="text-center"><h2>Readiness Assessment FORM</h2></div>
                 <div className="text-center col-sm text-info">Thanks for your interest in being part of the FirstMatch&trade; initiative. Please fill in the assessment form below.</div>
-                {loading?<div className="form-group mt-5 row d-flex justify-content-center"><span className="font-weight-bold h5">Loading</span><BeatLoader size={24} color='#0099CC' loading={loading}/><BeatLoader size={24} color='#0099CC' loading={loading}/></div> :""}
+                {loading?
+                <div className="form-group mt-5 row d-flex justify-content-center">
+                    <span className="font-weight-bold h5">Loading</span>
+                    <BeatLoader size={24} color='#0099CC' loading={loading}/>
+                    <BeatLoader size={24} color='#0099CC' loading={loading}/>
+                    </div> :""}
                 <div className="card-body shadow-sm p-3 m-3 bg-white rounded">
                     {this.state.error ? <div className="col-sm-12 d-flex shadow-lg p-3 mb-5 bg-white rounded justify-content-center text-info font-weight-bold h2">
                     {this.state.error}

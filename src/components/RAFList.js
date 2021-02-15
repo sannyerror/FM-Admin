@@ -1,5 +1,5 @@
 import React from 'react';
-import { fetchRaflist, baseApiUrl, UpdateDomain } from '../api/api';
+import { fetchRaflist, baseApiUrl, UpdateDomain, resendRAF } from '../api/api';
 import { connect } from 'react-redux';
 import axios from 'axios'
 import { toast } from 'react-toastify';
@@ -94,6 +94,36 @@ export class RAFList extends React.Component {
       let response = await UpdateDomain(customerId,domain,domain_updated)
       if(response.status === "success"){
         toast.info(response.message, { position: toast.POSITION.TOP_CENTER, autoClose: 3000 })
+        this.setState({
+            listID: "",
+            loading: true,
+            RafList:"",
+            success: "",
+            domain: "",
+            username: "",
+            password: "",
+            domain_updated: false,
+        })
+        await fetchRaflist();
+        this.setState({
+            loading: false
+        });
+                
+      }else {
+        toast.error(response.message, { position: toast.POSITION.TOP_CENTER, autoClose: 3000 })
+      }
+    }
+
+    resend_raf = async(e) => {
+        const {  customerId } = this.state
+       const response = await resendRAF(Number(customerId))
+       if(response.status === "success"){
+        toast.info(response.message, { position: toast.POSITION.TOP_CENTER, autoClose: 3000 })
+        this.setState({
+            listID: "",
+            loading: true,
+            RafList:""
+        })
         await fetchRaflist();
         this.setState({
             listID: "",
@@ -110,8 +140,8 @@ export class RAFList extends React.Component {
         toast.error(response.message, { position: toast.POSITION.TOP_CENTER, autoClose: 3000 })
       }
       
-    
     }
+
     render() {
         toast.configure()
         let { listID, success, domain, username, password, list_status, loading, domain_updated } = this.state;
@@ -138,10 +168,13 @@ export class RAFList extends React.Component {
                             <div className="col-sm-1  ">
                                 &nbsp;
                             </div>
-                            <div className="col-sm-5 d-flex justify-content-center">
+                            <div className="col-sm-3 d-flex justify-content-center">
+                                <button type="submit" value="resend" className="btn btn-primary pr-5 pl-5" onClick={e => this.resend_raf(e, "value")}>Resend</button>
+                            </div>
+                            <div className="col-sm-3 d-flex justify-content-center">
                                 <button type="submit" value="approved" className="btn btn-primary pr-5 pl-5" onClick={e => this.addDecision(e, "value")}>Approve</button>
                             </div>
-                            <div className="col-sm-5 d-flex justify-content-center">
+                            <div className="col-sm-3 d-flex justify-content-center">
                                 <button type="submit" value="rejected" className="btn btn-secondary pr-5 pl-5" onClick={e => this.addDecision(e, "value")}>Reject</button>
                             </div>
                             <div className="col-sm-1">

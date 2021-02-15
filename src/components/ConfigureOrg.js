@@ -87,7 +87,7 @@ class ConfigureOrg extends React.Component {
             <div className="container-fluid">
                 <form>
                     <div className="form-group d-flex flex-column bd-highlight mb-2">
-                        <div className="row p-2 bg-primary text-white">{Org_Name ? `Configure FirstMatch Tool for ${Org_Name}:` : "Choose an organization:"}</div>
+                        <div className="row p-2 bg-primary text-white">{Org_Name ? `Configure FirstMatch™ Tool for ${Org_Name}:` : "Choose an organization:"}</div>
                         {Org_Name ?
                             <div className="ml-5 mt-3">
                                 <div className="row p-2 bd-highlight">
