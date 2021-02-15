@@ -106,7 +106,8 @@ export class RAFList extends React.Component {
         })
         await fetchRaflist();
         this.setState({
-            loading: false
+            loading: false,
+            RafList: this.props.RafList,
         });
                 
       }else {
