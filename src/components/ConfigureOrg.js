@@ -131,7 +131,7 @@ class ConfigureOrg extends React.Component {
                                            <span className="text-center">Click on above to select an Image</span>
                                          </div>
                                          <div className="row">
-                                           <span className="text-danger small">Logo should be in PNG/JPEG format and size should be less or equal to 10kb.</span>
+                                           <span className="text-danger small">Logo should be in PNG/JPEG format and size should be less or equal to 10kb. 120X40 px - Ideal size</span>
                                          </div>
                                          <div className="row">
                                              <div className="col col-2">&nbsp;</div>

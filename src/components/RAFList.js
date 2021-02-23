@@ -109,9 +109,9 @@ export class RAFList extends React.Component {
             loading: false,
             RafList: this.props.RafList,
         });
-                
-      }else {
-        toast.error(response.message, { position: toast.POSITION.TOP_CENTER, autoClose: 3000 })
+      }
+      else {
+        toast.error(response.message, { position: toast.POSITION.TOP_CENTER, autoClose: 3000})
       }
     }
 

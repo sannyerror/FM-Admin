@@ -47,7 +47,6 @@ class RAF extends Component {
         this.setState({ customer: customer })
         this.setState({ loading: true })
         const response = await rafQuestions(customer);
-        console.log(response)
         if(response && response.message && response.message==="form already submitted" || response.message === "invalid customer"){
             this.setState({
                 loading: false, 
