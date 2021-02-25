@@ -32,11 +32,6 @@ class RAF extends Component {
             error:"",
             prevJump:[],
             addFile:{},
-            test:{183:[
-                    "static/assets/1612434440_Client_side_implementation_of_Chat_bot.pdf",
-                    "static/assets/1612434449_Copy_of_Upgrade__Maintenance_(1).xlsx"
-                ]}
-            ,
             uploadMsg:[]
         }
 
@@ -370,10 +365,10 @@ class RAF extends Component {
                                                            </i>
                                                         }
                                                            &nbsp;
-                                        <i className="fa fa-remove" onClick={this.deleteFile(index)}
+                                        {index>0 && <i className="fa fa-remove" onClick={this.deleteFile(index)}
                                          style={{ fontSize: "24px", color: "red" }} data-id={quest.id} > 
                                                            </i>
-                                        
+    }
                                        {this.state.uploadMsg[quest.id]&&this.state.uploadMsg[quest.id][index]  ? (
                                            
                                            <div className="text-danger">{this.state.uploadMsg[quest.id][index]}</div> 
@@ -463,7 +458,6 @@ class RAF extends Component {
                     )}
                     <Modal
                     isOpen={this.state.showPOPUP}
-                    //   onAfterOpen={afterOpenModal}
                     onRequestClose={this.handleClose}
                     style={customStyles}
                     contentLabel="Forgot Password"

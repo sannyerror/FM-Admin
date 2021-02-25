@@ -6,7 +6,10 @@ import 'react-toastify/dist/ReactToastify.css';
 class FormConfigure extends React.Component {
     constructor() {
         super();
-        this.state = {
+        this.state = this.getInitialState();
+    }
+    getInitialState() {
+        return {
             sections: [{
                 section: "Demographics",
                 section_id: 0,
@@ -35,17 +38,18 @@ class FormConfigure extends React.Component {
             lastSectionId: 0,
             Org_id: "",
             readOnly: ""
-
         }
+
+
     }
     componentDidMount = async () => {
-        let { Org, id } = this.props.match.params
+        let { id } = this.props.match.params
         const response = await fetchConfigureQuestions(id);
-        
+        console.log(response)
         if (response.message !== "sections not available") {
             this.setState({
                 Org_id: id,
-                sections: response.response,
+                sections: response.response?response.response:this.getInitialState(),
                 readOnly: response.is_prediction_available
             })
         } else {
@@ -243,13 +247,11 @@ class FormConfigure extends React.Component {
 
     render() {
         toast.configure();
-        let { section, questions, sections, } = this.state
+        let { sections } = this.state
         let id = this.state.lastSectionId;
-        const { Org } = this.props.match.params
         const sectionLength = this.state.sections.length - 1
         return (
             <div className="container-fluid">
-                {/* <div className="row p-2 mb-2 bg-primary text-white">Configure FirstMatch Tool for {Org}: Add Questions</div> */}
                 {this.state.sections.length > 0 ?
                     <div style={{ border: '1px solid #007bff', }}>
                         <form onChange={this.handleChange} className="m-3" >
@@ -268,22 +270,8 @@ class FormConfigure extends React.Component {
                                     <label className="form-check-label font-weight-bold">Related</label>
 
                                 </div>
-                                {/* <div className="col-sm-1"> */}
-                                {id === 0 ? <div
-                                    style={{
-                                        position: "relative",
-                                        top: "1px",
-                                        right: "-0px",
-                                        width: "50px",
-                                        height: "25px",
-                                    }}
-                                    className="ml-3"
-                                    data-id={id}
-                                    onClick={this.sectionDelete(id)} >
-                                    <a data-id={id} className="btn btn-danger" href="#">
-                                        <i data-id={id} className="fa fa-trash-o fa-lg"></i>
-                                    </a>
-                                </div> :
+                                {id === 0 ? ""
+                                :
                                     <div
                                         style={{
                                             position: "relative",
@@ -301,8 +289,6 @@ class FormConfigure extends React.Component {
                                     </div>
                                 }
                             </div>
-                            {/* </div> */}
-
                             {
                                 sections[id].questions.map((val, idx) => {
                                     let catId = `cat-${idx}`, answerId = `answer-${idx}`, descId = `description-${idx}`,
@@ -328,7 +314,6 @@ class FormConfigure extends React.Component {
                                                             className="form-control"
                                                         />
                                                     </div>
-                                                    {/* <div className="col-sm-1"> */}
                                                     {!this.state.readOnly ?
                                                     id === 0 ? idx === 0 || idx === 1 || idx === 2 ? "" :
                                                         <div
@@ -362,7 +347,6 @@ class FormConfigure extends React.Component {
                                                                 <i data-id={id} className="fa fa-trash-o fa-lg"></i> </a>
                                                         </div>
                                                     :""}
-                                                    {/* </div> */}
                                                 </div>
                                                 <div className="form-group row" key={idx}>
                                                     <label className="col-sm-2 col-form-label font-weight-bold " htmlFor={descId}>Description:</label>
@@ -582,17 +566,6 @@ class FormConfigure extends React.Component {
                                                                 </select>
                                                             </div>
                                                             <div className="col-sm-2">
-                                                                {/* <input
-                                                                    type="text"
-                                                                    name={validationId2}
-                                                                    data-id={idx}
-                                                                    data-secid={id}
-                                                                    data-name="validation2"
-                                                                    id={validationId2}
-                                                                    placeholder="Text"
-                                                                    value={sections[id].questions[idx].validation2}
-                                                                    className="form-control"
-                                                                /> */}
                                                                 <select name={validationId2}
                                                                     data-id={idx}
                                                                     data-secid={id}
