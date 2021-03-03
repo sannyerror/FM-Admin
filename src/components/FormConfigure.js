@@ -700,7 +700,7 @@ class FormConfigure extends React.Component {
                                                                     data-secid={id}
                                                                     data-name="flag"
                                                                     id={flagId}
-                                                                    checked={sections[id].questions[idx].flag == "0"}
+                                                                    checked={sections[id].questions[idx].flag === "" ? true:sections[id].questions[idx].flag == "0"}
                                                                     value="0" />
                                                                 <label className="form-check-label" >
                                                                     Add

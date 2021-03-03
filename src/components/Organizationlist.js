@@ -77,7 +77,7 @@ export class OrganizationList extends React.Component {
                     showPOPUP: false,
                 })
 
-                this.props.history.push(`/billing/org=${org_id}&name=${org_name}`);
+                this.props.history.push(`/admin/billing/org=${org_id}&name=${org_name}`);
             }
             this.setState({
                 showPOPUP: true,
@@ -130,7 +130,7 @@ export class OrganizationList extends React.Component {
             userID: userID,
             prompt: true
         })
-        this.props.history.push(`/configure/organization/edit=true&id=${userID}`);
+        this.props.history.push(`/admin/configure/organization/edit=true&id=${userID}`);
     }
 
     onBilling = async (e) => {
@@ -142,7 +142,7 @@ export class OrganizationList extends React.Component {
             startBill: false
         })
 
-        this.props.history.push(`/billing/org=${Id}&name=${name}`);
+        this.props.history.push(`/admin/billing/org=${Id}&name=${name}`);
     }
 
     render() {

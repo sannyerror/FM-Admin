@@ -127,7 +127,7 @@ class AddQuestion extends React.Component {
                 });
             } else {
                 toast.info(`Question ${id ? "updated" : "added"}  successfully.`, { position: toast.POSITION.TOP_CENTER, autoClose: 3000 })
-                this.props.history.push('/configure/questions');
+                this.props.history.push('/admin/configure/questions');
             }
 
         }

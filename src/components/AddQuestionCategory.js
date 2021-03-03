@@ -17,8 +17,9 @@ class AddQuestionCategory extends React.Component {
     }
     addCategory = async (e) => {
         e.preventDefault();
-        const { title, description, parent } = this.state;
-        const data = parent ? {
+        const { title, description, parent, CheckedSub } = this.state;
+        console.log(this.state)
+        const data = CheckedSub === true ? {
             title: title,
             description: description,
             parent: parent
@@ -29,6 +30,7 @@ class AddQuestionCategory extends React.Component {
         } 
         try {
             const response = await AddQuestionsCategory(data);
+            console.log(response)
             if (response.status === "failed") {
                 this.setState({
                     error: response.title ? response.title : "Please select sub category."
@@ -52,8 +54,8 @@ class AddQuestionCategory extends React.Component {
         });
     }
     addAnother = (e) => {
-        this.setState({ title: "", description: "", isUpdated: false })
-    }
+        this.setState({ title: "", description: "", isUpdated: false, parent:"", CheckedSub: false })  
+    } 
 
     onRadioChange = async (e) => {
         const {  value } = e.target;

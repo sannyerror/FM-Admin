@@ -71,7 +71,7 @@ export class UsersList extends React.Component {
             userID: userID,
             prompt: true
         })
-        this.props.history.push(`/configure/user/edit=true&id=${userID}`);
+        this.props.history.push(`/admin/configure/user/edit=true&id=${userID}`);
     }
 
     render() {

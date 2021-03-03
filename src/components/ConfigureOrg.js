@@ -92,7 +92,7 @@ class ConfigureOrg extends React.Component {
                             <div className="ml-5 mt-3">
                                 <div className="row p-2 bd-highlight">
                                     <div className="col col-3">
-                                        <a href={`/questions-configure/Org=${Org_Name}&id=${Org_Id}`}>Questions</a>
+                                        <a href={`/admin/questions-configure/Org=${Org_Name}&id=${Org_Id}`}>Questions</a>
                                         </div>
                                     
                                     <div className="col col-3">

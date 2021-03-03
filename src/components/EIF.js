@@ -64,7 +64,7 @@ export class EIF extends React.Component {
                         error:response.message
                     });
                 }else{
-                    this.props.history.push('/eifmsg');
+                    this.props.history.push('/admin/eifmsg');
                 }
                 
             }

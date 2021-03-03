@@ -21,7 +21,7 @@ export class Login extends Component {
         super(props);
         const isLoggedIn = props.user && props.user;
     if (isLoggedIn && isLoggedIn.token) {
-       this.props.history.push(`${isLoggedIn.role_type === "Coordinator" ? "/eiflist" : "/configure"}`);
+       this.props.history.push(`${isLoggedIn.role_type === "Coordinator" ? "/admin/eiflist" : "/admin/configure"}`);
     }
         this.state = {
             email: '',
@@ -85,11 +85,11 @@ export class Login extends Component {
                             accessToken: token,
                             refreshToken: refresh_token
                         })
-                        this.props.history.push(`${role_type === "Coordinator" ? "/eiflist" : "/configure"}`);
+                        this.props.history.push(`${role_type === "Coordinator" ? "/admin/eiflist" : "/admin/configure"}`);
 
                     } 
                 } else {
-                    this.props.history.push("/changepassword");
+                    this.props.history.push("/admin/changepassword");
                 }
 
 

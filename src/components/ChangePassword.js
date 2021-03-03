@@ -54,7 +54,7 @@ class ChangePassword extends React.Component {
                         is_pwd_updated: ""
                     }
                     this.props.dispatch({ type: "FETCH_USERS_SUCCESS", user });
-                    this.props.history.push(`${role_type === "Coordinator" ? "/eiflist":"/configure"}`);
+                    this.props.history.push(`${role_type === "Coordinator" ? "/admin/eiflist":"/admin/configure"}`);
                 }
             }
             catch (error) {

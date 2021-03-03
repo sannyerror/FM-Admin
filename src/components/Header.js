@@ -12,7 +12,7 @@ export class Header extends React.Component {
     }
 
     onformConf = (e)=>{
-        this.props.history.push('/org-configure/');
+        this.props.history.push('/admin/org-configure/');
     }
     render() {
         const { token, is_pwd_updated, role_type } = this.props.user
@@ -22,7 +22,7 @@ export class Header extends React.Component {
 
             <div id="app" className="container-fluid">
                 <nav className="navbar navbar-expand-lg navbar-light ">
-                    <a className="navbar-brand" href={`${token ? "/configure" : url}`}>
+                    <a className="navbar-brand" href={`${token ? "/admin/configure" : url}`}>
                         <img
                             className="navbar-brand"
                             alt="FirstMatch Logo"
@@ -41,24 +41,24 @@ export class Header extends React.Component {
                         {token ? (
                             <ul className="navbar-nav mr-right">
                                 <li className="nav-item">
-                                <a className="btn btn-primary" href="/org-configure/">Configure FirstMatch&trade;</a>
+                                <a className="btn btn-primary" href="/admin/org-configure/">Configure FirstMatch&trade;</a>
                                 </li>
                                 <li className="nav-item">
-                                    <a className="nav-link" href="/changepassword">Profile</a>
+                                    <a className="nav-link" href="/admin/changepassword">Profile</a>
                                 </li>
                                 {is_pwd_updated === false ? "" : (
                                     <>
                                         {role_type === "Coordinator" ? "" : (
                                             <li className="nav-item">
-                                                <a className="nav-link" href="/configure">Configure</a>
+                                                <a className="nav-link" href="/admin/configure">Configure</a>
                                             </li>
                                         )}
 
                                         <li className="nav-item">
-                                            <a className="nav-link" href="/eiflist">Interest Forms</a>
+                                            <a className="nav-link" href="/admin/eiflist">Interest Forms</a>
                                         </li>
                                         <li className="nav-item">
-                                            <a className="nav-link" href="/raflist">Assessment Forms
+                                            <a className="nav-link" href="/admin/raflist">Assessment Forms
                  </a>
                                         </li>
 

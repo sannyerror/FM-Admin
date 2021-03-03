@@ -260,7 +260,7 @@ class RAF extends Component {
         }
         try {
           await submitRAF(newArray, customer, is_completely_filled);
-           {is_completely_filled === "true" ? this.props.history.push('/rafmsg') :
+           {is_completely_filled === "true" ? this.props.history.push('/admin/rafmsg') :
            toast.info('Data saved successfully.', { position: toast.POSITION.TOP_CENTER,autoClose:1500 }) }
             
         }

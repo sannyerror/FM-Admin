@@ -6,7 +6,7 @@ export const PrivateRoute = ({ component: Component, user, ...rest }) => {
   if(user.length <= 0 || user.token.token === ""){
     return (
       <Redirect  to={{
-        pathname: "/login",
+        pathname: "/admin/login",
       }}
     />
      );

@@ -60,7 +60,7 @@ class AddOrganization extends React.Component {
                 })
             } else {
                 toast.info(`User ${id ? "updated" : "added"}  successfully.`, { position: toast.POSITION.TOP_CENTER, autoClose: 3000 })
-                this.props.history.push('/configure/organizationlist');
+                this.props.history.push('/admin/configure/organizationlist');
             }
 
         }

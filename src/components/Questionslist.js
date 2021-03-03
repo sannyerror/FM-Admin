@@ -117,7 +117,7 @@ export class QuestionsList extends React.Component {
             userID: userID,
             prompt: true
         })
-        this.props.history.push(`/configure/question/edit=true&id=${userID}`);
+        this.props.history.push(`/admin/configure/question/edit=true&id=${userID}`);
     }
 
     handleDelete = async (e) => {

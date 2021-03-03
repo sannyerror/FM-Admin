@@ -41,36 +41,36 @@ function App() {
                 <Header/>
               <Switch>
               <Route exact path="/">
-                          <Redirect to="/configure" />
+                          <Redirect to="/admin/configure" />
                           {/* <Redirect to="/login" />  */}
               </Route>
-                 <Route path="/eif" component={EIF}/>
-                <Route path="/eifmsg" component={EIFMSG}/>
-                <Route path="/rafmsg" component={RAFMSG} />
-                <Route path="/login" component={Login}/>
-                <Route path="/finddomain" component={FindDomain}/>
-                <Route path="/raf/:customer" component={RAF} />
+                 <Route path="/admin/eif" component={EIF}/>
+                <Route path="/admin/eifmsg" component={EIFMSG}/>
+                <Route path="/admin/rafmsg" component={RAFMSG} />
+                <Route path="/admin/login" component={Login}/>
+                <Route path="/admin/finddomain" component={FindDomain}/>
+                <Route path="/admin/raf/:customer" component={RAF} />
                 </Switch>
                 <Switch>
-                <PrivateRoute path="/changepassword" component={ChangePassword}/>
-                <PrivateRoute path="/billing/org=:org&name=:name" component={BillingDetails}/>
-                <PrivateRoute exact path="/configure" component={Configure}/>
-                <PrivateRoute path="/configure/questions" component={QuestionsList}/>
-                <PrivateRoute path="/configure/question/edit=:edit&id=:id" component={AddQuestion}/>
-                <PrivateRoute path="/configure/addquestion" component={AddQuestion}/>
-                <PrivateRoute path="/configure/adduser" component={AddUser}/>
-                <PrivateRoute path="/configure/user/edit=:edit&id=:id" component={AddUser}/>
-                <PrivateRoute path="/configure/userslist" component={Userslist}/>
-                <PrivateRoute path="/configure/addorganization" component={AddOrganization}/>
-                <PrivateRoute path="/configure/organizationlist" component={Organizationlist}/> 
-                <PrivateRoute path="/configure/organization/edit=:edit&id=:id" component={AddOrganization}/> 
-                <PrivateRoute path="/configure/questioncategory" component={AddQuestionCategory}/>
-                <PrivateRoute path="/eiflist" component={EIFList}/>
-                <PrivateRoute path="/raflist" component={RAFList}/>
-                <PrivateRoute path="/configure/emailslist" component={EmailList}/>
-                <PrivateRoute path="/org-configure/" component={ConfigureOrg}/>
-                <PrivateRoute path="/questions-configure/Org=:Org&id=:id" component={FormConfigure}/>
-                <PrivateRoute path="/configure/questioncategorylist" component={QuestionsCategorylist}/>
+                <PrivateRoute path="/admin/changepassword" component={ChangePassword}/>
+                <PrivateRoute path="/admin/billing/org=:org&name=:name" component={BillingDetails}/>
+                <PrivateRoute exact path="/admin/configure" component={Configure}/>
+                <PrivateRoute path="/admin/configure/questions" component={QuestionsList}/>
+                <PrivateRoute path="/admin/configure/question/edit=:edit&id=:id" component={AddQuestion}/>
+                <PrivateRoute path="/admin/configure/addquestion" component={AddQuestion}/>
+                <PrivateRoute path="/admin/configure/adduser" component={AddUser}/>
+                <PrivateRoute path="/admin/configure/user/edit=:edit&id=:id" component={AddUser}/>
+                <PrivateRoute path="/admin/configure/userslist" component={Userslist}/>
+                <PrivateRoute path="/admin/configure/addorganization" component={AddOrganization}/>
+                <PrivateRoute path="/admin/configure/organizationlist" component={Organizationlist}/> 
+                <PrivateRoute path="/admin/configure/organization/edit=:edit&id=:id" component={AddOrganization}/> 
+                <PrivateRoute path="/admin/configure/questioncategory" component={AddQuestionCategory}/>
+                <PrivateRoute path="/admin/eiflist" component={EIFList}/>
+                <PrivateRoute path="/admin/raflist" component={RAFList}/>
+                <PrivateRoute path="/admin/configure/emailslist" component={EmailList}/>
+                <PrivateRoute path="/admin/org-configure/" component={ConfigureOrg}/>
+                <PrivateRoute path="/admin/questions-configure/Org=:Org&id=:id" component={FormConfigure}/>
+                <PrivateRoute path="/admin/configure/questioncategorylist" component={QuestionsCategorylist}/>
                 </Switch>
                </Router>
                 </PersistGate>
