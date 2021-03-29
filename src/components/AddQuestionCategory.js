@@ -18,7 +18,6 @@ class AddQuestionCategory extends React.Component {
     addCategory = async (e) => {
         e.preventDefault();
         const { title, description, parent, CheckedSub } = this.state;
-        console.log(this.state)
         const data = CheckedSub === true ? {
             title: title,
             description: description,
@@ -30,8 +29,7 @@ class AddQuestionCategory extends React.Component {
         } 
         try {
             const response = await AddQuestionsCategory(data);
-            console.log(response)
-            if (response.status === "failed") {
+             if (response.status === "failed") {
                 this.setState({
                     error: response.title ? response.title : "Please select sub category."
                 });
@@ -50,7 +48,8 @@ class AddQuestionCategory extends React.Component {
     handleChange = (e) => {
         const { name, value } = e.target;
         this.setState({
-            [name]: value
+            [name]: value,
+            error:""
         });
     }
     addAnother = (e) => {
@@ -66,10 +65,13 @@ class AddQuestionCategory extends React.Component {
                 CheckedSub: true,
                 title:"",
                 isUpdated: false,
+                
             })
         } else {
             this.setState({
-                CheckedSub: false
+                CheckedSub: false,
+                error:"",
+                parent:""
             })
         }
     }

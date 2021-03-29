@@ -5,6 +5,13 @@ import axios from 'axios'
 import { toast } from 'react-toastify';
 import '../App.css';
 import { BeatLoader } from 'react-spinners'
+import {
+    BrowserRouter as Router,
+    Switch,
+    Route,
+    Link,
+    useRouteMatch
+  } from "react-router-dom";
 import { store } from '../App'
 export class RAFList extends React.Component {
     constructor() {
@@ -158,7 +165,7 @@ export class RAFList extends React.Component {
                             <li className="list-group-item mb-1" >
                                 <span className="text-primary "> {q.question}</span> <br />
                                 <span className=" ">(A)</span> -
-                                {z.answer.includes('static') ? (<a href={`${baseApiUrl}/${z.answer}`} className="font-weight-bold">View File</a>) : (<span className="text-primary font-weight-bold">{z.answer}</span>)}
+                                {z.answer.includes('static') ? (<Link to={`${baseApiUrl}/${z.answer}`} className="font-weight-bold">View File</Link>) : (<span className="text-primary font-weight-bold">{z.answer}</span>)}
 
                             </li>
                         )

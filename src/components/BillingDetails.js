@@ -6,6 +6,13 @@ import { fetchBillingStatus, configureBilling,
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
 import { toast } from 'react-toastify';
+import {
+    BrowserRouter as Router,
+    Switch,
+    Route,
+    Link,
+    useRouteMatch
+  } from "react-router-dom";
 import 'react-toastify/dist/ReactToastify.css';
 
 class BillingDetails extends React.Component {
@@ -278,7 +285,7 @@ class BillingDetails extends React.Component {
                                 </div>
                                 <div className="form-check col col-3 p-3 form-check-inline ml-3">
 
-                                    <div className="d-flex justify-content-end"><a href="#" onClick={this.onConfigure}>Configure</a></div>
+                                    <div className="d-flex justify-content-end"><Link to="#" onClick={this.onConfigure}>Configure</Link></div>
                                 </div>
                             </div>
                             {this.state.allRecords && this.state.allRecords.response && this.state.singlerecord.response ?
@@ -388,7 +395,7 @@ class BillingDetails extends React.Component {
                                     </div>
                                     <div className="form-check col-2 form-check-inline ">
 
-                                        <div ><a href="#" onClick={this.onLoad} >Load</a></div>
+                                        <div ><Link to="#" onClick={this.onLoad} >Load</Link></div>
                                     </div>
                                 </div>
                             </form>

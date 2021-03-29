@@ -2,13 +2,14 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
+import { Beforeunload } from 'react-beforeunload'
 import * as serviceWorker from './serviceWorker';
 
 ReactDOM.render(
   <React.StrictMode>
-    
+    {/* <Beforeunload onBeforeunload={() => localStorage.clear()} > */}
     <App />
-    
+    {/* </Beforeunload> */}
   </React.StrictMode>,
   document.getElementById('root')
 );

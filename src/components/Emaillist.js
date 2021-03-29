@@ -4,6 +4,13 @@ import axios from 'axios'
 import '../App.css';
 import { store } from '../App'
 import { toast } from 'react-toastify';
+import {
+    BrowserRouter as Router,
+    Switch,
+    Route,
+    Link,
+    useRouteMatch
+  } from "react-router-dom";
 import 'react-toastify/dist/ReactToastify.css';
 
 export class EmailList extends React.Component {
@@ -84,8 +91,8 @@ export class EmailList extends React.Component {
                                         <td>{q.recipient}</td>
                                         <td>{q.subject}</td>
                                         <td>{q.date_created}</td>
-                                        <td>{q.status === "success" ? "Success" : (<a href="" data-id={q.id} onClick={this.handleResend}>
-                                            Resend Email</a>)}</td>
+                                        <td>{q.status === "success" ? "Success" : (<Link to="" data-id={q.id} onClick={this.handleResend}>
+                                            Resend Email</Link>)}</td>
 
                                     </tr>
                                 ))}

@@ -4,6 +4,13 @@ import { connect } from 'react-redux';
 import axios from 'axios'
 import '../App.css';
 import {BeatLoader } from 'react-spinners'
+import {
+    BrowserRouter as Router,
+    Switch,
+    Route,
+    Link,
+    useRouteMatch
+  } from "react-router-dom";
 import  {store}  from '../App'
 export class EIFList extends React.Component {
     constructor() {
@@ -121,7 +128,7 @@ export class EIFList extends React.Component {
                     <div className="container-fluid">
                         <div className="row d-flex justify-content-center mb-4">
                         Click here to fill the Readiness Assessment Form - &nbsp;
-                        <a href={`${raf_link}`} className="font-weight-bold">{raf_link}</a>
+                        <Link to={`${raf_link}`} className="font-weight-bold">{raf_link}</Link>
                         </div>
                         <div>&nbsp;</div>
                     </div>

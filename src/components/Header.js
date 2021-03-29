@@ -2,6 +2,13 @@ import React from 'react';
 import '../App.css';
 import { logOut } from '../api/api';
 import { connect } from 'react-redux'
+import {
+    BrowserRouter as Router,
+    Switch,
+    Route,
+    Link,
+    useRouteMatch
+  } from "react-router-dom";
 export class Header extends React.Component {
   constructor(props){
       super(props)
@@ -22,14 +29,14 @@ export class Header extends React.Component {
 
             <div id="app" className="container-fluid">
                 <nav className="navbar navbar-expand-lg navbar-light ">
-                    <a className="navbar-brand" href={`${token ? "/admin/configure" : url}`}>
+                    <Link className="navbar-brand" to={`${token ? "/admin/configure" : url}`}>
                         <img
                             className="navbar-brand"
                             alt="FirstMatch Logo"
                             src="/img/logo_stroke.png"
                             width="40%" height="40%"
                         />
-                    </a>
+                    </Link>
                     <div id="navbarNav" className="collapse navbar-collapse">
                         <ul className="navbar-nav mr-auto">
 
@@ -41,25 +48,25 @@ export class Header extends React.Component {
                         {token ? (
                             <ul className="navbar-nav mr-right">
                                 <li className="nav-item">
-                                <a className="btn btn-primary" href="/admin/org-configure/">Configure FirstMatch&trade;</a>
+                                <Link className="btn btn-primary" to="/admin/org-configure/">Configure FirstMatch&trade;</Link>
                                 </li>
                                 <li className="nav-item">
-                                    <a className="nav-link" href="/admin/changepassword">Profile</a>
+                                    <Link className="nav-link" to="/admin/changepassword">Profile</Link>
                                 </li>
                                 {is_pwd_updated === false ? "" : (
                                     <>
                                         {role_type === "Coordinator" ? "" : (
                                             <li className="nav-item">
-                                                <a className="nav-link" href="/admin/configure">Configure</a>
+                                                <Link className="nav-link" to="/admin/configure">Configure</Link>
                                             </li>
                                         )}
 
                                         <li className="nav-item">
-                                            <a className="nav-link" href="/admin/eiflist">Interest Forms</a>
+                                            <Link className="nav-link" to="/admin/eiflist">Interest Forms</Link>
                                         </li>
                                         <li className="nav-item">
-                                            <a className="nav-link" href="/admin/raflist">Assessment Forms
-                 </a>
+                                            <Link className="nav-link" to="/admin/raflist">Assessment Forms
+                 </Link>
                                         </li>
 
                                     </>

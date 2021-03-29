@@ -29,10 +29,11 @@ import EmailList from "./components/Emaillist";
 import BillingDetails from "./components/BillingDetails";
 import FormConfigure from "./components/FormConfigure";
 import ConfigureOrg from "./components/ConfigureOrg";
-
 export const { store , persistor } = configureStore(createHistory());
-function App() {
-  return (
+class App extends React.Component {
+  
+  render(){
+   return (
     <div className="Container-fluid">
       <div className="App">
        <Provider store={store}>
@@ -78,6 +79,7 @@ function App() {
         </div>
     </div>
   );
+  }
 }
 
 export default App;

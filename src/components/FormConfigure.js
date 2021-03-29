@@ -1,6 +1,13 @@
 import React from "react"
 import { saveClientConfigure, fetchConfigureQuestions } from '../api/api';
 import { toast } from 'react-toastify';
+import {
+    BrowserRouter as Router,
+    Switch,
+    Route,
+    Link,
+    useRouteMatch
+  } from "react-router-dom";
 import 'react-toastify/dist/ReactToastify.css';
 
 class FormConfigure extends React.Component {
@@ -45,7 +52,6 @@ class FormConfigure extends React.Component {
     componentDidMount = async () => {
         let { id } = this.props.match.params
         const response = await fetchConfigureQuestions(id);
-        console.log(response)
         if (response.message !== "sections not available") {
             this.setState({
                 Org_id: id,
@@ -79,7 +85,7 @@ class FormConfigure extends React.Component {
             return {
                 question_id: id, question: item.question, description: item.description,
                 answer_type: item.answer_type, suggested_answers: item.suggested_answers,
-                suggested_jump: item.suggested_jump, validation1: item.validation1, validation2: item.validation2, error_msg: item.error_msg, required: item.required
+                suggested_jump: item.suggested_jump, validation1: item.validation1, validation2: item.validation2, error_msg: item.error_msg, required: item.required, flag: item.flag
             }
         })
         this.setState({ sections });
@@ -134,7 +140,7 @@ class FormConfigure extends React.Component {
                 if (e.target.dataset.name === "suggested_jump") {
                     sections[secid].questions[e.target.dataset.id].suggested_jump[e.target.dataset.idy] = { "answer": sections[secid].questions[e.target.dataset.id].suggested_answers[e.target.dataset.idy].value, "jumpto": e.target.value }
                 } else {
-                    sections[secid].questions[e.target.dataset.id].suggested_answers[e.target.dataset.idy] = { "id": parseInt(e.target.dataset.idy), "value": e.target.value }
+                    sections[secid].questions[e.target.dataset.id].suggested_answers[e.target.dataset.idy] = { "id": parseInt(e.target.dataset.idy), "value": e.target.value, "isChecked": false }
                 }
 
                 this.setState({ sections })
@@ -189,7 +195,7 @@ class FormConfigure extends React.Component {
         const secid = e.target.dataset.id
         let ques = {
             question_id: id, question: "", description: "",
-            answer_type: "", suggested_answers: [""], suggested_jump: [], validation1: "", validation2: "", error_msg: "", required: "yes", flag: ""
+            answer_type: "", suggested_answers: [""], suggested_jump: [], validation1: "", validation2: "", error_msg: "", required: "yes", flag: "0"
         }
         let sections = [...this.state.sections]
         sections[secid].questions = [...sections[secid].questions, ques]
@@ -207,7 +213,7 @@ class FormConfigure extends React.Component {
                 related: "false",
                 questions: [{
                     question_id: 0, question: "", description: "",
-                    answer_type: "", suggested_answers: [""], suggested_jump: [], validation1: "", validation2: "", error_msg: "", required: "yes", flag: ""
+                    answer_type: "", suggested_answers: [""], suggested_jump: [], validation1: "", validation2: "", error_msg: "", required: "yes", flag: "0"
                 }]
             }],
             lastItemId: 1,
@@ -283,9 +289,9 @@ class FormConfigure extends React.Component {
                                         className="ml-3"
                                         data-id={id}
                                         onClick={this.sectionDelete(id)} >
-                                        <a data-id={id} className="btn btn-danger" href="#">
+                                        <Link data-id={id} className="btn btn-danger" to="#">
                                             <i data-id={id} className="fa fa-trash-o fa-lg"></i>
-                                        </a>
+                                        </Link>
                                     </div>
                                 }
                             </div>
@@ -327,8 +333,8 @@ class FormConfigure extends React.Component {
                                                             className=""
                                                             data-id={id}
                                                             onClick={this.quesDelete(idx)} >
-                                                            <a data-id={id} className="btn btn-danger" href="#">
-                                                                <i data-id={id} className="fa fa-trash-o fa-lg"></i> </a>
+                                                            <Link data-id={id} className="btn btn-danger" to="#">
+                                                                <i data-id={id} className="fa fa-trash-o fa-lg"></i> </Link>
                                                         </div>
 
                                                         :
@@ -343,8 +349,8 @@ class FormConfigure extends React.Component {
                                                             className=""
                                                             data-id={id}
                                                             onClick={this.quesDelete(idx)} >
-                                                            <a data-id={id} className="btn btn-danger" href="#">
-                                                                <i data-id={id} className="fa fa-trash-o fa-lg"></i> </a>
+                                                            <Link data-id={id} className="btn btn-danger" to="#">
+                                                                <i data-id={id} className="fa fa-trash-o fa-lg"></i> </Link>
                                                         </div>
                                                     :""}
                                                 </div>
@@ -699,8 +705,8 @@ class FormConfigure extends React.Component {
                                                                     data-id={idx}
                                                                     data-secid={id}
                                                                     data-name="flag"
-                                                                    id={flagId}
-                                                                    checked={sections[id].questions[idx].flag === "" ? true:sections[id].questions[idx].flag == "0"}
+                                                                    id={flagId} 
+                                                                    checked={sections[id].questions[idx].flag == "0"}
                                                                     value="0" />
                                                                 <label className="form-check-label" >
                                                                     Add

@@ -4,6 +4,13 @@ import '../App.css';
 import { fetchOrganizations, uploadLogo, baseApiUrl } from '../api/api';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import {
+    BrowserRouter as Router,
+    Switch,
+    Route,
+    Link,
+    useRouteMatch
+  } from "react-router-dom";
 import { connect } from 'react-redux';
 class ConfigureOrg extends React.Component {
     constructor() {
@@ -92,7 +99,7 @@ class ConfigureOrg extends React.Component {
                             <div className="ml-5 mt-3">
                                 <div className="row p-2 bd-highlight">
                                     <div className="col col-3">
-                                        <a href={`/admin/questions-configure/Org=${Org_Name}&id=${Org_Id}`}>Questions</a>
+                                        <Link to={`/admin/questions-configure/Org=${Org_Name}&id=${Org_Id}`}>Questions</Link>
                                         </div>
                                     
                                     <div className="col col-3">
