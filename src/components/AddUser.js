@@ -68,7 +68,6 @@ class AddUser extends React.Component {
         const data = this.state
         try {
             const response = await AddUsers(data, id);
-            console.log(response)
             if (response.status === "failed") {
                 const err = response.message
                 this.setState({

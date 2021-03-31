@@ -148,6 +148,7 @@ const currentUser = store.getState().loginData.user.token;
   }
 };
 
+
 export const checkDomain = async (domain) => {
   const { dispatch } = store
   const data = `${domain}`
@@ -180,6 +181,7 @@ export const resendRAF = async (customer) => {
       }
     })
       .then(response => {
+        console.log(response)
         return response.data;
       })
   }
@@ -691,7 +693,32 @@ export const fetchRaflist = async () => {
 
   }
 };
+export const Change_RAFtype = async () => {
 
+  const { dispatch } = store
+  const currentUser = store.getState().loginData.user.token;
+  try {
+    dispatch(fetchRafListRequest)
+    return await axios.get(`${baseApiUrl}/staging?category=2&q=drafts`, {
+      headers: {
+        'Authorization': `Bearer ${currentUser}`
+      }
+    })
+      .then(response => {
+        console.log(response)
+        const RafList = response.data
+        dispatch(fetchRafListSuccess(RafList))
+        return response.data;
+      })
+  }
+
+  catch (error) {
+    console.log('error')
+    dispatch(fetchRafListFailure(error.message))
+    throwError(error)
+
+  }
+};
 export const fetchQuestionsCategory = async () => {
   const { dispatch } = store
   try {
