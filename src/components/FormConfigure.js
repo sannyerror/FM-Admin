@@ -1,6 +1,8 @@
 import React from "react"
 import { saveClientConfigure, fetchConfigureQuestions } from '../api/api';
+import Preview from "./Preview_Questions"
 import { toast } from 'react-toastify';
+import { connect } from 'react-redux';
 import {
     BrowserRouter as Router,
     Switch,
@@ -9,7 +11,21 @@ import {
     useRouteMatch
   } from "react-router-dom";
 import 'react-toastify/dist/ReactToastify.css';
-
+import Modal from "react-modal";
+const customStyles = {
+    content: {
+        position: "absolute",
+        width: "70%",
+        top: "35%",
+        marginTop: "-150px",
+        left: "20%",
+        right: "10%",
+        marginLeft: "-100px",
+        height: "auto",
+        overflow: "scroll",
+        border: "1px solid black"
+    }
+  };
 class FormConfigure extends React.Component {
     constructor() {
         super();
@@ -44,24 +60,29 @@ class FormConfigure extends React.Component {
             lastItemId: 3,
             lastSectionId: 0,
             Org_id: "",
-            readOnly: ""
+            readOnly: "",
+            isPreview: false,
+            isOpen: false,
+            logoPath: ""
         }
 
 
     }
     componentDidMount = async () => {
         let { id } = this.props.match.params
-        const response = await fetchConfigureQuestions(id);
+        let logopath = this.props.organizationsList.filter(org=> org.id === Number(id))[0].logo_path
+        let response = await fetchConfigureQuestions(id);
         if (response.message !== "sections not available") {
             this.setState({
                 Org_id: id,
                 sections: response.response?response.response:this.getInitialState(),
-                readOnly: response.is_prediction_available
+                readOnly: response.is_prediction_available,
+                logoPath: logopath
             })
         } else {
             this.setState({
                 Org_id: id,
-
+                logoPath: logopath
             })
         }
 
@@ -233,8 +254,14 @@ class FormConfigure extends React.Component {
             lastSectionId: id + 1
         })
     }
-
-    handleSubmit = async (e) => {
+    handlePreview = async(e) => {
+      e.preventDefault();
+      this.setState({
+        isPreview: true,
+        isOpen: true
+      })
+    }
+        handleSubmit = async (e) => {
         e.preventDefault()
         let data = {
             customer: this.state.Org_id,
@@ -250,538 +277,569 @@ class FormConfigure extends React.Component {
         }
 
     }
-
+    handleClose = () => {
+        this.setState({
+          isOpen: false,
+          isPreview: false
+        })
+      }
+    
     render() {
         toast.configure();
-        let { sections } = this.state
+        let { sections, isPreview, logoPath } = this.state
         let id = this.state.lastSectionId;
         const sectionLength = this.state.sections.length - 1
-        return (
-            <div className="container-fluid">
-                {this.state.sections.length > 0 ?
-                    <div style={{ border: '1px solid #007bff', }}>
-                        <form onChange={this.handleChange} className="m-3" >
-                            <div className="form-group row" >
-                                <label className="col-sm-1 col-form-label font-weight-bold " htmlFor="question">Section {id + 1}:</label>
-                                <div className="col-sm-5">
-                                    <input className="form-control" type="text" name="section" id="section" data-secid={id} value={sections[id].section} />
-                                </div>
-                                <div className="form-check form-check-inline col-sm-1 ml-3">
-                                    <input type="checkbox"
-                                        className="form-check-input"
-                                        name="related"
-                                        data-secid={id}
-                                        checked={this.state.sections[id].related === "true"}
-                                        value="false" />
-                                    <label className="form-check-label font-weight-bold">Related</label>
-
-                                </div>
-                                {id === 0 ? ""
-                                :
-                                    <div
-                                        style={{
-                                            position: "relative",
-                                            top: "-5px",
-                                            right: "-0px",
-                                            width: "50px",
-                                            height: "44px",
-                                        }}
-                                        className="ml-3"
-                                        data-id={id}
-                                        onClick={this.sectionDelete(id)} >
-                                        <Link data-id={id} className="btn btn-danger" to="#">
-                                            <i data-id={id} className="fa fa-trash-o fa-lg"></i>
-                                        </Link>
+        if(isPreview){
+          return (
+            <Modal
+            isOpen={this.state.isOpen}
+            ariaHideApp={false}
+            onRequestClose={this.handleClose}
+            style={customStyles}
+            scrollable= "true"
+            contentLabel="Example Modal"
+          >
+           <Preview DynamicQuestions={this.state.sections} logoPath={logoPath}/>
+          </Modal>
+          
+          )
+        }else{
+            return (
+                <div className="container-fluid">
+                    {this.state.sections.length > 0 ?
+                        <div style={{ border: '1px solid #007bff', }}>
+                            <form onChange={this.handleChange} className="m-3" >
+                                <div className="form-group row" >
+                                    <label className="col-sm-1 col-form-label font-weight-bold " htmlFor="question">Section {id + 1}:</label>
+                                    <div className="col-sm-5">
+                                        <input className="form-control" type="text" name="section" id="section" data-secid={id} value={sections[id].section} />
                                     </div>
-                                }
-                            </div>
-                            {
-                                sections[id].questions.map((val, idx) => {
-                                    let catId = `cat-${idx}`, answerId = `answer-${idx}`, descId = `description-${idx}`,
-                                        validationId1 = `validation1-${idx}`, validationId2 = `validation2-${idx}`, typeId = `type-${idx}`, errorId = `error-${idx}`,
-                                        requiredId = `required-${idx}`, flagId = `flag-${idx}`
-                                        
-                                    return (
-                                        <div style={{ border: '1px solid #007bff' }} className="mb-2" >
-                                            <div className="m-3 p-3"  >
-                                                <div className="form-group row" key={idx}>
-                                                    <label className="col-sm-2 col-form-label font-weight-bold " htmlFor={catId}>{`Question #${idx + 1}:`}</label>
-                                                    <div className="col-sm-6">
-                                                        <input
-                                                            type="text"
-                                                            name={catId}
-                                                            data-id={idx}
-                                                            data-secid={id}
-                                                            data-name="question"
-                                                            id={catId}
-                                                            required
-                                                            readOnly={this.state.readOnly}
-                                                            value={sections[id].questions[idx].question}
-                                                            className="form-control"
-                                                        />
-                                                    </div>
-                                                    {!this.state.readOnly ?
-                                                    id === 0 ? idx === 0 || idx === 1 || idx === 2 ? "" :
-                                                        <div
-                                                            style={{
-                                                                position: "relative",
-                                                                top: "1px",
-                                                                right: "-20px",
-                                                                width: "50px",
-                                                                height: "25px",
-                                                            }}
-                                                            className=""
-                                                            data-id={id}
-                                                            onClick={this.quesDelete(idx)} >
-                                                            <Link data-id={id} className="btn btn-danger" to="#">
-                                                                <i data-id={id} className="fa fa-trash-o fa-lg"></i> </Link>
-                                                        </div>
-
-                                                        :
-                                                        <div
-                                                            style={{
-                                                                position: "relative",
-                                                                top: "1px",
-                                                                right: "-20px",
-                                                                width: "50px",
-                                                                height: "25px",
-                                                            }}
-                                                            className=""
-                                                            data-id={id}
-                                                            onClick={this.quesDelete(idx)} >
-                                                            <Link data-id={id} className="btn btn-danger" to="#">
-                                                                <i data-id={id} className="fa fa-trash-o fa-lg"></i> </Link>
-                                                        </div>
-                                                    :""}
-                                                </div>
-                                                <div className="form-group row" key={idx}>
-                                                    <label className="col-sm-2 col-form-label font-weight-bold " htmlFor={descId}>Description:</label>
-                                                    <div className="col-sm-6">
-                                                        <input
-                                                            type="text"
-                                                            name={descId}
-                                                            data-id={idx} data-secid={id}
-                                                            data-name="description"
-                                                            id={descId}
-                                                            value={sections[id].questions[idx].description}
-                                                            className="form-control"
-
-                                                        />
-                                                    </div>
-                                                </div>
-                                                <fieldset className="form-group">
-                                                    <div className="row">
-                                                        <legend className="col-form-label col-sm-2 font-weight-bold" htmlFor={typeId}>Answer Type:</legend>
-                                                        <div className="col-sm-8">
-                                                            <div className="form-check form-check-inline">
-                                                                <input
-                                                                    className="form-check-input" name={typeId}
-                                                                    data-id={idx}
-                                                                    data-secid={id}
-                                                                    data-name="answer_type"
-                                                                    id={typeId}
-                                                                    type="radio"
-                                                                    checked={sections[id].questions[idx].answer_type === "SELECT"}
-                                                                    // disabled={this.state.answer_type !== "SELECT" ? true : false}
-                                                                    value="SELECT" required />
-                                                                <label className="form-check-label" >
-                                                                    Drop Down
-                                    </label>
-                                                            </div>
-                                                            <div className="form-check form-check-inline">
-                                                                <input
-                                                                    className="form-check-input" name={typeId}
-                                                                    data-id={idx}
-                                                                    data-secid={id}
-                                                                    data-name="answer_type"
-                                                                    id={typeId}
-                                                                    type="radio"
-                                                                    value="TEXT"
-                                                                    checked={sections[id].questions[idx].answer_type === "TEXT"}
-                                                                    required />
-                                                                <label className="form-check-label" >
-                                                                    Text
-                                    </label>
-                                                            </div>
-                                                            <div className="form-check form-check-inline">
-                                                                <input
-                                                                    className="form-check-input" name={typeId}
-                                                                    data-id={idx}
-                                                                    data-secid={id}
-                                                                    data-name="answer_type"
-                                                                    id={typeId}
-                                                                    type="radio"
-                                                                    value="NUMBER"
-                                                                    checked={sections[id].questions[idx].answer_type === "NUMBER"}
-                                                                    required />
-                                                                <label className="form-check-label" >
-                                                                    Number
-                                    </label>
-                                                            </div>
-                                                            <div className="form-check form-check-inline">
-                                                                <input
-                                                                    className="form-check-input" name={typeId}
-                                                                    data-id={idx}
-                                                                    data-secid={id}
-                                                                    data-name="answer_type"
-                                                                    id={typeId}
-                                                                    type="radio"
-                                                                    value="CHECKBOX"
-                                                                    checked={sections[id].questions[idx].answer_type === "CHECKBOX"}
-                                                                    required />
-                                                                <label className="form-check-label" >
-                                                                    Checkbox
-                                    </label>
-                                                            </div>
-                                                            <div className="form-check form-check-inline">
-                                                                <input
-                                                                    className="form-check-input" name={typeId}
-                                                                    data-id={idx}
-                                                                    data-secid={id}
-                                                                    data-name="answer_type"
-                                                                    id={typeId}
-                                                                    type="radio"
-                                                                    value="RADIO"
-                                                                    checked={sections[id].questions[idx].answer_type === "RADIO"}
-                                                                    required />
-                                                                <label className="form-check-label" >
-                                                                    Radio
-                                    </label>
-                                                            </div>
-                                                            <div className="form-check form-check-inline">
-                                                                <input
-                                                                    className="form-check-input" name={typeId}
-                                                                    data-id={idx}
-                                                                    data-secid={id}
-                                                                    data-name="answer_type"
-                                                                    id={typeId}
-                                                                    type="radio"
-                                                                    value="FILE"
-                                                                    checked={sections[id].questions[idx].answer_type === "FILE"}
-                                                                    required />
-                                                                <label className="form-check-label" >
-                                                                    Upload File
-                                    </label>
-                                                            </div>
-                                                            <div className="form-check form-check-inline">
-                                                                <input
-                                                                    className="form-check-input" name={typeId}
-                                                                    data-id={idx}
-                                                                    data-secid={id}
-                                                                    data-name="answer_type"
-                                                                    id={typeId}
-                                                                    type="radio"
-                                                                    value="DATE"
-                                                                    checked={sections[id].questions[idx].answer_type === "DATE"}
-                                                                    required />
-                                                                <label className="form-check-label" >
-                                                                    Date
-                                    </label>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </fieldset>
-                                                {this.state.sections[id].questions[idx].answer_type === "" || this.state.sections[id].questions[idx].answer_type === "TEXT" || this.state.sections[id].questions[idx].answer_type === "NUMBER"
-                                                    || this.state.sections[id].questions[idx].answer_type === "RELATED" || this.state.sections[id].questions[idx].answer_type === "DATE" || this.state.sections[id].questions[idx].answer_type === "FILE" ?
-                                                    "" : this.state.sections[id].questions.filter(p => p.question === this.state.sections[id].questions[idx].question).map((q, i) => q.suggested_answers.map((question, idy) => (
-                                                        <div key={idy} className="form-group row">
-                                                            <label className="col-sm-2 col-form-label font-weight-bold">Answer {idy + 1}:</label>
-                                                            <div className="col-sm-4">
-                                                                <input
-                                                                    type="text"
-                                                                    name={answerId}
-                                                                    data-id={idx}
-                                                                    data-secid={id}
-                                                                    data-name="suggested_answers"
-                                                                    id={answerId}
-                                                                    data-idy={idy}
-                                                                    value={question.value ? question.value : ""}
-                                                                    className="form-control" required
-                                                                />
-                                                                {idy !== 0 && <div
-                                                                    style={{
-                                                                        position: "absolute",
-                                                                        top: "1px",
-                                                                        right: "-0px",
-                                                                        width: "25px",
-                                                                        height: "25px",
-                                                                        fontSize: "24px",
-                                                                        color: "red"
-                                                                    }}
-                                                                    className="font-text-bold text-center "
-                                                                    data-secid={id} data-id={idy}
-                                                                    onClick={this.handleDelete(idx, idy)} >
-                                                                    <i className="fa fa-remove" data-secid={id} data-id={idy}></i>
-                                                                </div>
-                                                                }
-                                                                {idy === this.state.sections[id].questions[idx].suggested_answers.length - 1 && 
-                                                                <div
-                                                                    style={{
-                                                                        position: "absolute",
-                                                                        top: "1px",
-                                                                        right: "-25px",
-                                                                        width: "25px",
-                                                                        height: "25px",
-                                                                        fontSize: "24px",
-                                                                    }}
-                                                                    className="font-text-bold text-center "
-                                                                    data-secid={id} data-id={idy}
-                                                                    onClick={this.addAnswer(idx)} >
-                                                                    <i className="fa fa-plus" style={{ fontSize: "28px" }} data-secid={id} data-id={idy}></i>
-                                                                </div>}
-                                                            </div>
-                                                            {this.state.sections[id].questions[idx].answer_type === "CHECKBOX" ? "" :
-                                                                <>
-                                                                    <label className="col-sm-1 col-form-label font-weight-bold ml-3" >Jump to:</label>
-                                                                    <div className="col-sm-3">
-                                                                        <select name="jumpto"
-                                                                            className="form-control" id="exampleFormControlSelect1"
-                                                                            data-id={idx}
-                                                                            data-secid={id}
-                                                                            data-name="suggested_jump"
-                                                                            id={answerId}
-                                                                            data-idy={idy} required>
-                                                                            <option value="" >Select</option>
-                                                                            {this.state.sections.filter((sec, key) => sec.related === "true").map(
-                                                                                (q, i) =>
-                                                                                    <option key={i} value={q.section}
-                                                                                        selected={q.section === `${this.state.sections[id].questions[idx].suggested_jump[idy] && this.state.sections[id].questions[idx].suggested_jump[idy].jumpto}`}
-                                                                                    >
-                                                                                        {q.section}
-                                                                                    </option>
-                                                                            )}
-                                                                        </select>
-                                                                    </div>
-                                                                </>}
-                                                        </div>
-
-                                                    )))}
-                                                {this.state.sections[id].questions[idx].answer_type === "TEXT" ?
-                                                    <React.Fragment>
-                                                        <div className="form-group row" key={idx}>
-                                                            <label className="col-sm-2 col-form-label font-weight-bold " htmlFor={validationId1}>Validation:</label>
-                                                            <div className="col-sm-2">
-                                                                <select name={validationId1}
-                                                                    data-id={idx}
-                                                                    data-secid={id}
-                                                                    data-name="validation1"
-                                                                    id={validationId1} className="form-control" id="exampleFormControlSelect1" onChange={this.handleChange} required>
-                                                                    <option value="">Select</option>
-                                                                    <option value="Contains" selected={sections[id].questions[idx].validation1 === "Contains"}>Contains</option>
-                                                                    <option value="Not Contains" selected={sections[id].questions[idx].validation2 === "Not Contains"}>Does not contain</option>
-                                                                </select>
-                                                            </div>
-                                                            <div className="col-sm-2">
-                                                                <select name={validationId2}
-                                                                    data-id={idx}
-                                                                    data-secid={id}
-                                                                    data-name="validation2"
-                                                                    id={validationId1} className="form-control" id="exampleFormControlSelect1" onChange={this.handleChange} required>
-                                                                    <option value="">Select</option>
-                                                                    <option value="Numbers" selected={sections[id].questions[idx].validation2 === "Numbers"}>Numbers</option>
-                                                                    <option value="Special characters" selected={sections[id].questions[idx].validation2 === "Special characters"}>Special characters</option>
-                                                                    <option value="Both" selected={sections[id].questions[idx].validation2 === "Both"}>Both</option>
-                                                                </select>
-                                                            </div>
-                                                            <div className="col-sm-2">
-
-                                                                <input
-                                                                    type="text"
-                                                                    name={errorId}
-                                                                    data-id={idx}
-                                                                    data-secid={id}
-                                                                    data-name="error_msg"
-                                                                    id={errorId}
-                                                                    placeholder="Error message"
-                                                                    value={sections[id].questions[idx].error_msg}
-                                                                    className="form-control"
-                                                                />
-                                                            </div>
-
-                                                        </div>
-
-                                                    </React.Fragment>
-                                                    : ""}
-                                                {this.state.sections[id].questions[idx].answer_type === "NUMBER" ?
-                                                    <React.Fragment>
-                                                        <div className="form-group row" key={idx}>
-                                                            <label className="col-sm-2 col-form-label font-weight-bold " htmlFor={validationId1}>Validation:</label>
-                                                            <label className="col-sm-1 col-form-label font-weight-bold " >Between</label>
-                                                            <div className="col-sm-1">
-                                                                <input
-                                                                    type="text"
-                                                                    name={validationId1}
-                                                                    data-id={idx}
-                                                                    data-secid={id}
-                                                                    data-name="validation1"
-                                                                    id={validationId1}
-                                                                    placeholder="Number"
-                                                                    value={sections[id].questions[idx].validation1}
-                                                                    className="form-control"
-                                                                />
-
-                                                            </div>
-                                                            <span className="text-center"> and</span>
-
-                                                            <div className="col-sm-1">
-                                                                <input
-                                                                    type="text"
-                                                                    name={validationId2}
-                                                                    data-id={idx}
-                                                                    data-secid={id}
-                                                                    data-name="validation2"
-                                                                    id={validationId2}
-                                                                    placeholder="Number"
-                                                                    value={sections[id].questions[idx].validation2}
-                                                                    className="form-control"
-                                                                />
-                                                            </div>
-                                                            <div className="col-sm-2">
-
-                                                                <input
-                                                                    type="text"
-                                                                    name={errorId}
-                                                                    data-id={idx}
-                                                                    data-secid={id}
-                                                                    data-name="error_msg"
-                                                                    id={errorId}
-                                                                    placeholder="Error message"
-                                                                    value={sections[id].questions[idx].error_msg}
-                                                                    className="form-control"
-                                                                />
-                                                            </div>
-
-                                                        </div>
-
-                                                    </React.Fragment>
-                                                    : ""}
-
-                                                <fieldset className="form-group">
-                                                    <div className="row">
-                                                        <legend className="col-form-label col-sm-2 font-weight-bold" htmlFor={requiredId}>Required:</legend>
-                                                        <div className="col-sm-10">
-                                                            <div className="form-check form-check-inline">
-                                                                <input
-                                                                    type="radio"
-                                                                    name={requiredId}
-                                                                    className="form-check-input"
-                                                                    data-id={idx}
-                                                                    data-secid={id}
-                                                                    data-name="required"
-                                                                    id={requiredId}
-                                                                    checked={sections[id].questions[idx].required == "yes"}
-                                                                    value="yes" />
-                                                                <label className="form-check-label" >
-                                                                    Yes
-                                    </label>
-                                                            </div>
-                                                            <div className="form-check form-check-inline">
-                                                                <input
-                                                                    type="radio"
-                                                                    name={requiredId}
-                                                                    className="form-check-input"
-                                                                    data-id={idx}
-                                                                    data-secid={id}
-                                                                    data-name="required"
-                                                                    id={requiredId}
-                                                                    checked={sections[id].questions[idx].required == "no"}
-                                                                    value="no" />
-                                                                <label className="form-check-label" >
-                                                                    No
-                                    </label>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </fieldset>
-                                                <fieldset className="form-group">
-                                                    <div className="row">
-                                                        <legend className="col-form-label col-sm-2 font-weight-bold" htmlFor={requiredId}>Flag:</legend>
-                                                        <div className="col-sm-10">
-                                                            <div className="form-check form-check-inline">
-                                                                <input
-                                                                    type="radio"
-                                                                    name={flagId}
-                                                                    className="form-check-input"
-                                                                    data-id={idx}
-                                                                    data-secid={id}
-                                                                    data-name="flag"
-                                                                    id={flagId} 
-                                                                    checked={sections[id].questions[idx].flag == "0"}
-                                                                    value="0" />
-                                                                <label className="form-check-label" >
-                                                                    Add
-                                    </label>
-                                                            </div>
-                                                            <div className="form-check form-check-inline">
-                                                                <input
-                                                                    type="radio"
-                                                                    name={flagId}
-                                                                    className="form-check-input"
-                                                                    data-id={idx}
-                                                                    data-secid={id}
-                                                                    data-name="flag"
-                                                                    id={flagId}
-                                                                    checked={sections[id].questions[idx].flag == "1"}
-                                                                    value="1" />
-                                                                <label className="form-check-label" >
-                                                                    Edit
-                                    </label>
-                                                            </div>
-                                                            <div className="form-check form-check-inline">
-                                                                <input
-                                                                    type="radio"
-                                                                    name={flagId}
-                                                                    className="form-check-input"
-                                                                    data-id={idx}
-                                                                    data-secid={id}
-                                                                    data-name="flag"
-                                                                    id={flagId}
-                                                                    checked={sections[id].questions[idx].flag == "2"}
-                                                                    value="2" />
-                                                                <label className="form-check-label" >
-                                                                    Custom
-                                    </label>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </fieldset>
-
-                                            </div>
+                                    <div className="form-check form-check-inline col-sm-1 ml-3">
+                                        <input type="checkbox"
+                                            className="form-check-input"
+                                            name="related"
+                                            data-secid={id}
+                                            checked={this.state.sections[id].related === "true"}
+                                            value="false" />
+                                        <label className="form-check-label font-weight-bold">Related</label>
+    
+                                    </div>
+                                    {id === 0 ? ""
+                                    :
+                                        <div
+                                            style={{
+                                                position: "relative",
+                                                top: "-5px",
+                                                right: "-0px",
+                                                width: "50px",
+                                                height: "44px",
+                                            }}
+                                            className="ml-3"
+                                            data-id={id}
+                                            onClick={this.sectionDelete(id)} >
+                                            <Link data-id={id} className="btn btn-danger" to="#">
+                                                <i data-id={id} className="fa fa-trash-o fa-lg"></i>
+                                            </Link>
                                         </div>
-                                    )
-                                })
-                            }
-                            <div className=" col d-flex justify-content-end">
-                                <button className="btn btn-primary" data-id={id} onClick={this.addQuestion}>{this.state.sections[id].questions.length === 0 ? "Add Question" : "Add Next Question"}</button>
-                            </div>
-
-                        </form>
-                    </div >
-                    : ""}
-                <div className="row mt-3 text-center">
-
-                    <div className="col col-sm-3  mb-1">
-                        <button
-                            className="btn btn-primary"
-                            disabled={id === 0 ? true : sectionLength >= 1 ? false : true}
-                            onClick={this.onPreviuos} >Previous Section</button>
+                                    }
+                                </div>
+                                {
+                                    sections[id].questions.map((val, idx) => {
+                                        let catId = `cat-${idx}`, answerId = `answer-${idx}`, descId = `description-${idx}`,
+                                            validationId1 = `validation1-${idx}`, validationId2 = `validation2-${idx}`, typeId = `type-${idx}`, errorId = `error-${idx}`,
+                                            requiredId = `required-${idx}`, flagId = `flag-${idx}`
+                                            
+                                        return (
+                                            <div style={{ border: '1px solid #007bff' }} className="mb-2" >
+                                                <div className="m-3 p-3"  >
+                                                    <div className="form-group row" key={idx}>
+                                                        <label className="col-sm-2 col-form-label font-weight-bold " htmlFor={catId}>{`Question #${idx + 1}:`}</label>
+                                                        <div className="col-sm-6">
+                                                            <input
+                                                                type="text"
+                                                                name={catId}
+                                                                data-id={idx}
+                                                                data-secid={id}
+                                                                data-name="question"
+                                                                id={catId}
+                                                                required
+                                                                readOnly={this.state.readOnly}
+                                                                value={sections[id].questions[idx].question}
+                                                                className="form-control"
+                                                            />
+                                                        </div>
+                                                        {!this.state.readOnly ?
+                                                        id === 0 ? idx === 0 || idx === 1 || idx === 2 ? "" :
+                                                            <div
+                                                                style={{
+                                                                    position: "relative",
+                                                                    top: "1px",
+                                                                    right: "-20px",
+                                                                    width: "50px",
+                                                                    height: "25px",
+                                                                }}
+                                                                className=""
+                                                                data-id={id}
+                                                                onClick={this.quesDelete(idx)} >
+                                                                <Link data-id={id} className="btn btn-danger" to="#">
+                                                                    <i data-id={id} className="fa fa-trash-o fa-lg"></i> </Link>
+                                                            </div>
+    
+                                                            :
+                                                            <div
+                                                                style={{
+                                                                    position: "relative",
+                                                                    top: "1px",
+                                                                    right: "-20px",
+                                                                    width: "50px",
+                                                                    height: "25px",
+                                                                }}
+                                                                className=""
+                                                                data-id={id}
+                                                                onClick={this.quesDelete(idx)} >
+                                                                <Link data-id={id} className="btn btn-danger" to="#">
+                                                                    <i data-id={id} className="fa fa-trash-o fa-lg"></i> </Link>
+                                                            </div>
+                                                        :""}
+                                                    </div>
+                                                    <div className="form-group row" key={idx}>
+                                                        <label className="col-sm-2 col-form-label font-weight-bold " htmlFor={descId}>Description:</label>
+                                                        <div className="col-sm-6">
+                                                            <input
+                                                                type="text"
+                                                                name={descId}
+                                                                data-id={idx} data-secid={id}
+                                                                data-name="description"
+                                                                id={descId}
+                                                                value={sections[id].questions[idx].description}
+                                                                className="form-control"
+    
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                    <fieldset className="form-group">
+                                                        <div className="row">
+                                                            <legend className="col-form-label col-sm-2 font-weight-bold" htmlFor={typeId}>Answer Type:</legend>
+                                                            <div className="col-sm-8">
+                                                                <div className="form-check form-check-inline">
+                                                                    <input
+                                                                        className="form-check-input" name={typeId}
+                                                                        data-id={idx}
+                                                                        data-secid={id}
+                                                                        data-name="answer_type"
+                                                                        id={typeId}
+                                                                        type="radio"
+                                                                        checked={sections[id].questions[idx].answer_type === "SELECT"}
+                                                                        // disabled={this.state.answer_type !== "SELECT" ? true : false}
+                                                                        value="SELECT" required />
+                                                                    <label className="form-check-label" >
+                                                                        Drop Down
+                                        </label>
+                                                                </div>
+                                                                <div className="form-check form-check-inline">
+                                                                    <input
+                                                                        className="form-check-input" name={typeId}
+                                                                        data-id={idx}
+                                                                        data-secid={id}
+                                                                        data-name="answer_type"
+                                                                        id={typeId}
+                                                                        type="radio"
+                                                                        value="TEXT"
+                                                                        checked={sections[id].questions[idx].answer_type === "TEXT"}
+                                                                        required />
+                                                                    <label className="form-check-label" >
+                                                                        Text
+                                        </label>
+                                                                </div>
+                                                                <div className="form-check form-check-inline">
+                                                                    <input
+                                                                        className="form-check-input" name={typeId}
+                                                                        data-id={idx}
+                                                                        data-secid={id}
+                                                                        data-name="answer_type"
+                                                                        id={typeId}
+                                                                        type="radio"
+                                                                        value="NUMBER"
+                                                                        checked={sections[id].questions[idx].answer_type === "NUMBER"}
+                                                                        required />
+                                                                    <label className="form-check-label" >
+                                                                        Number
+                                        </label>
+                                                                </div>
+                                                                <div className="form-check form-check-inline">
+                                                                    <input
+                                                                        className="form-check-input" name={typeId}
+                                                                        data-id={idx}
+                                                                        data-secid={id}
+                                                                        data-name="answer_type"
+                                                                        id={typeId}
+                                                                        type="radio"
+                                                                        value="CHECKBOX"
+                                                                        checked={sections[id].questions[idx].answer_type === "CHECKBOX"}
+                                                                        required />
+                                                                    <label className="form-check-label" >
+                                                                        Checkbox
+                                        </label>
+                                                                </div>
+                                                                <div className="form-check form-check-inline">
+                                                                    <input
+                                                                        className="form-check-input" name={typeId}
+                                                                        data-id={idx}
+                                                                        data-secid={id}
+                                                                        data-name="answer_type"
+                                                                        id={typeId}
+                                                                        type="radio"
+                                                                        value="RADIO"
+                                                                        checked={sections[id].questions[idx].answer_type === "RADIO"}
+                                                                        required />
+                                                                    <label className="form-check-label" >
+                                                                        Radio
+                                        </label>
+                                                                </div>
+                                                                <div className="form-check form-check-inline">
+                                                                    <input
+                                                                        className="form-check-input" name={typeId}
+                                                                        data-id={idx}
+                                                                        data-secid={id}
+                                                                        data-name="answer_type"
+                                                                        id={typeId}
+                                                                        type="radio"
+                                                                        value="FILE"
+                                                                        checked={sections[id].questions[idx].answer_type === "FILE"}
+                                                                        required />
+                                                                    <label className="form-check-label" >
+                                                                        Upload File
+                                        </label>
+                                                                </div>
+                                                                <div className="form-check form-check-inline">
+                                                                    <input
+                                                                        className="form-check-input" name={typeId}
+                                                                        data-id={idx}
+                                                                        data-secid={id}
+                                                                        data-name="answer_type"
+                                                                        id={typeId}
+                                                                        type="radio"
+                                                                        value="DATE"
+                                                                        checked={sections[id].questions[idx].answer_type === "DATE"}
+                                                                        required />
+                                                                    <label className="form-check-label" >
+                                                                        Date
+                                        </label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </fieldset>
+                                                    {this.state.sections[id].questions[idx].answer_type === "" || this.state.sections[id].questions[idx].answer_type === "TEXT" || this.state.sections[id].questions[idx].answer_type === "NUMBER"
+                                                        || this.state.sections[id].questions[idx].answer_type === "RELATED" || this.state.sections[id].questions[idx].answer_type === "DATE" || this.state.sections[id].questions[idx].answer_type === "FILE" ?
+                                                        "" : this.state.sections[id].questions.filter(p => p.question === this.state.sections[id].questions[idx].question).map((q, i) => q.suggested_answers.map((question, idy) => (
+                                                            <div key={idy} className="form-group row">
+                                                                <label className="col-sm-2 col-form-label font-weight-bold">Answer {idy + 1}:</label>
+                                                                <div className="col-sm-4">
+                                                                    <input
+                                                                        type="text"
+                                                                        name={answerId}
+                                                                        data-id={idx}
+                                                                        data-secid={id}
+                                                                        data-name="suggested_answers"
+                                                                        id={answerId}
+                                                                        data-idy={idy}
+                                                                        value={question.value ? question.value : ""}
+                                                                        className="form-control" required
+                                                                    />
+                                                                    {idy !== 0 && <div
+                                                                        style={{
+                                                                            position: "absolute",
+                                                                            top: "1px",
+                                                                            right: "-0px",
+                                                                            width: "25px",
+                                                                            height: "25px",
+                                                                            fontSize: "24px",
+                                                                            color: "red"
+                                                                        }}
+                                                                        className="font-text-bold text-center "
+                                                                        data-secid={id} data-id={idy}
+                                                                        onClick={this.handleDelete(idx, idy)} >
+                                                                        <i className="fa fa-remove" data-secid={id} data-id={idy}></i>
+                                                                    </div>
+                                                                    }
+                                                                    {idy === this.state.sections[id].questions[idx].suggested_answers.length - 1 && 
+                                                                    <div
+                                                                        style={{
+                                                                            position: "absolute",
+                                                                            top: "1px",
+                                                                            right: "-25px",
+                                                                            width: "25px",
+                                                                            height: "25px",
+                                                                            fontSize: "24px",
+                                                                        }}
+                                                                        className="font-text-bold text-center "
+                                                                        data-secid={id} data-id={idy}
+                                                                        onClick={this.addAnswer(idx)} >
+                                                                        <i className="fa fa-plus" style={{ fontSize: "28px" }} data-secid={id} data-id={idy}></i>
+                                                                    </div>}
+                                                                </div>
+                                                                {this.state.sections[id].questions[idx].answer_type === "CHECKBOX" ? "" :
+                                                                    <>
+                                                                        <label className="col-sm-1 col-form-label font-weight-bold ml-3" >Jump to:</label>
+                                                                        <div className="col-sm-3">
+                                                                            <select name="jumpto"
+                                                                                className="form-control" id="exampleFormControlSelect1"
+                                                                                data-id={idx}
+                                                                                data-secid={id}
+                                                                                data-name="suggested_jump"
+                                                                                id={answerId}
+                                                                                data-idy={idy} required>
+                                                                                <option value="" >Select</option>
+                                                                                {this.state.sections.filter((sec, key) => sec.related === "true").map(
+                                                                                    (q, i) =>
+                                                                                        <option key={i} value={q.section}
+                                                                                            selected={q.section === `${this.state.sections[id].questions[idx].suggested_jump[idy] && this.state.sections[id].questions[idx].suggested_jump[idy].jumpto}`}
+                                                                                        >
+                                                                                            {q.section}
+                                                                                        </option>
+                                                                                )}
+                                                                            </select>
+                                                                        </div>
+                                                                    </>}
+                                                            </div>
+    
+                                                        )))}
+                                                    {this.state.sections[id].questions[idx].answer_type === "TEXT" ?
+                                                        <React.Fragment>
+                                                            <div className="form-group row" key={idx}>
+                                                                <label className="col-sm-2 col-form-label font-weight-bold " htmlFor={validationId1}>Validation:</label>
+                                                                <div className="col-sm-2">
+                                                                    <select name={validationId1}
+                                                                        data-id={idx}
+                                                                        data-secid={id}
+                                                                        data-name="validation1"
+                                                                        id={validationId1} className="form-control" id="exampleFormControlSelect1" onChange={this.handleChange} required>
+                                                                        <option value="">Select</option>
+                                                                        <option value="Contains" selected={sections[id].questions[idx].validation1 === "Contains"}>Contains</option>
+                                                                        <option value="Not Contains" selected={sections[id].questions[idx].validation2 === "Not Contains"}>Does not contain</option>
+                                                                    </select>
+                                                                </div>
+                                                                <div className="col-sm-2">
+                                                                    <select name={validationId2}
+                                                                        data-id={idx}
+                                                                        data-secid={id}
+                                                                        data-name="validation2"
+                                                                        id={validationId1} className="form-control" id="exampleFormControlSelect1" onChange={this.handleChange} required>
+                                                                        <option value="">Select</option>
+                                                                        <option value="Numbers" selected={sections[id].questions[idx].validation2 === "Numbers"}>Numbers</option>
+                                                                        <option value="Special characters" selected={sections[id].questions[idx].validation2 === "Special characters"}>Special characters</option>
+                                                                        <option value="Both" selected={sections[id].questions[idx].validation2 === "Both"}>Both</option>
+                                                                    </select>
+                                                                </div>
+                                                                <div className="col-sm-2">
+    
+                                                                    <input
+                                                                        type="text"
+                                                                        name={errorId}
+                                                                        data-id={idx}
+                                                                        data-secid={id}
+                                                                        data-name="error_msg"
+                                                                        id={errorId}
+                                                                        placeholder="Error message"
+                                                                        value={sections[id].questions[idx].error_msg}
+                                                                        className="form-control"
+                                                                    />
+                                                                </div>
+    
+                                                            </div>
+    
+                                                        </React.Fragment>
+                                                        : ""}
+                                                    {this.state.sections[id].questions[idx].answer_type === "NUMBER" ?
+                                                        <React.Fragment>
+                                                            <div className="form-group row" key={idx}>
+                                                                <label className="col-sm-2 col-form-label font-weight-bold " htmlFor={validationId1}>Validation:</label>
+                                                                <label className="col-sm-1 col-form-label font-weight-bold " >Between</label>
+                                                                <div className="col-sm-1">
+                                                                    <input
+                                                                        type="text"
+                                                                        name={validationId1}
+                                                                        data-id={idx}
+                                                                        data-secid={id}
+                                                                        data-name="validation1"
+                                                                        id={validationId1}
+                                                                        placeholder="Number"
+                                                                        value={sections[id].questions[idx].validation1}
+                                                                        className="form-control"
+                                                                    />
+    
+                                                                </div>
+                                                                <span className="text-center"> and</span>
+    
+                                                                <div className="col-sm-1">
+                                                                    <input
+                                                                        type="text"
+                                                                        name={validationId2}
+                                                                        data-id={idx}
+                                                                        data-secid={id}
+                                                                        data-name="validation2"
+                                                                        id={validationId2}
+                                                                        placeholder="Number"
+                                                                        value={sections[id].questions[idx].validation2}
+                                                                        className="form-control"
+                                                                    />
+                                                                </div>
+                                                                <div className="col-sm-2">
+    
+                                                                    <input
+                                                                        type="text"
+                                                                        name={errorId}
+                                                                        data-id={idx}
+                                                                        data-secid={id}
+                                                                        data-name="error_msg"
+                                                                        id={errorId}
+                                                                        placeholder="Error message"
+                                                                        value={sections[id].questions[idx].error_msg}
+                                                                        className="form-control"
+                                                                    />
+                                                                </div>
+    
+                                                            </div>
+    
+                                                        </React.Fragment>
+                                                        : ""}
+    
+                                                    <fieldset className="form-group">
+                                                        <div className="row">
+                                                            <legend className="col-form-label col-sm-2 font-weight-bold" htmlFor={requiredId}>Required:</legend>
+                                                            <div className="col-sm-10">
+                                                                <div className="form-check form-check-inline">
+                                                                    <input
+                                                                        type="radio"
+                                                                        name={requiredId}
+                                                                        className="form-check-input"
+                                                                        data-id={idx}
+                                                                        data-secid={id}
+                                                                        data-name="required"
+                                                                        id={requiredId}
+                                                                        checked={sections[id].questions[idx].required == "yes"}
+                                                                        value="yes" />
+                                                                    <label className="form-check-label" >
+                                                                        Yes
+                                        </label>
+                                                                </div>
+                                                                <div className="form-check form-check-inline">
+                                                                    <input
+                                                                        type="radio"
+                                                                        name={requiredId}
+                                                                        className="form-check-input"
+                                                                        data-id={idx}
+                                                                        data-secid={id}
+                                                                        data-name="required"
+                                                                        id={requiredId}
+                                                                        checked={sections[id].questions[idx].required == "no"}
+                                                                        value="no" />
+                                                                    <label className="form-check-label" >
+                                                                        No
+                                        </label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </fieldset>
+                                                    <fieldset className="form-group">
+                                                        <div className="row">
+                                                            <legend className="col-form-label col-sm-2 font-weight-bold" htmlFor={requiredId}>Flag:</legend>
+                                                            <div className="col-sm-10">
+                                                                <div className="form-check form-check-inline">
+                                                                    <input
+                                                                        type="radio"
+                                                                        name={flagId}
+                                                                        className="form-check-input"
+                                                                        data-id={idx}
+                                                                        data-secid={id}
+                                                                        data-name="flag"
+                                                                        id={flagId} 
+                                                                        checked={sections[id].questions[idx].flag == "0"}
+                                                                        value="0" />
+                                                                    <label className="form-check-label" >
+                                                                        Add
+                                        </label>
+                                                                </div>
+                                                                <div className="form-check form-check-inline">
+                                                                    <input
+                                                                        type="radio"
+                                                                        name={flagId}
+                                                                        className="form-check-input"
+                                                                        data-id={idx}
+                                                                        data-secid={id}
+                                                                        data-name="flag"
+                                                                        id={flagId}
+                                                                        checked={sections[id].questions[idx].flag == "1"}
+                                                                        value="1" />
+                                                                    <label className="form-check-label" >
+                                                                        Edit
+                                        </label>
+                                                                </div>
+                                                                <div className="form-check form-check-inline">
+                                                                    <input
+                                                                        type="radio"
+                                                                        name={flagId}
+                                                                        className="form-check-input"
+                                                                        data-id={idx}
+                                                                        data-secid={id}
+                                                                        data-name="flag"
+                                                                        id={flagId}
+                                                                        checked={sections[id].questions[idx].flag == "2"}
+                                                                        value="2" />
+                                                                    <label className="form-check-label" >
+                                                                        Custom
+                                        </label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </fieldset>
+    
+                                                </div>
+                                            </div>
+                                        )
+                                    })
+                                }
+                                <div className=" col d-flex justify-content-end">
+                                    <button className="btn btn-primary" data-id={id} onClick={this.addQuestion}>{this.state.sections[id].questions.length === 0 ? "Add Question" : "Add Next Question"}</button>
+                                </div>
+    
+                            </form>
+                        </div >
+                        : ""}
+                    <div className="row mt-3 text-center">
+    
+                        <div className="col col-sm-2  mb-1">
+                            <button
+                                className="btn btn-primary"
+                                disabled={id === 0 ? true : sectionLength >= 1 ? false : true}
+                                onClick={this.onPreviuos} >Previous Section</button>
+                        </div>
+                        <div className="col col-sm-2 mb-1">
+                            <button className="btn btn-primary"
+                                disabled={sectionLength === id ? true : false} onClick={this.onNext}>Next Section</button>
+                        </div>
+                        <div className="col col-sm-2">
+                            <button className="btn btn-primary" onClick={this.addSection}>Add Section</button>
+                        </div>
+                        <div className="col col-sm-2">
+                            <button onClick={this.handlePreview} className="btn btn-primary" disabled={sectionLength > -1 ? false : true}  >Preview</button>
+                        </div>
+                        <div className="col col-sm-2">
+                            <button onClick={this.handleSubmit} className="btn btn-primary" disabled={sectionLength > -1 ? false : true}  >Submit</button>
+                        </div>
+    
                     </div>
-                    <div className="col col-sm-3 mb-1">
-                        <button className="btn btn-primary"
-                            disabled={sectionLength === id ? true : false} onClick={this.onNext}>Next Section</button>
-                    </div>
-                    <div className="col col-sm-3">
-                        <button className="btn btn-primary" onClick={this.addSection}>Add Section</button>
-                    </div>
-                    <div className="col col-sm-3">
-                        <button onClick={this.handleSubmit} className="btn btn-primary" disabled={sectionLength > -1 ? false : true}  >Submit</button>
-                    </div>
-
+    
+    
                 </div>
-
-
-            </div>
-        )
+            )
+        }
+        
     }
 }
-export default FormConfigure
+const mapStateToProps = state => {
+    return {
+        organizationsList: state.getorganization.organizationsList,
+    }
+}
+export default connect(mapStateToProps)(FormConfigure);

@@ -29,6 +29,7 @@ import EmailList from "./components/Emaillist";
 import BillingDetails from "./components/BillingDetails";
 import FormConfigure from "./components/FormConfigure";
 import ConfigureOrg from "./components/ConfigureOrg";
+import Preview from "./components/Preview_Questions"
 export const { store , persistor } = configureStore(createHistory());
 class App extends React.Component {
   
@@ -54,6 +55,7 @@ class App extends React.Component {
                 </Switch>
                 <Switch>
                 <PrivateRoute path="/admin/changepassword" component={ChangePassword}/>
+                <PrivateRoute path="/admin/preview" component={Preview}/>
                 <PrivateRoute path="/admin/billing/org=:org&name=:name" component={BillingDetails}/>
                 <PrivateRoute exact path="/admin/configure" component={Configure}/>
                 <PrivateRoute path="/admin/configure/questions" component={QuestionsList}/>

@@ -3,7 +3,7 @@
   margin: 5px;
   border: 1px;
   border-radius: 0px;
-  /* box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); */
+  /* box-shadow: 0 4px 8px 0 rgba(0; 0; 0; 0.2); 0 6px 20px 0 rgba(0; 0; 0; 0.19); */
   
 }
 .button {
@@ -25,7 +25,7 @@
     color: white;
 }
 .App-logo {
-  margin: "0px";
+  margin:  0px;
   width: 50%;
   background-color: #fff;
   padding: 16px;
@@ -51,7 +51,7 @@
 }
 
 .boxing {
-  width: "75%";
+  width:  75%;
   border: '1px solid black';
   border-radius: '2px';
   padding: '25px';
@@ -60,7 +60,7 @@
   align-items: 'center';
   margin-bottom: '15px';
   background-color: '#ffffff';
-  box-shadow: '0px 0px 9px 0px rgba(0,0,0,0.1)';
+  box-shadow: '0px 0px 9px 0px rgba(0;0;0;0.1)';
   min-width:  '1000px'
 }
 .popup {  
@@ -72,7 +72,7 @@
   right: 0;  
   bottom: 0;  
   margin: auto;  
-  background-color: rgba(0,0,0, 0.5);  
+  /* background-color: rgba(0;0;0; 0.5);   */
 }  
 .popup\_inner {  
   position: absolute;  
@@ -97,7 +97,35 @@
   font-size: calc(10px + 2vmin);
   color: white;
 }
-
+.menuButton  {
+  width:  260px;
+  height:  140px;
+  background-color:  #f5f5f5;
+  color:  #9d9d9d;
+  /* @media all and (max-width: 520px) {
+      width:  110px;
+      height:  80px;
+      font-size:  12px !important;
+  };
+  @media all and (max-width: 768px) {
+      font-size:  16px;
+  }; */
+  cursor:  pointer;
+  align-items:  center;
+  justify-content:  center;
+  text-decoration:  none;
+  text-transform:  uppercase;
+  display:  flex;
+  flex-direction:  column;
+  border-radius:  4px !important;
+  font-size:  26px;
+  color:  #9c9c9c;
+  /* @media all and (min-width: 520px) {
+      // :not(:last-child) {
+      border-right:  2px solid #c4c4c4 !important;
+      // }
+  } */
+}
 .App-link {
   color: #61dafb;
 }

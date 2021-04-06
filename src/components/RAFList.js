@@ -244,7 +244,7 @@ export class RAFList extends React.Component {
                                     <label className="col-sm-2 col-form-label font-weight-bold "></label>
                                     <div className="col-sm-4">
                                         <button type="submit" className="btn btn-primary font-weight-bold btn-block" >
-                                            {domain_updated ? "Update Domain & Send Email" : "Send Email"}
+                                        Update Domain
                                         </button>
                                     </div>
 
