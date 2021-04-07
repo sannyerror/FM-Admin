@@ -128,7 +128,7 @@ export class EIFList extends React.Component {
                     <div className="container-fluid">
                         <div className="row d-flex justify-content-center mb-4">
                         Click here to fill the Readiness Assessment Form - &nbsp;
-                        <Link to={`${raf_link}`} className="font-weight-bold">{raf_link}</Link>
+                        <a href={`${raf_link}`} className="font-weight-bold">{raf_link}</a>
                         </div>
                         <div>&nbsp;</div>
                     </div>

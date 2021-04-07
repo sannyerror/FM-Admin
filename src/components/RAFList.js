@@ -96,6 +96,7 @@ export class RAFList extends React.Component {
         })
 
     }
+    
     listChange = async(e) => {
         const {name, value} = e.target
         this.setState({ loading: true,RafList: [] })
@@ -177,7 +178,7 @@ export class RAFList extends React.Component {
                             <li className="list-group-item mb-1" >
                                 <span className="text-primary "> {q.question}</span> <br />
                                 <span className=" ">(A)</span> -
-                                {z.answer.includes('static') ? (<Link to={`${baseApiUrl}/${z.answer}`} className="font-weight-bold">View File</Link>) : (<span className="text-primary font-weight-bold">{z.answer}</span>)}
+                                {z.answer.includes('static') ? (<a href={`${baseApiUrl}/${z.answer}`} className="font-weight-bold">View File</a>) : (<span className="text-primary font-weight-bold">{z.answer}</span>)}
 
                             </li>
                         )
@@ -240,15 +241,19 @@ export class RAFList extends React.Component {
                                         {password}
                                     </div>
                                 </div>
+                                
                                 <div className="form-group row">
                                     <label className="col-sm-2 col-form-label font-weight-bold "></label>
                                     <div className="col-sm-4">
-                                        <button type="submit" className="btn btn-primary font-weight-bold btn-block" >
+                                        <button type="submit" 
+                                        disabled = {!domain_updated}
+                                        className="btn btn-primary font-weight-bold btn-block" >
                                         Update Domain
                                         </button>
                                     </div>
 
                                 </div>
+            
                             </div>
                         </form>
                     </div>
