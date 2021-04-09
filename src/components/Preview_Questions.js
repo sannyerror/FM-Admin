@@ -594,7 +594,7 @@ export class Preview extends React.Component {
                                                                             <React.Fragment>
                                                                                 <input
                                                                                     type="radio"
-                                                                                    data-jump={ques.suggested_jump.map(sj => ans.value === sj.answer ? sj.jumpto ? sj.jumpto : "" : "")}
+                                                                                    data-jump={ques.suggested_jump.length > 0 ?ques.suggested_jump.map(sj => sj !== null && ans.value === sj.answer ? sj.jumpto ? sj.jumpto : "" : ""):""}
                                                                                     data-idx={index}
                                                                                     data-idy={ind}
                                                                                     name={ques.question.replace(/ /g, "_")} value={ans.id}
