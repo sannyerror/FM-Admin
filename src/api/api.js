@@ -705,7 +705,6 @@ export const Change_RAFtype = async () => {
       }
     })
       .then(response => {
-        console.log(response)
         const RafList = response.data
         dispatch(fetchRafListSuccess(RafList))
         return response.data;
