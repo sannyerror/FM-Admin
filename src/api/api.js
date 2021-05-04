@@ -1052,11 +1052,14 @@ console.log(data)
 export const logOut = () => {
   const { dispatch } = store
   const currentUser = store.getState().loginData.user.token;
+  let token = localStorage.refreshToken ? 
+                localStorage.refreshToken === undefined ? "" : 
+                localStorage.refreshToken === "undefined" ? "" : localStorage.refreshToken: ""
   let config = {
     method: 'post',
     url: `${baseApiUrl}/admin/logout`,
     headers: {
-      'Authorization': `Bearer ${currentUser}`
+      'Authorization': `Bearer ${token}`
     }
   };
   axios(config)
