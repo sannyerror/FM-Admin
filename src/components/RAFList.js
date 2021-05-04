@@ -168,6 +168,7 @@ export class RAFList extends React.Component {
         let { listID, success, username, password,
              list_status, loading, domain_updated,
              list_type } = this.state;
+        
         if (listID !== "") {
             return (
                 <div className="container-fluid">
@@ -178,7 +179,7 @@ export class RAFList extends React.Component {
                             <li className="list-group-item mb-1" >
                                 <span className="text-primary "> {q.question}</span> <br />
                                 <span className=" ">(A)</span> -
-                                {z.answer.includes('static') ? (<a href={`${baseApiUrl}/${z.answer}`} className="font-weight-bold">View File</a>) : (<span className="text-primary font-weight-bold">{z.answer}</span>)}
+                                {z.answer.includes('static/') ? (<a href={`${baseApiUrl}/${z.answer}`} className="font-weight-bold">View File</a>) : (<span className="text-primary font-weight-bold">{z.answer}</span>)}
 
                             </li>
                         )

@@ -3,7 +3,7 @@ import createHistory from 'history/createBrowserHistory';
 import { Provider } from "react-redux";
 import { PersistGate } from 'redux-persist/integration/react';
 import configureStore from './redux/configureStore';
-import { Switch, Route, BrowserRouter as Router, Redirect} from "react-router-dom";
+import { Switch, Route, BrowserRouter as Router, Redirect, useHistory} from "react-router-dom";
 import './App.css';
 import Login from './components/Login'
 import EIFMSG from './components/EIFMSG'
@@ -30,21 +30,35 @@ import BillingDetails from "./components/BillingDetails";
 import FormConfigure from "./components/FormConfigure";
 import ConfigureOrg from "./components/ConfigureOrg";
 import Preview from "./components/Preview_Questions"
+import { logOut } from './api/api';
 export const { store , persistor } = configureStore(createHistory());
 class App extends React.Component {
-  
+  async componentDidMount(){
+    const entries = performance.getEntriesByType("navigation");
+    const action = entries.map( nav => nav.type )
+    if(localStorage.refreshToken){
+    if(action[0] !== "reload"){
+      await logOut();
+       //localStorage.removeItem("refreshToken") 
+       
+    }else{
+      
+    }}
+
+  }
+
   render(){
-   return (
+    return (
     <div className="Container-fluid">
       <div className="App">
        <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
               <Router>
-                <Header/>
+                <Header refreshToken={localStorage.refreshToken}/>
               <Switch>
               <Route exact path="/">
                           <Redirect to="/admin/configure" />
-                          {/* <Redirect to="/login" />  */}
+                          
               </Route>
                  <Route path="/admin/eif" component={EIF}/>
                 <Route path="/admin/eifmsg" component={EIFMSG}/>

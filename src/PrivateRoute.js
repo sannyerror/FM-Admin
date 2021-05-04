@@ -3,21 +3,24 @@ import { Route, Redirect } from "react-router-dom";
 import { connect } from "react-redux";
 export const PrivateRoute = ({ component: Component, user, ...rest }) => {
  // const { user } = props;
-  if(user.length <= 0 || user.token.token === ""){
-    return (
-      <Redirect  to={{
-        pathname: "/admin/login",
-      }}
-    />
-     );
-  }else{
-    return(
+ console.log(user)
+ console.log(localStorage)
+ if(localStorage.refreshToken){
+  return(
     <Route
     {...rest}
     render={props =>
       <Component {...props} />
         }/>
         );
+  }else{
+    return (
+      <Redirect  to={{
+        pathname: "/admin/login",
+      }}
+    />
+     );
+   
   
   }
 }
