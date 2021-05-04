@@ -43,7 +43,7 @@ class Configure extends React.Component {
                             <div className="row p-2 bd-highlight">
                                 <div className="col col-3"><Link to="/admin/configure/organizationlist">Organizations List</Link></div>
                                 <div className="col col-2"><Link to="/admin/configure/addorganization" ><i className="fa fa-plus" style={{color:"#000000", fontSize:"13px"}}></i> Add</Link></div>
-                                <div className="col col-2"><Link to="/admin/eif" target="_blank">EIF Link</Link></div>
+                                <div className="col col-2"><Link to="/admin/eif" >EIF Link</Link></div>
                                 
                                 
                             </div>
