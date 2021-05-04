@@ -1052,6 +1052,7 @@ console.log(data)
 export const logOut = () => {
   const { dispatch } = store
   const currentUser = store.getState().loginData.user.token;
+  console.log(localStorage)
   let config = {
     method: 'post',
     url: `${baseApiUrl}/admin/logout`,
@@ -1061,6 +1062,7 @@ export const logOut = () => {
   };
   axios(config)
     .then(response => {
+      console.log(response)
       localStorage.removeItem("refreshToken")
       dispatch(clearUser())
       return response.data;
