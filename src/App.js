@@ -40,6 +40,7 @@ class App extends React.Component {
     let token = localStorage.refreshToken ? 
                 localStorage.refreshToken === undefined ? "" : 
                 localStorage.refreshToken === "undefined" ? "" : localStorage.refreshToken: ""
+                console.log(token,"token")
     if(token){
     if(action[0] !== "reload"){
       await logOut();
