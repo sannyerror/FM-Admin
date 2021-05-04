@@ -22,7 +22,7 @@ export class EIFList extends React.Component {
             customerId:"",
             categoryId:"",
             formstatus: "",
-            raf_link:"", 
+            raf_link:"",
             list_status:"",
             Host : window.location.host
 
@@ -84,7 +84,6 @@ export class EIFList extends React.Component {
 
     render() {
            let {listID, raf_link,list_status,loading} = this.state;
-          let eifID = raf_link && raf_link.split("/")
            if(listID !== ""){
             return (
                 <div className="container-fluid">
@@ -129,7 +128,7 @@ export class EIFList extends React.Component {
                     <div className="container-fluid">
                         <div className="row d-flex justify-content-center mb-4">
                         Click here to fill the Readiness Assessment Form - &nbsp;
-                        <Link to={`/admin/raf/${eifID[eifID.length-1]}`} className="font-weight-bold">{raf_link}</Link>
+                        <a href={`${raf_link}`} className="font-weight-bold">{raf_link}</a>
                         </div>
                         <div>&nbsp;</div>
                     </div>

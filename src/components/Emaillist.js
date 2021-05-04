@@ -27,7 +27,7 @@ export class EmailList extends React.Component {
     async componentDidMount() {
         const res = await fetchEmails();
         this.setState({
-            Emails: res&&res.response,
+            Emails: res.response,
         })
     }
 

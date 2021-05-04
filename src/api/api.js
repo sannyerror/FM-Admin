@@ -87,10 +87,8 @@ export const login = async (email, password) => {
       role_type: role_type,
       is_pwd_updated: is_pwd_updated
     }
-    localStorage.setItem("refreshToken", response.data.response.token);
     dispatch(fetchUsersSuccess(user))
-    
-    
+    localStorage.setItem("refreshToken", response.data.token);
     return response;
   } catch (error) {
     dispatch(fetchUsersFailure(error.message))
@@ -183,7 +181,7 @@ export const resendRAF = async (customer) => {
       }
     })
       .then(response => {
-       
+        console.log(response)
         return response.data;
       })
   }
@@ -286,7 +284,7 @@ export const fetchEmails = async () => {
 
   catch (error) {
     console.log('error')
-    
+
     throwError(error)
 
   }
@@ -595,6 +593,7 @@ export const fetchOrganizations = async () => {
       }
     })
       .then(response => {
+        
         const organizationsList = response.data
 
         dispatch(getOrganizationsSuccess(organizationsList))
@@ -721,15 +720,11 @@ export const Change_RAFtype = async () => {
 };
 export const fetchQuestionsCategory = async () => {
   const { dispatch } = store
-  const currentUser = store.getState().loginData.user.token;
   try {
     dispatch(fetchQuestionscategoryRequest)
-    return await axios.get(`${baseApiUrl}/questionscategory/`, {
-      headers: {
-        'Authorization': `Bearer ${currentUser}`
-      }
-    })
+    return await axios.get(`${baseApiUrl}/questionscategory/`)
       .then(response => {
+        
         const questionscategoryList = response.data
         dispatch(fetchQuestionscategorySuccess(questionscategoryList))
         return response.data;
@@ -1052,18 +1047,16 @@ console.log(data)
 export const logOut = () => {
   const { dispatch } = store
   const currentUser = store.getState().loginData.user.token;
-  console.log("storage",localStorage.refreshToken)
-  let config = {
+ let config = {
     method: 'post',
     url: `${baseApiUrl}/admin/logout`,
     headers: {
-      'Authorization': `Bearer ${localStorage.refreshToken}`
+      'Authorization': `Bearer ${currentUser}`
     }
   };
-  axios(config)
+ axios(config)
     .then(response => {
-      console.log(response)
-      localStorage.removeItem("refreshToken")
+      
       dispatch(clearUser())
       return response.data;
     })
@@ -1077,7 +1070,6 @@ function throwError(error) {
     console.log(error.response.headers);
     if(error.response.status === 403) {
       const { dispatch } = store
-      logOut();
       dispatch(clearUser())
     }else {
       const errorResponse = {

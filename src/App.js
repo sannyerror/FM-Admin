@@ -30,30 +30,17 @@ import BillingDetails from "./components/BillingDetails";
 import FormConfigure from "./components/FormConfigure";
 import ConfigureOrg from "./components/ConfigureOrg";
 import Preview from "./components/Preview_Questions"
-import { logOut } from './api/api';
 export const { store , persistor } = configureStore(createHistory());
 class App extends React.Component {
-  async componentDidMount(){
-    const entries = performance.getEntriesByType("navigation");
-    const action = entries.map( nav => nav.type )
-    // if(localStorage.refreshToken){
-    // if(action[0] !== "reload"){
-    //    await logOut();
-     
-    // }else{
-      
-    // }}
-
-  }
-
+  
   render(){
-    return (
+   return (
     <div className="Container-fluid">
       <div className="App">
        <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
               <Router>
-                <Header refreshToken={localStorage.refreshToken}/>
+                <Header/>
               <Switch>
               <Route exact path="/">
                           <Redirect to="/admin/configure" />

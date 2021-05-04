@@ -23,20 +23,20 @@ export class Header extends React.Component {
     }
     render() {
         const { token, is_pwd_updated, role_type } = this.props.user
-        const { refreshToken } = this.props
+
         const url = "https://firstmatch.com/"
         return (
 
             <div id="app" className="container-fluid">
                 <nav className="navbar navbar-expand-lg navbar-light ">
-                    <Link className="navbar-brand" to={`${token ? "/admin/configure" : url}`}> 
+                    <a className="navbar-brand" href={`${token ? "/admin/configure" : url}`}>
                         <img
                             className="navbar-brand"
                             alt="FirstMatch Logo"
                             src="/img/logo_stroke.png"
                             width="40%" height="40%"
                         />
-                    </Link>
+                    </a>
                     <div id="navbarNav" className="collapse navbar-collapse">
                         <ul className="navbar-nav mr-auto">
 
