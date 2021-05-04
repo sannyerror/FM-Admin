@@ -1056,7 +1056,7 @@ export const logOut = () => {
     method: 'post',
     url: `${baseApiUrl}/admin/logout`,
     headers: {
-      'Authorization': `Bearer ${localStorage.refreshToken}`
+      'Authorization': `Bearer ${currentUser}`
     }
   };
   axios(config)
