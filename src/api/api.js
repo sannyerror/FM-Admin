@@ -1052,7 +1052,7 @@ console.log(data)
 export const logOut = () => {
   const { dispatch } = store
   const currentUser = store.getState().loginData.user.token;
-  console.log(localStorage)
+  console.log("storage",localStorage.refreshToken)
   let config = {
     method: 'post',
     url: `${baseApiUrl}/admin/logout`,
