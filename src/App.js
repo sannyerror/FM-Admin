@@ -36,7 +36,11 @@ class App extends React.Component {
   async componentDidMount(){
     const entries = performance.getEntriesByType("navigation");
     const action = entries.map( nav => nav.type )
-    if(localStorage.refreshToken){
+    console.log(localStorage)
+    let token = localStorage.refreshToken ? 
+                localStorage.refreshToken === undefined ? "" : 
+                localStorage.refreshToken === "undefined" ? "" : localStorage.refreshToken: ""
+    if(token){
     if(action[0] !== "reload"){
       await logOut();
        //localStorage.removeItem("refreshToken") 
