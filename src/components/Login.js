@@ -20,13 +20,10 @@ export class Login extends Component {
     constructor(props) {
         super(props);
         const isLoggedIn = props.user && props.user;
-        console.log(isLoggedIn)
-        console.log(localStorage)
         let token = localStorage.refreshToken ? 
         localStorage.refreshToken === undefined ? "" : 
         localStorage.refreshToken === "undefined" ? "" : localStorage.refreshToken: ""
-        console.log(token,"Login-token")
-          if (token) { 
+         if (token) { 
        this.props.history.push(`${isLoggedIn.role_type === "Coordinator" ? "/admin/eiflist" : "/admin/configure"}`);
     }
         this.state = {

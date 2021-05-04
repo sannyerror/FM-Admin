@@ -1025,7 +1025,7 @@ export const AddQuestionsCategory = async (data) => {
 
   const { dispatch } = store
   const currentUser = store.getState().loginData.user.token;
-console.log(data)
+
   try {
     dispatch(addQuestionsCategoryRequest)
     return await axios.post(`${baseApiUrl}/questionscategory/`, data, {
@@ -1064,8 +1064,7 @@ export const logOut = () => {
   };
   axios(config)
     .then(response => {
-      console.log(response)
-     localStorage.removeItem("refreshToken")
+      localStorage.removeItem("refreshToken")
       dispatch(clearUser())
       return response.data;
     })
