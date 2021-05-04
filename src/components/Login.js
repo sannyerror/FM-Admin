@@ -20,9 +20,11 @@ export class Login extends Component {
     constructor(props) {
         super(props);
         const isLoggedIn = props.user && props.user;
-          if (localStorage.refreshToken) {
-       this.props.history.push(`${isLoggedIn.role_type === "Coordinator" ? "/admin/eiflist" : "/admin/configure"}`);
-    }
+        console.log(isLoggedIn)
+        console.log(localStorage)
+        if (isLoggedIn && isLoggedIn.token) {
+            this.props.history.push(`${isLoggedIn.role_type === "Coordinator" ? "/admin/eiflist" : "/admin/configure"}`);
+         }
         this.state = {
             email: '',
             password: '',
