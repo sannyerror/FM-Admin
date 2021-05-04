@@ -37,12 +37,12 @@ class App extends React.Component {
     const entries = performance.getEntriesByType("navigation");
     const action = entries.map( nav => nav.type )
     if(localStorage.refreshToken){
-    if(action[0] !== "reload"){
-       await logOut();
+    // if(action[0] !== "reload"){
+    //    await logOut();
      
-    }else{
+    // }else{
       
-    }}
+    // }}
 
   }
 
