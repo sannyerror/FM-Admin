@@ -5,7 +5,7 @@ export const PrivateRoute = ({ component: Component, user, ...rest }) => {
  // const { user } = props;
  console.log(user)
  console.log(localStorage)
- if(localStorage.refreshToken){
+ if(localStorage.refreshToken || localStorage.refreshToken !== undefined){
   return(
     <Route
     {...rest}
