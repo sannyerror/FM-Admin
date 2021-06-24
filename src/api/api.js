@@ -79,6 +79,7 @@ export const login = async (email, password) => {
   try {
     dispatch(fetchUsersRequest)
     const response = await axios.post(`${baseApiUrl}/admin/login`, { username: email, password: password });
+    console.log(response)
     const { token, user_id, role_type, is_pwd_updated } = response.data.response
     const user = { 
       email,
@@ -1080,6 +1081,7 @@ function throwError(error) {
       const { dispatch } = store
       logOut();
       dispatch(clearUser())
+      localStorage.removeItem("refreshToken")
     }else {
       const errorResponse = {
         data: error.response.data || undefined,

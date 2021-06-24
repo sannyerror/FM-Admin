@@ -49,6 +49,7 @@ class FormConfigure extends React.Component {
                 related: "false",
                 questions: [{
                     question_id: 0, question: "Client Code", description: "",
+                    field_type:"1",
                     answer_type: "NUMBER", suggested_answers: [""], suggested_jump: [""],
                     validation1: "100", validation2: "99999",
                     error_msg: "Should be range between 100 - 99999", related:"no", required: "yes",
@@ -85,7 +86,8 @@ class FormConfigure extends React.Component {
         if (response.message !== "sections not available") {
             this.setState({
                 Org_id: id,
-                sections: response.response ? response.response : this.getInitialState(),
+                sections: response.response ? response.response : this.state.sections,
+                // sections: this.state.sections, 
                 readOnly: response.is_prediction_available,
                 logoPath: logopath
             })
@@ -163,11 +165,9 @@ class FormConfigure extends React.Component {
     }
 
     handleChange = (e) => {
-        console.log(e)
         let secid = e.target.dataset.secid
-
         if (["question", "suggested_answers", "suggested_jump",
-            "description", "validation1", "validation2", "answer_type", "error_msg", "required", "related", "flag"].includes(e.target.dataset.name)) {
+            "description", "validation1", "validation2", "answer_type", "error_msg", "required", "related", "flag","field_type"].includes(e.target.dataset.name)) {
             if (e.target.dataset.name === "suggested_answers" || e.target.dataset.name === "suggested_jump") {
                 let sections = [...this.state.sections]
                 if (e.target.dataset.name === "suggested_jump") {
@@ -418,7 +418,7 @@ class FormConfigure extends React.Component {
                                     sections[id].questions.map((val, idx) => {
                                         let catId = `cat-${idx}`, answerId = `answer-${idx}`, descId = `description-${idx}`,
                                             validationId1 = `validation1-${idx}`, validationId2 = `validation2-${idx}`, typeId = `type-${idx}`, errorId = `error-${idx}`,
-                                            relatedId = `related-${idx}`, requiredId = `required-${idx}`, flagId = `flag-${idx}`
+                                            relatedId = `related-${idx}`, requiredId = `required-${idx}`, flagId = `flag-${idx}`, fieldTypeId = `fieldType-${idx}`
 
                                         return (
                                             <div style={{ border: '1px solid #007bff' }} className="mb-2" >
@@ -489,6 +489,51 @@ class FormConfigure extends React.Component {
                                                             />
                                                         </div>
                                                     </div>
+                                                    {id === 0 && idx === 0 &&
+                                                    
+                                                    <fieldset className="form-group">
+                                                        <div className="row">
+                                                            <legend className="col-form-label col-sm-2 font-weight-bold" htmlFor={fieldTypeId}>Field Type:</legend>
+                                                            <div className="col-sm-10">
+                                                                <div className="form-check form-check-inline">
+                                                                    <input
+                                                                        type="radio"
+                                                                        name={fieldTypeId}
+                                                                        className="form-check-input"
+                                                                        data-id={idx}
+                                                                        data-secid={id}
+                                                                        data-name="field_type"
+                                                                        id={fieldTypeId}
+                                                                        checked={sections[id].questions[idx].field_type.toString() === "0"}
+                                                                        value="0" />
+                                                                    <label className="form-check-label" >
+                                                                        Auto
+                                        </label>
+                                                                </div>
+                                                                <div className="form-check form-check-inline">
+                                                                    <input
+                                                                        type="radio"
+                                                                        name={fieldTypeId}
+                                                                        className="form-check-input"
+                                                                        data-id={idx}
+                                                                        data-secid={id}
+                                                                        data-name="field_type"
+                                                                        id={fieldTypeId}
+                                                                        checked={sections[id].questions[idx].field_type.toString() === "1"}
+                                                                        value="1" />
+                                                                    <label className="form-check-label" >
+                                                                        Manual
+                                        </label>
+                                                                </div>
+                                                                </div>
+                                                        </div>
+                                                    </fieldset>
+                                                    }   
+
+                                                    {  
+                                                      ((Object.keys(sections[id].questions[idx]).includes("field_type") && sections[id].questions[idx].field_type !== "0" )
+                                                      || ( !Object.keys(sections[id].questions[idx]).includes("field_type") ) ) && (
+                                                          <React.Fragment>
                                                     <fieldset className="form-group">
                                                         <div className="row">
                                                             <legend className="col-form-label col-sm-2 font-weight-bold" htmlFor={typeId}>Answer Type:</legend>
@@ -934,6 +979,11 @@ class FormConfigure extends React.Component {
                                                             </div>
                                                         </div>
                                                     </fieldset>
+                                                </React.Fragment>
+                                                     ) }
+                                                    
+                                                    
+                                                    
 
                                                 </div>
                                             </div>
