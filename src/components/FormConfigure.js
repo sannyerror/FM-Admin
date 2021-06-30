@@ -531,7 +531,7 @@ class FormConfigure extends React.Component {
                                                     }   
 
                                                     {  
-                                                      ((Object.keys(sections[id].questions[idx]).includes("field_type") && sections[id].questions[idx].field_type !== "0" )
+                                                      ((Object.keys(sections[id].questions[idx]).includes("field_type") && sections[id].questions[idx].field_type.toString() !== "0" )
                                                       || ( !Object.keys(sections[id].questions[idx]).includes("field_type") ) ) && (
                                                           <React.Fragment>
                                                     <fieldset className="form-group">
