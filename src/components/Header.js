@@ -48,7 +48,7 @@ export class Header extends React.Component {
                         {token ? (
                             <ul className="navbar-nav mr-right">
                                 <li className="nav-item">
-                                <Link className="btn btn-primary" to="/admin/org-configure/">Configure FirstMatch&trade;</Link>
+                                <Link className="btn btn-primary" to="/admin/org-configure/">Configure FirstMatch&reg;</Link>
                                 </li>
                                 <li className="nav-item">
                                     <Link className="nav-link" to="/admin/changepassword">Profile</Link>

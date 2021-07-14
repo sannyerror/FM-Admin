@@ -359,7 +359,7 @@ class FormConfigure extends React.Component {
         let jumpOpt = []
         this.state.sections.filter((sec, key) => sec.related === "true").map(
             (q, i) => jumpOpt.push({ value: q.section, label: q.section, id: i }))
-                       
+         console.log(this.state)               
         if (isPreview) {
             return (
                 <Modal

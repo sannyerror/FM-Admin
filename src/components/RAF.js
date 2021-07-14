@@ -419,7 +419,7 @@ class RAF extends Component {
         return (
             <div className="cotainer-fluid">
                 <div className="text-center"><h2>Readiness Assessment FORM</h2></div>
-                <div className="text-center col-sm text-info">Thanks for your interest in being part of the FirstMatch&trade; initiative. Please fill in the assessment form below.</div>
+                <div className="text-center col-sm text-info">Thanks for your interest in being part of the FirstMatch&reg; initiative. Please fill in the assessment form below.</div>
                 {loading?
                 <div className="form-group mt-5 row d-flex justify-content-center">
                     <span className="font-weight-bold h5">Loading</span>
