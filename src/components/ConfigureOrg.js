@@ -1,17 +1,32 @@
 import React, { createRef } from 'react';
 import fs from 'fs';
 import '../App.css';
-import { fetchOrganizations, uploadLogo, baseApiUrl } from '../api/api';
+import { fetchOrganizations, uploadLogo, baseApiUrl, uploadHeaderColor } from '../api/api';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { SketchPicker, PhotoshopPicker } from 'react-color';
+import Modal from 'react-modal';
 import {
     BrowserRouter as Router,
     Switch,
     Route,
     Link,
     useRouteMatch
-  } from "react-router-dom";
+} from "react-router-dom";
 import { connect } from 'react-redux';
+
+
+const customStyles = {
+    content: {
+        top: '50%',
+        left: '50%',
+        right: 'auto',
+        bottom: 'auto',
+        marginRight: '-50%',
+        transform: 'translate(-50%, -50%)'
+    }
+};
+
 class ConfigureOrg extends React.Component {
     constructor() {
         super();
@@ -24,7 +39,10 @@ class ConfigureOrg extends React.Component {
             startBill: false,
             Org_Name: "",
             Org_Id: "",
-            logoPath: ""
+            logoPath: "",
+            color: "#fff",
+            isOpen: false,
+            header_color: ""
 
         }
     }
@@ -34,6 +52,23 @@ class ConfigureOrg extends React.Component {
             Organizations: res,
         })
     }
+
+    handleClose = () => {
+        this.setState({
+            isOpen: false,
+            startBill: false,
+            header_color: this.state.color
+            
+        })
+    }
+
+    handleShow = () => {
+        this.setState({
+            isOpen: true,
+            
+        })
+    }
+
     handleChange = (e) => {
         e.preventDefault();
         const id = e.target.value
@@ -41,7 +76,9 @@ class ConfigureOrg extends React.Component {
         this.setState({
             Org_Name: org_name[0].org_name,
             Org_Id: org_name[0].id,
-            logoPath: org_name[0].logo_path
+            logoPath: org_name[0].logo_path,
+            color: org_name[0].header_color,
+            header_color: org_name[0].header_color
         })
 
     }
@@ -70,100 +107,123 @@ class ConfigureOrg extends React.Component {
         formdata.append("customer", org_id);
         formdata.append("logo", this.state.selectedFile, this.state.selectedFile.name);
         const response = await uploadLogo(formdata);
-         if (response.message === "logo uploaded successfully") {
+        if (response.message === "logo uploaded successfully") {
             const res = await fetchOrganizations();
-            let logoPath = res.filter(p=> p.id === org_id)
+            let logoPath = res.filter(p => p.id === org_id)
             this.setState({
                 logoPath: logoPath[0].logo_path
-             })
+            })
             toast.info(`Logo uploaded successfully.`, { position: toast.POSITION.TOP_CENTER, autoClose: 3000 })
-            
-        //     window.location.reload(true);
-         } else {
+
+            //     window.location.reload(true);
+        } else {
             toast.error(response.message, { position: toast.POSITION.TOP_CENTER, autoClose: 3000 })
-          
+
         }
     }
-
+     
+    selectColor = async(e)=>{
+        let org_id = this.state.Org_Id
+        let {header_color}= this.state
+        this.setState({
+            isOpen: false
+        })
+        const response = await uploadHeaderColor(org_id,header_color);
+        if(response.message === "header color saved successfully"){
+            toast.info(`Color updated successfully.`, { position: toast.POSITION.TOP_CENTER, autoClose: 3000 })
+        }
+     
+    }
     render() {
         toast.configure()
-        const { role_type } = this.props.user;
-        const { Org_Name, Org_Id } = this.state;
+        const { Org_Name, Org_Id, header_color } = this.state;
         return (
 
             <div className="container-fluid">
                 <form>
                     <div className="form-group d-flex flex-column bd-highlight mb-2">
-                        <div className="row p-2 bg-primary text-white">{Org_Name ? `Configure FirstMatch™ Tool for ${Org_Name}:` : "Choose an organization:"}</div>
+                        <div className="row p-2 bg-primary text-white">{Org_Name ? `Configure FirstMatch® Tool for ${Org_Name}:` : "Choose an organization:"}</div>
                         {Org_Name ?
                             <div className="ml-5 mt-3">
                                 <div className="row p-2 bd-highlight">
-                                    <div className="col col-3">
-                                        <Link to={`/admin/questions-configure/Org=${Org_Name}&id=${Org_Id}`} >Questions</Link>
-                                        </div>
-                                    
+                                    <div className="col col-3" style={{ alignSelf: "center", fontSize: "18px" }}>
+                                        <Link to={`/admin/questions-configure/Org=${Org_Name}&id=${Org_Id}`} ><strong>Questions</strong></Link>
+                                    </div>
+
                                     <div className="col col-3">
                                         <div className="row">
-                                        <input
-                                        type="file"
-                                        accept="image/*"
-                                        onChange={this.fileChangedHandler}
-                                        ref={this.imageUploader}
-                                        style={{
-                                            display: "none"
-                                        }}
-                                    />
-                                        <div
-                                            style={{
-                                                height: "220px",
-                                                width: "220px",
-                                                border: "1px dashed black",
-
-                                            }}
-                                            onClick={() => this.imageUploader.current.click()}
-                                        >
-                                            <img
-                                                ref={this.uploadedImage}
+                                            <input
+                                                type="file"
+                                                accept="image/*"
+                                                onChange={this.fileChangedHandler}
+                                                ref={this.imageUploader}
                                                 style={{
-                                                    width: "100%",
-                                                    height: "100%",
-                                                    //position: "absolute"
+                                                    display: "none"
                                                 }}
-                                                src={`${baseApiUrl}/${this.state.logoPath}`}
-
                                             />
+                                            <div
+                                                style={{
+                                                    height: "220px",
+                                                    width: "220px",
+                                                    border: "1px dashed black",
+
+                                                }}
+                                                onClick={() => this.imageUploader.current.click()}
+                                            >
+                                                <img
+                                                    ref={this.uploadedImage}
+                                                    style={{
+                                                        width: "100%",
+                                                        height: "100%",
+                                                        //position: "absolute"
+                                                    }}
+                                                    src={`${baseApiUrl}/${this.state.logoPath}`}
+
+                                                />
                                             </div>
                                         </div>
                                         <div className="row">
-                                           <span className="text-center">Click on above to select an Image</span>
-                                         </div>
-                                         <div className="row">
-                                           <span className="text-danger small">Logo should be in PNG/JPEG format and size should be less or equal to 10kb. 120X40 px - Ideal size</span>
-                                         </div>
-                                         <div className="row">
-                                             <div className="col col-2">&nbsp;</div>
-                                             <div className="col col-4"> 
-                                             <button className="btn btn-primary" onClick={this.uploadHandler} >Upload</button>
-                                             </div>
-                                         <div className="col col-4">&nbsp;</div>
-                                         </div>
-                                        
-                                        
-                                        {/* <button 
-                                        style={{
-                                                    width: "78%",
-                                                    height: "10%",
-                                                    //position: "absolute"
-                                                }} 
-                                                className="btn btn-primary btn-block" onClick={this.uploadHandler} >Upload</button>
-                                        <br /> */}
+                                            <span className="text-center">Click on above to select an Image</span>
                                         </div>
-                                        {/* <div className="col col-1">Upload logo</div>
-                                    <div className="col col-1"><a href="/configure/addquestion">Upload</a></div>  */}
+                                        <div className="row">
+                                            <span className="text-danger small">Logo should be in PNG/JPEG format and size should be less or equal to 10kb. 120X40 px - Ideal size</span>
+                                        </div>
+                                        <div className="row">
+                                            <div className="col col-2">&nbsp;</div>
+                                            <div className="col col-4">
+                                                <button className="btn btn-primary" onClick={this.uploadHandler} >Upload</button>
+                                            </div>
 
-                                   
+                                        </div>
+
+                                    </div>
+                                    <div className="col-1" style={{ alignSelf: "center", fontSize: "18px" }}>
+                                        <strong>Pick a color:</strong>
+                                    </div>
+                                    <div className="col-1"
+                                         onClick={this.handleShow}
+                                         style={{ alignSelf: "center", 
+                                                  backgroundColor: header_color, 
+                                                  borderRadius: "50%", height: "100px", 
+                                                  color: "#fff", width: "50px", position: "relative" }} >
+                                        <span 
+                                           style={{
+                                            display: "flex", height: "100%", hyphens: "auto",
+                                            justifyContent: "center", left: "50%", padding: "0.75em", position: "absolute",
+                                            textAlign: "center", transform: " translate(-60%, -77%)", top: "30%", width: "30%"
+                                            }}
+                                            
+                                        >&nbsp;</span>
+
+                                    </div>
+                                    {/* <div className="row" > 
+                                           <span >Click on here to pick a Color</span> 
+                                        </div> */}
+
                                 </div>
-                            </div> :
+                               
+                            </div>
+                            :
                             <div className="form-group row mt-4">
                                 <label className="col-sm-2 col-form-label font-weight-bold " >Organization:</label>
                                 <div className="col-sm-3">
@@ -182,7 +242,24 @@ class ConfigureOrg extends React.Component {
                         &nbsp;
                             </div>
                 </form>
-
+                <Modal
+                    isOpen={this.state.isOpen}
+                    //   onAfterOpen={afterOpenModal}
+                    onRequestClose={this.handleClose}
+                    style={customStyles}
+                    contentLabel="Forgot Password"
+                    ariaHideApp={false}
+                >
+                     <div className="row">
+                                <div className="col col-3" style={{alignContent: "center"}}>
+                                        <PhotoshopPicker 
+                                             color={this.state.header_color}
+                                             onChange={updatedColor => this.setState({header_color: updatedColor.hex})}
+                                             onAccept={this.selectColor}
+                                             onCancel={this.handleClose}/>
+                                          </div>
+                                          </div>
+                </Modal>
             </div>
 
         );
@@ -191,7 +268,7 @@ class ConfigureOrg extends React.Component {
 
 const mapStateToProps = state => {
     return {
-        user: state.loginData.user
+                    user: state.loginData.user
     }
 }
 

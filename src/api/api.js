@@ -79,7 +79,6 @@ export const login = async (email, password) => {
   try {
     dispatch(fetchUsersRequest)
     const response = await axios.post(`${baseApiUrl}/admin/login`, { username: email, password: password });
-    console.log(response)
     const { token, user_id, role_type, is_pwd_updated } = response.data.response
     const user = { 
       email,
@@ -348,6 +347,29 @@ export const isPrediction = async (id) => {
   }
 };
 
+export const Email_Credetials = async (org_id) => {
+  const currentUser = store.getState().loginData.user.token;
+  try {
+    return await axios.post(`${baseApiUrl}/after-raf/`,{customer: org_id, send_to:"customer"}, {
+      headers: {
+        'Authorization': `Bearer ${currentUser}`
+      }
+    })
+      .then(response => {
+        console.log(response)
+        const bill = response.data
+        return response.data;
+      })
+
+  }
+
+  catch (error) {
+    console.log('error')
+    throwError(error)
+
+  } 
+}
+
 export const fetchAllRecords = async (id, sDate, EDate) => {
   const currentUser = store.getState().loginData.user.token;
   try {
@@ -529,6 +551,29 @@ export const uploadLogo = async (data) => {
       .then(response => {
         const logo = response.json();
         return logo;
+      })
+
+  }
+
+  catch (error) {
+    console.log('error')
+
+    throwError(error)
+
+  }
+};
+
+export const uploadHeaderColor = async (org_id, header_color) => {
+  const currentUser = store.getState().loginData.user.token;
+  let data = {customer: org_id, header_color: header_color}
+  try {
+    return await axios.post(`${baseApiUrl}/client-css`, data, {
+      headers: {
+        'Authorization': `Bearer ${currentUser}`
+      }
+    })
+      .then(response => {
+        return response.data;
       })
 
   }

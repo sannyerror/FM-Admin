@@ -1,8 +1,11 @@
 import React from 'react';
-import { fetchOrganizations,
-          fetchBillingStatus,
-           isPrediction, 
-           deleteOrganizations } from '../api/api';
+import {
+    fetchOrganizations,
+    fetchBillingStatus,
+    isPrediction,
+    deleteOrganizations,
+    Email_Credetials
+} from '../api/api';
 import axios from 'axios';
 import { connect } from 'react-redux';
 import '../App.css';
@@ -34,7 +37,9 @@ export class OrganizationList extends React.Component {
             Org_Id: "",
             Delete_Org: "",
             suspend_lbl: "",
-            active_lbl:""
+            active_lbl: "",
+            showMessage: "",
+            sendEmail: "",
 
         }
     }
@@ -54,35 +59,44 @@ export class OrganizationList extends React.Component {
             Org_Name: org_name,
             Org_Id: org_id
         })
-        if (org_remove) {
-            let is_suspend = e.currentTarget.dataset.suspend; 
-            let is_active = e.currentTarget.dataset.active;
-            this.setState({
-                showPOPUP: true,
-                Delete_Org: true,
-                suspend_lbl: is_suspend === "true" ? "Resume" : "Suspend",
-                active_lbl:  is_active === "true" ? "Deactivate" : "Activate",
+        switch (org_remove) {
+            case 'true':
+                let is_suspend = e.currentTarget.dataset.suspend;
+                let is_active = e.currentTarget.dataset.active;
+                this.setState({
+                    showPOPUP: true,
+                    Delete_Org: true,
+                    suspend_lbl: is_suspend === "true" ? "Resume" : "Suspend",
+                    active_lbl: is_active === "true" ? "Deactivate" : "Activate",
 
-            })
-            
-            
-        } else {
-            const response = await fetchBillingStatus(org_id);
-            if (response.message === "Yet to be configured") {
+                })
+                break;
+            case 'false':
+                this.setState({
+                    showPOPUP: true,
+                    showMessage: true,
+                })
+                break;
+            default:
+                const response = await fetchBillingStatus(org_id);
+                switch (response.message) {
+                    case 'Yet to be configured':
+                        this.setState({
+                            showPOPUP: true,
+                        })
+                        break;
+                    default:
+                        this.setState({
+                            showPOPUP: false,
+                        })
+
+                        this.props.history.push(`/admin/billing/org=${org_id}&name=${org_name}`);
+                }
                 this.setState({
                     showPOPUP: true,
                 })
-            } else {
-                this.setState({
-                    showPOPUP: false,
-                })
-
-                this.props.history.push(`/admin/billing/org=${org_id}&name=${org_name}`);
-            }
-            this.setState({
-                showPOPUP: true,
-            })
         }
+
 
     }
 
@@ -96,21 +110,25 @@ export class OrganizationList extends React.Component {
     handleClose = () => {
         this.setState({
             showPOPUP: false,
-            startBill: false
+            startBill: false,
+            Delete_Org: false,
+            showMessage: false,
+            sendEmail: false
         })
     }
 
     handleDelete = async (e) => {
-       e.preventDefault();
+        e.preventDefault();
         let org_id = this.state.Org_Id
         let rmType = e.target.dataset.id;
-        let response = await deleteOrganizations(org_id,rmType)
+        let response = await deleteOrganizations(org_id, rmType)
         if (response.status === "failed") {
             this.setState({
                 error: response.status
             });
         } else {
-            toast.info(response.data.message&&response.data.message, { position: toast.POSITION.TOP_CENTER, autoClose: 3000 })
+            toast.info(response.data.message && response.data.message,
+                { position: toast.POSITION.TOP_CENTER, autoClose: 3000 })
             const res = await fetchOrganizations();
             this.setState({
                 Organizations: res,
@@ -145,9 +163,37 @@ export class OrganizationList extends React.Component {
         this.props.history.push(`/admin/billing/org=${Id}&name=${name}`);
     }
 
+    sendCredentails_1 = async (e) => {
+        const name = this.state.Org_Name
+        const Id = this.state.Org_Id
+        let response = await Email_Credetials(Id)
+        
+        if (response.status === "failed") {
+            this.setState({
+                error: response.status
+            });
+        } else {
+            toast.info(response.message && response.message,
+                { position: toast.POSITION.TOP_CENTER, autoClose: 3000 })
+            this.setState({
+                showPOPUP: false,
+                sendEmail: false,
+                showMessage: false
+            })
+        }
+
+    }
+
+    sendCredentails = async (e) => {
+        this.setState({
+            showPOPUP: true,
+            sendEmail: true,
+            showMessage: false
+        })
+    }
     render() {
         toast.configure()
-        let { Delete_Org, Org_Name, active_lbl, suspend_lbl } = this.state;
+        let { Delete_Org, Org_Name, active_lbl, suspend_lbl, showMessage, sendEmail } = this.state;
         return (
             <div className="container-fluid">
                 <div className="row p-2 bg-primary text-white">Organizations List</div>
@@ -157,6 +203,7 @@ export class OrganizationList extends React.Component {
                             <tr>
                                 <th scope="col mb-4">Organization Name</th>
                                 <th scope="col">Name</th>
+                                <th scope="col">Communication</th>
                                 <th scope="col">Billing</th>
                                 <th scope="col">Configure</th>
                             </tr>
@@ -168,10 +215,18 @@ export class OrganizationList extends React.Component {
                                     <tr key={index}>
                                         <td>{org.org_name}</td>
                                         <td>{org.name}</td>
+                                        <td className="text-center">
+                                            <i style={{ fontSize: "24px", color: "black" }}
+                                                class="fa fa-envelope" aria-hidden="true"
+                                                data-id={org.id} data-org={org.org_name}
+                                                data-remove="false"
+                                                onClick={this.handleShow}
+                                            ></i>
+                                        </td>
                                         <td className="text-center text-primary">
-                                            <i className="fa fa-money" style={{ fontSize: "24px", color: "" }} 
-                                            data-id={org.id} data-org={org.org_name} 
-                                            onClick={this.handleShow}></i>
+                                            <i className="fa fa-money" style={{ fontSize: "24px", color: "" }}
+                                                data-id={org.id} data-org={org.org_name}
+                                                onClick={this.handleShow}></i>
                                         </td>
                                         {/* <td>{q.role_type === "Super Admin" ? "-":(<a href="" data-id={q.id} onClick={this.handleEdit}>
                                             Edit</a>)}</td> */}
@@ -180,8 +235,8 @@ export class OrganizationList extends React.Component {
                                                 data-id={org.id}
                                                 data-org={org.org_name}
                                                 data-remove="true"
-                                                data-active={org.is_active} data-suspend={org.is_suspend} 
-                                                onClick={this.handleShow}></i> 
+                                                data-active={org.is_active} data-suspend={org.is_suspend}
+                                                onClick={this.handleShow}></i>
 
                                         </td>
                                     </tr>
@@ -207,7 +262,7 @@ export class OrganizationList extends React.Component {
                                     <button className="btn btn-primary btn-lg" data-id={active_lbl} onClick={this.handleDelete} >{active_lbl}</button>
                                 </div>
                                 <div className="col text-center ">
-                                    <button className="btn btn-primary btn-lg" disabled = {active_lbl === "Activate" && "true"}  data-id={suspend_lbl} onClick={this.handleDelete} >{suspend_lbl}</button>
+                                    <button className="btn btn-primary btn-lg" disabled={active_lbl === "Activate" && "true"} data-id={suspend_lbl} onClick={this.handleDelete} >{suspend_lbl}</button>
                                 </div>
                                 <div className="col text-center ">
                                     <button className="btn btn-primary btn-lg" data-id="delete" onClick={this.handleDelete} >Delete</button>
@@ -216,22 +271,55 @@ export class OrganizationList extends React.Component {
                                     <button className="btn btn-primary btn-lg" onClick={this.handleClose} >Cancel</button>
                                 </div>
                             </div>
-                        </> ): (
-                            <>
-                                <p className="text-center h5">{this.state.startBill ? "Do you want to start the billing?" : "Is the Prediction Model done?"}</p>
+                        </>) :
+                        showMessage ? (<>
+                            <p className="text-center h5">
+                                Is the FirstMatch Tool configuration Done Or Are you sending the credentials again?</p>
+
+                            <div className="row ">
+                                <div className="col text-center ">
+
+                                    <button className="button-pop" onClick={this.sendCredentails} >Yes</button>
+
+                                </div>
+                                <div className="col text-center ">
+                                    <button className="button-pop" onClick={this.handleClose} >No</button>
+                                </div>
+                            </div>
+                        </>) :
+
+                            sendEmail ? (<>
+                                <p className="text-center h5">
+                                    The organization receives login credentials by clicking the Send button below:</p>
 
                                 <div className="row ">
                                     <div className="col text-center ">
 
-                                        <button className="button-pop" onClick={this.state.startBill ? this.onBilling : this.start_Bill} >Yes</button>
+                                        <button className="button-pop" onClick={this.sendCredentails_1} >Send</button>
 
                                     </div>
                                     <div className="col text-center ">
-                                        <button className="button-pop" onClick={this.handleClose} >No</button>
+                                        <button className="button-pop" onClick={this.handleClose} >Cancel</button>
                                     </div>
                                 </div>
-                            </>
-                        )
+                            </>) :
+
+                                (
+                                    <>
+                                        <p className="text-center h5">{this.state.startBill ? "Do you want to start the billing?" : "Is the Prediction Model done?"}</p>
+
+                                        <div className="row ">
+                                            <div className="col text-center ">
+
+                                                <button className="button-pop" onClick={this.state.startBill ? this.onBilling : this.start_Bill} >Yes</button>
+
+                                            </div>
+                                            <div className="col text-center ">
+                                                <button className="button-pop" onClick={this.handleClose} >No</button>
+                                            </div>
+                                        </div>
+                                    </>
+                                )
                     }
 
                 </Modal>
