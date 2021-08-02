@@ -356,7 +356,6 @@ export const Email_Credetials = async (org_id) => {
       }
     })
       .then(response => {
-        console.log(response)
         const bill = response.data
         return response.data;
       })

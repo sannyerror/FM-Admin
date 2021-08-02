@@ -113,8 +113,8 @@ class AddQuestion extends React.Component {
             category: this.state.category,
             free_text: this.state.free_text,
             suggested_answers: this.state.suggested_answers,
-            is_mandatory: this.state.is_mandatory.toString(),
-            is_related: this.state.is_related.toString(),
+            is_mandatory: this.state.is_mandatory?.toString(),
+            is_related: this.state.is_related?.toString(),
             suggested_jump: this.state.suggested_jump
 
         }

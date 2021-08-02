@@ -133,7 +133,7 @@ class RAF extends Component {
         if(file){
                     let res = await this.uploadFile(file);
                     let file_path = res.data.status === "failed" ? res.data.response[0] : res.data.response[0]
-                    let Error_Msg = res.data.status === "failed" ? res.data.response.toString() : res.data.message;
+                    let Error_Msg = res.data.status === "failed" ? res.data.response?.toString() : res.data.message;
                     this.state.data[name]&&this.state.data[name][index]?
                         this.updateData(index,name,file_path,Error_Msg):
                         this.updateData1(name,file_path,Error_Msg)
