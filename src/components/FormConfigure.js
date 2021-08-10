@@ -75,14 +75,16 @@ class FormConfigure extends React.Component {
             readOnly: "",
             isPreview: false,
             isOpen: false,
-            logoPath: ""
+            logoPath: "",
+            header_color:""
         }
 
 
     }
     componentDidMount = async () => {
         let { id } = this.props.match.params
-        let logopath = this.props.organizationsList.filter(org => org.id === Number(id))[0].logo_path
+        let logopath = this.props.organizationsList.find(org=> org.id === Number(id)).logo_path
+        let headerColor = this.props.organizationsList.find(org=> org.id === Number(id)).header_color
         let response = await fetchConfigureQuestions(id);
         if (response.message !== "sections not available") {
             this.setState({
@@ -90,12 +92,14 @@ class FormConfigure extends React.Component {
                 sections: response.response ? response.response : this.state.sections,
                 // sections: this.state.sections, 
                 readOnly: response.is_prediction_available,
-                logoPath: logopath
+                logoPath: logopath,
+                header_color: headerColor
             })
         } else {
             this.setState({
                 Org_id: id,
-                logoPath: logopath
+                logoPath: logopath,
+                header_color: headerColor
             })
         }
 
@@ -336,16 +340,20 @@ class FormConfigure extends React.Component {
     }
     jumpOptions = () => {
         let options = []
-        this.state.sections.filter((sec, key) => sec.related === "true").map(
+       this.state.sections.filter((sec, key) => sec.related === "true").map(
             (q, i) => options.push({ value: q.section, label: q.section, id: i }))
         return options;
+       
     }
     Question_jumpOptions = (id) => {
         let options = []
         this.state.sections[id].questions.filter((sec, key) => sec.related === "yes").map(
             (q, i) => options.push({ value: q.question, label: q.question, id: i }))
         return options;
+        
+    
     }
+    
     multihandleChange = (id, idx, idy) => e => {
         let sections = [...this.state.sections];
         let jumpValues =
@@ -380,7 +388,7 @@ class FormConfigure extends React.Component {
     }
     render() {
         toast.configure();
-        let { sections, isPreview, logoPath } = this.state
+        let { sections, isPreview, logoPath, header_color } = this.state
         let id = this.state.lastSectionId;
         const sectionLength = this.state.sections.length - 1
         let jumpOpt = []
@@ -396,7 +404,7 @@ class FormConfigure extends React.Component {
                     scrollable="true"
                     contentLabel="Example Modal"
                 >
-                    <Preview DynamicQuestions={this.state.sections} logoPath={logoPath} />
+                    <Preview DynamicQuestions={this.state.sections} logoPath={logoPath} headerColor={header_color} />
                 </Modal>
 
             )
