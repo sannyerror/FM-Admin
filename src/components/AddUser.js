@@ -208,7 +208,10 @@ class AddUser extends React.Component {
                             <div className="col-sm-4">
                                 <select name="group_id" className="form-control" id="exampleFormControlSelect1" onChange={this.handleChange} required>
                                     <option value="" >Select</option>
-                                    {this.state.Roles.map((role,i) => <option key={i} value={role.id} selected={this.state.role_type === role.name}>{role.name}</option>)}
+                                    {this.state.Roles.map((role,i) => 
+                                    <option key={i} 
+                                    value={role.id} selected={this.state.role_type === role.name}>
+                                        {role.name}</option>)}
 
                                 </select>
                             </div>

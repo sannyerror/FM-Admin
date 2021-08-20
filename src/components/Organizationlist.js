@@ -6,7 +6,6 @@ import {
     deleteOrganizations,
     Email_Credetials
 } from '../api/api';
-import axios from 'axios';
 import { connect } from 'react-redux';
 import '../App.css';
 import { toast } from 'react-toastify';

@@ -25,7 +25,7 @@ export const heading = {
 export const subHeading = {
   fontSize:  "30px",
   fontWeight:  "bold",
-  color:  "#8284e5",
+  
 }
 
 export const fullWidth = {

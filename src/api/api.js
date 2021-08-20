@@ -88,6 +88,7 @@ export const login = async (email, password) => {
       is_pwd_updated: is_pwd_updated
     }
     localStorage.setItem("refreshToken", response.data.response.token);
+    localStorage.setItem("user_role", response.data.response.role_type);
     dispatch(fetchUsersSuccess(user))
     
     
@@ -1110,6 +1111,7 @@ export const logOut = () => {
   axios(config)
     .then(response => {
       localStorage.removeItem("refreshToken")
+      localStorage.removeItem("user_role")
       dispatch(clearUser())
       return response.data;
     })
@@ -1125,7 +1127,8 @@ function throwError(error) {
       const { dispatch } = store
       logOut();
       dispatch(clearUser())
-      localStorage.removeItem("refreshToken")
+      localStorage.removeItem("refreshToken");
+      localStorage.removeItem("user_role");
     }else {
       const errorResponse = {
         data: error.response.data || undefined,

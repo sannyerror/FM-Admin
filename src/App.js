@@ -31,6 +31,7 @@ import FormConfigure from "./components/FormConfigure";
 import ConfigureOrg from "./components/ConfigureOrg";
 import Preview from "./components/Preview_Questions"
 import { logOut } from './api/api';
+import PageNotFound from './components/PageNotFound';
 export const { store , persistor } = configureStore(createHistory());
 class App extends React.Component {
   async componentDidMount(){
@@ -72,28 +73,30 @@ class App extends React.Component {
                 <Route path="/admin/login" component={Login}/>
                 <Route path="/admin/finddomain" component={FindDomain}/>
                 <Route path="/admin/raf/:customer" component={RAF} />
+                
                 </Switch>
                 <Switch>
-                <PrivateRoute path="/admin/changepassword" component={ChangePassword}/>
-                <PrivateRoute path="/admin/preview" component={Preview}/>
-                <PrivateRoute path="/admin/billing/org=:org&name=:name" component={BillingDetails}/>
-                <PrivateRoute exact path="/admin/configure" component={Configure}/>
-                <PrivateRoute path="/admin/configure/questions" component={QuestionsList}/>
-                <PrivateRoute path="/admin/configure/question/edit=:edit&id=:id" component={AddQuestion}/>
-                <PrivateRoute path="/admin/configure/addquestion" component={AddQuestion}/>
-                <PrivateRoute path="/admin/configure/adduser" component={AddUser}/>
-                <PrivateRoute path="/admin/configure/user/edit=:edit&id=:id" component={AddUser}/>
-                <PrivateRoute path="/admin/configure/userslist" component={Userslist}/>
-                <PrivateRoute path="/admin/configure/addorganization" component={AddOrganization}/>
-                <PrivateRoute path="/admin/configure/organizationlist" component={Organizationlist}/> 
-                <PrivateRoute path="/admin/configure/organization/edit=:edit&id=:id" component={AddOrganization}/> 
-                <PrivateRoute path="/admin/configure/questioncategory" component={AddQuestionCategory}/>
-                <PrivateRoute path="/admin/eiflist" component={EIFList}/>
-                <PrivateRoute path="/admin/raflist" component={RAFList}/>
-                <PrivateRoute path="/admin/configure/emailslist" component={EmailList}/>
-                <PrivateRoute path="/admin/org-configure/" component={ConfigureOrg}/>
-                <PrivateRoute path="/admin/questions-configure/Org=:Org&id=:id" component={FormConfigure}/>
-                <PrivateRoute path="/admin/configure/questioncategorylist" component={QuestionsCategorylist}/>
+                <PrivateRoute path="/admin/access_denied" component={PageNotFound} roles={["Super Admin","Admin","Coordinator"]}/>
+                <PrivateRoute path="/admin/changepassword" component={ChangePassword} roles={["Super Admin","Admin","Coordinator"]}/>
+                <PrivateRoute path="/admin/preview" component={Preview} roles={["Super Admin","Admin"]}/>
+                <PrivateRoute path="/admin/billing/org=:org&name=:name" component={BillingDetails} roles={["Super Admin","Admin"]}/>
+                <PrivateRoute exact path="/admin/configure" component={Configure} roles={["Super Admin","Admin","Coordinator"]}/>
+                <PrivateRoute path="/admin/configure/questions" component={QuestionsList} roles={["Super Admin","Admin"]}/>
+                <PrivateRoute path="/admin/configure/question/edit=:edit&id=:id" component={AddQuestion} roles={["Super Admin","Admin"]}/>
+                <PrivateRoute path="/admin/configure/addquestion" component={AddQuestion} roles={["Super Admin","Admin"]}/>
+                <PrivateRoute path="/admin/configure/adduser" component={AddUser} roles={["Super Admin","Admin"]}/>
+                <PrivateRoute path="/admin/configure/user/edit=:edit&id=:id" component={AddUser} roles={["Super Admin","Admin"]}/>
+                <PrivateRoute path="/admin/configure/userslist" component={Userslist} roles={["Super Admin","Admin"]}/>
+                <PrivateRoute path="/admin/configure/addorganization" component={AddOrganization} roles={["Super Admin","Admin"]}/>
+                <PrivateRoute path="/admin/configure/organizationlist" component={Organizationlist} roles={["Super Admin","Admin"]}/> 
+                <PrivateRoute path="/admin/configure/organization/edit=:edit&id=:id" component={AddOrganization} roles={["Super Admin","Admin"]}/> 
+                <PrivateRoute path="/admin/configure/questioncategory" component={AddQuestionCategory} roles={["Super Admin","Admin"]}/>
+                <PrivateRoute path="/admin/eiflist" component={EIFList} roles={["Super Admin","Admin","Coordinator"]}/>
+                <PrivateRoute path="/admin/raflist" component={RAFList} roles={["Super Admin","Admin","Coordinator"]}/>
+                <PrivateRoute path="/admin/configure/emailslist" component={EmailList} roles={["Super Admin","Admin","Coordinator"]}/>
+                <PrivateRoute path="/admin/org-configure/" component={ConfigureOrg} roles={["Super Admin","Admin"]}/> 
+                <PrivateRoute path="/admin/questions-configure/Org=:Org&id=:id" component={FormConfigure} roles={["Super Admin","Admin"]}/>
+                <PrivateRoute path="/admin/configure/questioncategorylist" component={QuestionsCategorylist} roles={["Super Admin","Admin"]}/>
                 </Switch>
                </Router>
                 </PersistGate>

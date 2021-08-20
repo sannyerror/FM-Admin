@@ -55,11 +55,11 @@ export class Header extends React.Component {
                                 </li>
                                 {is_pwd_updated === false ? "" : (
                                     <>
-                                        {role_type === "Coordinator" ? "" : (
+                                       
                                             <li className="nav-item">
                                                 <Link className="nav-link" to="/admin/configure">Configure</Link>
                                             </li>
-                                        )}
+                                        
 
                                         <li className="nav-item">
                                             <Link className="nav-link" to="/admin/eiflist">Interest Forms</Link>

@@ -100,29 +100,27 @@ export class UsersList extends React.Component {
                                         <td>{ques.email_id}</td>
                                         <td>{ques.role_type}</td>
                                         <td className="text-center">
-                                            {ques.role_type === "Super Admin" ? "-" :
-                                                role_type === "Admin" ? ques.role_type !== "Admin" ? (
-                                                    <i className="fa fa-edit" style={{ fontSize: "20px", color: "#000000" }} data-id={ques.id} onClick={this.handleEdit}></i>) : "-"
-                                                    : (
-                                                        <i className="fa fa-edit" style={{ fontSize: "20px", color: "#000000" }} data-id={ques.id} onClick={this.handleEdit}></i>)
-
-                                            }</td>
-                                        <td className="text-center">{ques.role_type === "Super Admin" ? "-" :
-
-                                            role_type === "Admin" ? ques.role_type !== "Admin" ? (
-                                                <i className="fa fa-trash" style={{ fontSize: "20px", color: "red" }} data-id={ques.id}
+                                            {(  role_type === "Coordinator" ? "-" :
+                                                
+                                                role_type === "Admin" && (ques.role_type === "Super Admin" || ques.role_type === "Admin" )) ? "-" :
+                                        <i className="fa fa-edit"  
+                                                style={{ fontSize: "20px", color: "#000000" }} 
+                                                data-id={ques.id} onClick={this.handleEdit}></i>
+                                }
+                                            </td>
+                                        <td className="text-center">
+                                        {(  role_type === "Coordinator" ? "-" :
+                                                
+                                                 role_type === "Admin" && (ques.role_type === "Super Admin" || ques.role_type === "Admin" )) ? "-" :
+                                          
+                                            <i className="fa fa-trash" 
+                                                   style={{ fontSize: "20px", color: "red" }} 
+                                                   data-id={ques.id}
                                                     onClick={e =>
                                                         window.confirm("Are you sure you wish to delete this User?") &&
                                                         this.handleDelete(e)
                                                     }></i>
-                                            ) : "-"
-                                                : (
-                                                    <i className="fa fa-trash" style={{ fontSize: "20px", color: "red" }} data-id={ques.id}
-                                                        onClick={e =>
-                                                            window.confirm("Are you sure you wish to delete this User?") &&
-                                                            this.handleDelete(e)
-                                                        }></i>
-                                                )
+                                            
 
                                         }
 
