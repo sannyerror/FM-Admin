@@ -169,7 +169,7 @@ export class OrganizationList extends React.Component {
         const name = this.state.Org_Name
         const Id = this.state.Org_Id
         let email_id = (this.state.super_admin_email_id.filter(email => email)).toString()
-        if(this.state.super_admin_email_id.length > 0) {
+        if(email_id) {
         let response = await Email_Credetials(Id,email_id)
         
         if (response.status === "failed") {
@@ -198,6 +198,13 @@ export class OrganizationList extends React.Component {
         const name = this.state.Org_Name
         const Id = this.state.Org_Id
         let org_SAdmins = await Org_Super_Admins(Id)
+        if (org_SAdmins.status === "failed") {
+            org_SAdmins.message &&  toast.error(org_SAdmins.message && org_SAdmins.message,
+                { position: toast.POSITION.TOP_CENTER, autoClose: 3000 })
+            this.setState({
+                error: org_SAdmins.status
+            });
+        }
         this.setState({
             superAdminList: org_SAdmins.status === "failed" ? [] : org_SAdmins.response,
             showPOPUP: true,
