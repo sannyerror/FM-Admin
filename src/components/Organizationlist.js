@@ -4,7 +4,8 @@ import {
     fetchBillingStatus,
     isPrediction,
     deleteOrganizations,
-    Email_Credetials
+    Email_Credetials,
+    Org_Super_Admins
 } from '../api/api';
 import { connect } from 'react-redux';
 import '../App.css';
@@ -39,6 +40,8 @@ export class OrganizationList extends React.Component {
             active_lbl: "",
             showMessage: "",
             sendEmail: "",
+            superAdminList: [],
+            super_admin_email_id: []
 
         }
     }
@@ -165,9 +168,13 @@ export class OrganizationList extends React.Component {
     sendCredentails_1 = async (e) => {
         const name = this.state.Org_Name
         const Id = this.state.Org_Id
-        let response = await Email_Credetials(Id)
+        let email_id = (this.state.super_admin_email_id.filter(email => email)).toString()
+        if(this.state.super_admin_email_id.length > 0) {
+        let response = await Email_Credetials(Id,email_id)
         
         if (response.status === "failed") {
+            toast.error(response.message && response.message,
+                { position: toast.POSITION.TOP_CENTER, autoClose: 3000 })
             this.setState({
                 error: response.status
             });
@@ -177,22 +184,41 @@ export class OrganizationList extends React.Component {
             this.setState({
                 showPOPUP: false,
                 sendEmail: false,
-                showMessage: false
+                showMessage: false,
+                super_admin_email_id: []
             })
         }
-
+    } else {
+        toast.error("Please select Email-Id before clicking on Send button",
+            { position: toast.POSITION.TOP_CENTER, autoClose: 3000 })
+    }
     }
 
     sendCredentails = async (e) => {
+        const name = this.state.Org_Name
+        const Id = this.state.Org_Id
+        let org_SAdmins = await Org_Super_Admins(Id)
         this.setState({
+            superAdminList: org_SAdmins.status === "failed" ? [] : org_SAdmins.response,
             showPOPUP: true,
             sendEmail: true,
             showMessage: false
         })
     }
+
+    Email_Onchange = async (e) => {
+        let {name, value} = e.target
+        let id = e.target.dataset.id
+        let checked = e.target.checked
+        let super_admin_email_id = this.state.super_admin_email_id
+        super_admin_email_id[id] = checked ? value : ""
+        this.setState({
+            super_admin_email_id
+        })
+    }
     render() {
         toast.configure()
-        let { Delete_Org, Org_Name, active_lbl, suspend_lbl, showMessage, sendEmail } = this.state;
+        let { Delete_Org, Org_Name, active_lbl, suspend_lbl, showMessage, sendEmail, superAdminList } = this.state;
         return (
             <div className="container-fluid">
                 <div className="row p-2 bg-primary text-white">Organizations List</div>
@@ -290,11 +316,36 @@ export class OrganizationList extends React.Component {
                             sendEmail ? (<>
                                 <p className="text-center h5">
                                     The organization receives login credentials by clicking the Send button below:</p>
+                                    
+                                        {   
+                                          superAdminList.length>0 ? superAdminList.map((list,i) => 
+                                        <div className="row" style={{marginLeft:"10%", marginBottom: "8px", alignContent: "center"}}>
+                                    <div className="form-check form-check-inline">
+                                    <input
+                                        style={{height: "18px", width:"18px"}}
+                                        onChange={this.Email_Onchange}
+                                        key={i}
+                                        data-id={i}
+                                        value={list.email_id}
+                                        className="form-check-input" name="super_admin_email_id"
+                                        checked={this.state.super_admin_email_id[i] === list.email_id}
+                                        type="checkbox"  
+                                         />
+                                    <label className="form-check-label " style={{alignItems:"center"}} >
+                                        {list.email_id}
+                                    </label>
+                                </div>
+                                </div> 
+                                        )
+                                    : 
+                                     <h2>There is no List of Super Admin EmailId's</h2>
+                                    }
+                                    
 
-                                <div className="row ">
+                                <div className="row " style={{marginTop: "10px"}}>
                                     <div className="col text-center ">
 
-                                        <button className="button-pop" onClick={this.sendCredentails_1} >Send</button>
+                                        <button className="button-pop" disabled={superAdminList.length===0} onClick={this.sendCredentails_1} >Send</button>
 
                                     </div>
                                     <div className="col text-center ">

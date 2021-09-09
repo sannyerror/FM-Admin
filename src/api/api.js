@@ -45,6 +45,7 @@ import { update } from '../redux/login/loginAction'
 import { clearUser } from '../redux/login/loginAction'
 import { store } from '../App'
 export const baseApiUrl = "http://3.7.135.210/api";
+export const OrgbaseApiUrl = "http://3.7.135.210/";
 
 
 const refreshAuthLogic = async failedRequest => {
@@ -348,10 +349,10 @@ export const isPrediction = async (id) => {
   }
 };
 
-export const Email_Credetials = async (org_id) => {
+export const Email_Credetials = async (org_id, email_id) => {
   const currentUser = store.getState().loginData.user.token;
   try {
-    return await axios.post(`${baseApiUrl}/after-raf/`,{customer: org_id, send_to:"customer"}, {
+    return await axios.post(`${baseApiUrl}/after-raf/`,{customer: org_id, send_to:"customer", email_id: email_id}, {
       headers: {
         'Authorization': `Bearer ${currentUser}`
       }
@@ -1062,6 +1063,28 @@ export const rafQuestions = async (customer) => {
   catch (error) {
     console.log('error')
     dispatch(rafQuestionsFailure(error.message))
+    throwError(error)
+
+  }
+};
+
+export const Org_Super_Admins = async (customer) => {
+  const { dispatch } = store
+  const currentUser = store.getState().loginData.user.token;
+  try {
+    return await axios.get(`${baseApiUrl}/org/super/admins?customer=${customer}`, { 
+      headers: {
+        'Authorization': `Bearer ${currentUser}`
+      }
+    })
+      .then(response => {
+        
+        const loadrafquestions = response.data
+        return response.data;
+      })
+  }
+  catch (error) {
+    console.log('error')
     throwError(error)
 
   }
