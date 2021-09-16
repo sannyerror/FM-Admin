@@ -32,6 +32,7 @@ import ConfigureOrg from "./components/ConfigureOrg";
 import Preview from "./components/Preview_Questions"
 import { logOut } from './api/api';
 import PageNotFound from './components/PageNotFound';
+import AddOrgUser from './components/AddOrgUser'
 export const { store , persistor } = configureStore(createHistory());
 class App extends React.Component {
   async componentDidMount(){
@@ -97,7 +98,8 @@ class App extends React.Component {
                 <PrivateRoute path="/admin/org-configure/" component={ConfigureOrg} roles={["Super Admin","Admin"]}/> 
                 <PrivateRoute path="/admin/questions-configure/Org=:Org&id=:id" component={FormConfigure} roles={["Super Admin","Admin"]}/>
                 <PrivateRoute path="/admin/configure/questioncategorylist" component={QuestionsCategorylist} roles={["Super Admin","Admin"]}/>
-                </Switch>
+                <PrivateRoute path="/admin/configure/organization/adduser/id:id" component={AddOrgUser} roles={["Super Admin","Admin"]}/>
+                </Switch> 
                </Router>
                 </PersistGate>
         </Provider>

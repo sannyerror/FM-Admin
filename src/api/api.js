@@ -895,6 +895,30 @@ export const AddUsers = async (data, id) => {
 
 };
 
+export const AddOrgUsers = async (data) => {
+  const { dispatch } = store
+  const currentUser = store.getState().loginData.user.token;
+  try {
+    return await axios.post(`${baseApiUrl}/org/super/admins`, data, {
+      headers: {
+        'Authorization': `Bearer ${currentUser}`
+      }
+    })
+      .then(response => {
+        console.log(response)
+        const addedusers = response.data
+        return response.data;
+      })
+  }
+
+  catch (error) {
+    console.log('error')
+    throwError(error)
+
+  }
+
+};
+
 export const AddOrganizations = async (data, id) => {
   const { dispatch } = store
   const currentUser = store.getState().loginData.user.token;

@@ -161,7 +161,7 @@ class RAF extends Component {
         formData.append('assets', file)
        return await axios.post(`${baseApiUrl}/assets`, formData, {
             headers: {
-                'content-type': 'multipart/form-data'
+                'content-type': 'multipart/form-data' 
             }
         });
     }

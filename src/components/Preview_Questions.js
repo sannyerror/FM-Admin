@@ -48,7 +48,7 @@ const nav = {
   alignItems: "center",
   justifyContent: "center",
   fontWeight: "bold",
-  marginTop: "80px",
+  marginTop: "90px",
   '@media all and (min-width:  "520px)': {
     flexDirection: "row",
     alignItems: "flex-start",
@@ -101,9 +101,11 @@ const logo = {
 
 const firstMatchLogo = {
   position: "absolute",
-  transform: "translate(-50%, -50%)",
+  transform: "translate(-50%, -40%)",
   left: "50%",
-  top: "20px",
+  top: "20px", 
+  height: "100px",
+  width: "200px",
   '@media all and (max-width: 520px)': {
     width: "80px"
   }

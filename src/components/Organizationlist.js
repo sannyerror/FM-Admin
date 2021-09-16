@@ -238,6 +238,7 @@ export class OrganizationList extends React.Component {
                                 <th scope="col">Communication</th>
                                 <th scope="col">Billing</th>
                                 <th scope="col">Configure</th>
+                                <th scope="col">Edit</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -271,6 +272,12 @@ export class OrganizationList extends React.Component {
                                                 onClick={this.handleShow}></i>
 
                                         </td>
+                                        <td className="text-center">
+                                          <i className="fa fa-edit"  
+                                                style={{ fontSize: "20px", color: "#000000" }} 
+                                                data-id={org.id} onClick={this.handleEdit}></i>
+                                
+                                            </td>
                                     </tr>
                                 ))}
 
@@ -322,7 +329,7 @@ export class OrganizationList extends React.Component {
 
                             sendEmail ? (<>
                                 <p className="text-center h5">
-                                    The organization receives login credentials by clicking the Send button below:</p>
+                                Please choose email ID(s) and click on “send” button below to send the credentials:</p>
                                     
                                         {   
                                           superAdminList.length>0 ? superAdminList.map((list,i) => 

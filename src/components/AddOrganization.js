@@ -5,6 +5,7 @@ import axios from 'axios'
 import { store } from '../App'
 import {connect} from 'react-redux';
 import { toast } from 'react-toastify';
+import {Link } from "react-router-dom";
 import 'react-toastify/dist/ReactToastify.css';
 class AddOrganization extends React.Component {
     constructor() {
@@ -24,13 +25,12 @@ class AddOrganization extends React.Component {
         if (id) {
             
             try {
-                const response = await axios.get(`${baseApiUrl}/customers/${id}`, {
+                const response = await axios.get(`${baseApiUrl}/customers/${id}/`, {
                     headers: {
                         'Authorization': `Bearer ${currentUser}`
                     }
                 })
                     .then(response => {
-                        
                         return response.data;
                     })
                this.setState({
@@ -151,12 +151,18 @@ class AddOrganization extends React.Component {
                            <div className="form-group row">
                             <label className="col-sm-2 col-form-label font-weight-bold "></label>
                             <div className="col-sm-4">
-                                <button type="submit" className="btn btn-primary font-weight-bold btn-block" >{id ? "UPDATE" : "ADD ORGANIZATION"}</button>
+                                <button type="submit" disabled className="btn btn-primary font-weight-bold btn-block" >{id ? "UPDATE" : "ADD ORGANIZATION"}</button>
                             </div>
                         </div>
                     </div>
                 </form>
-
+                <div className="row p-2 bd-highlight">
+                            <div className="col col-3">
+                                {/* <Link to="/admin/configure/questioncategorylist">Question Categories</Link> */} 
+                                <Link to={`/admin/configure/organization/adduser/id=${id}`}>Add Admin Users</Link>
+                                </div>
+                         </div>
+                        
             </div>
 
         );
