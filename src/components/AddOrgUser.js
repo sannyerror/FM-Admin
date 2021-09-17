@@ -57,10 +57,14 @@ class AddOrgUser extends React.Component {
         try {
             const response = await AddOrgUsers(data);
             if (response.status === "failed") {
+                if(response.message === "user already existed with given email or mobile."){
+                    toast.info(response.message, { position: toast.POSITION.TOP_CENTER, autoClose: 3000 })
+                }else{
                 const err = response.message
                 this.setState({
                     error: err
                 })
+            }
             } else {
                 toast.info(`User ${id ? "updated" : "added"}  successfully.`, { position: toast.POSITION.TOP_CENTER, autoClose: 3000 })
                 this.props.history.push('/admin/configure/organizationlist');
