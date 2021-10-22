@@ -137,6 +137,11 @@ class FormConfigure extends React.Component {
         sections[secid].questions[idx].suggested_answers = sections[secid].questions[idx].suggested_answers.filter((item, i) => index != i)
         sections[secid].questions[idx].suggested_jump = sections[secid].questions[idx].suggested_jump.filter((item, i) => index != i)
         // const sectionss = this.state.sections[secid].questions[idx].suggested_answers.filter((item, i) => index != i)
+        sections[secid].questions[idx].suggested_answers = sections[secid].questions[idx].suggested_answers.map((item,id) => {
+            return{
+                    id: id, value: item.value, isChecked: item.isChecked
+                 }
+        })
         this.setState({
             sections,
         })
