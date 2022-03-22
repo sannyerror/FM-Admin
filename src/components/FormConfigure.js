@@ -117,10 +117,139 @@ class FormConfigure extends React.Component {
       (org) => org.id === Number(id)
     ).header_color;
     let response = await fetchConfigureQuestions(id);
+    let findLastSection = response.response.some((section) =>
+      section.section === "Outcomes" ? true : false
+    );
+    let lastSection = [
+      ...response.response,
+      {
+        section: "Outcomes",
+        section_id: this.state.sections.length,
+        related: "false",
+        questions: [
+          {
+            question_id: 0,
+            question: "Referral Status",
+            description: "",
+            field_type: "1",
+            answer_type: "RADIO",
+            suggested_answers: [
+              { id: 0, value: "Pending", isChecked: true },
+              { id: 1, value: "Placed", isChecked: false },
+              { id: 2, value: "Rejected", isChecked: false },
+              { id: 3, value: "Not Placed", isChecked: false },
+            ],
+            suggested_jump: [],
+            validation1: "",
+            validation2: "",
+            error_msg: "",
+            related: "no",
+            required: "yes",
+            flag: "0",
+          },
+          {
+            question_id: 1,
+            question: "Program",
+            description: "",
+            field_type: "1",
+            answer_type: "SELECT",
+            suggested_answers: [
+              { id: 0, value: "yes", isChecked: false },
+              { id: 1, value: "no", isChecked: false },
+            ],
+            suggested_jump: [],
+            validation1: "",
+            validation2: "",
+            error_msg: "",
+            related: "no",
+            required: "yes",
+            flag: "0",
+          },
+          {
+            question_id: 2,
+            question: "Start Date",
+            description: "",
+            field_type: "1",
+            answer_type: "DATE",
+            suggested_answers: [],
+            suggested_jump: [],
+            validation1: "",
+            validation2: "",
+            error_msg: "",
+            related: "no",
+            required: "yes",
+            flag: "0",
+          },
+          {
+            question_id: 3,
+            question: "Program Completion",
+            description: "",
+            field_type: "1",
+            answer_type: "SELECT",
+            suggested_answers: [
+              { id: 0, value: "Secure Treatment", isChecked: false },
+              { id: 1, value: "abc", isChecked: false },
+              { id: 2, value: "abc 2", isChecked: false },
+            ],
+            suggested_jump: [],
+            validation1: "",
+            validation2: "",
+            error_msg: "",
+            related: "no",
+            required: "yes",
+            flag: "0",
+          },
+          {
+            question_id: 4,
+            question: "End Date",
+            description: "",
+            field_type: "1",
+            answer_type: "DATE",
+            suggested_answers: [],
+            suggested_jump: [],
+            validation1: "",
+            validation2: "",
+            error_msg: "",
+            related: "no",
+            required: "yes",
+            flag: "0",
+          },
+          {
+            question_id: 5,
+            question: "Remain Out of Care",
+            description: "",
+            field_type: "1",
+            answer_type: "SELECT",
+            suggested_answers: [""],
+            suggested_jump: [],
+            validation1: "",
+            validation2: "",
+            error_msg: "",
+            related: "no",
+            required: "yes",
+            flag: "0",
+          },
+        ],
+      },
+    ];
+    let sectionResponse = response.response.find(
+      (section) => section.section === "Outcomes"
+    );
+    let index = response.response.findIndex(
+      (section) => section.section === "Outcomes"
+    );
+    if (index >= 0) {
+      response.response.splice(index, 1);
+      response.response.push(sectionResponse);
+    }
     if (response.message !== "sections not available") {
       this.setState({
         Org_id: id,
-        sections: response.response ? response.response : this.state.sections,
+        sections: response.response
+          ? findLastSection
+            ? response.response
+            : lastSection
+          : this.state.sections,
         // sections: this.state.sections,
         readOnly: response.is_prediction_available,
         logoPath: logopath,
@@ -422,6 +551,15 @@ class FormConfigure extends React.Component {
       lastSectionId: id + 1,
     });
   };
+  onLast = () => {
+    let id = this.state.sections.length - 1;
+    let sections = [...this.state.sections];
+    sections.map((section, i) => (section.section_id = i));
+    this.setState({
+      sections,
+      lastSectionId: id,
+    });
+  };
   handlePreview = async (e) => {
     e.preventDefault();
     this.setState({
@@ -431,6 +569,24 @@ class FormConfigure extends React.Component {
   };
   handleSubmit = async (e) => {
     e.preventDefault();
+    let sections = [...this.state.sections];
+    //FIND : Outcomes Section
+    let lastSectionValue = this.state.sections.find(
+      (section) => section.section === "Outcomes"
+    );
+    const findIndex = this.state.sections.findIndex(
+      (section) => section.section === "Outcomes"
+    );
+
+    if (findIndex >= 0) {
+      let sections = [...this.state.sections];
+      sections.splice(findIndex, 1);
+      this.setState({ sections });
+      this.setState((prevState) => ({
+        ...prevState,
+        sections: [...prevState.sections, lastSectionValue],
+      }));
+    }
     let data = {
       customer: this.state.Org_id,
       sections: this.state.sections,
@@ -1729,6 +1885,15 @@ class FormConfigure extends React.Component {
                 disabled={sectionLength > -1 ? false : true}
               >
                 Submit
+              </button>
+            </div>
+            <div className="col col-sm-2">
+              <button
+                onClick={this.onLast}
+                className="btn btn-primary"
+                disabled={sectionLength === id ? true : false}
+              >
+                Last Section
               </button>
             </div>
           </div>
