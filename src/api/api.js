@@ -44,7 +44,9 @@ import createAuthRefreshInterceptor from "axios-auth-refresh"
 import { update } from '../redux/login/loginAction'
 import { clearUser } from '../redux/login/loginAction'
 import { store } from '../App'
+//UAT
 export const baseApiUrl = "http://3.7.135.210/api";
+
 export const OrgbaseApiUrl = "http://3.7.135.210/";
 
 

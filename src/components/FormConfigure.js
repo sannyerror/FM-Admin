@@ -126,7 +126,12 @@ class FormConfigure extends React.Component {
                         { id: 2, value: 'Rejected', isChecked: false },
                         { id: 3, value: 'Not Placed', isChecked: false }
                     ],
-                    suggested_jump: [],
+                    suggested_jump: [
+                        {answer: 'Pending', jumpto: [], question_jumpto:[]},
+                        {answer: 'Placed', jumpto: [], question_jumpto: ['Program', 'Start Date', 'Program Completion', 'End Date', 'Remain Out of Care']},
+                        {answer: 'Rejected', jumpto: [], question_jumpto: ['Reason for Rejection']},
+                        {answer: 'Not Placed',  jumpto: [], question_jumpto: ['Program', 'Start Date']}
+                    ],
                     validation1: '',
                     validation2: '',
                     error_msg: '',
@@ -148,7 +153,7 @@ class FormConfigure extends React.Component {
                     validation1: '',
                     validation2: '',
                     error_msg: '',
-                    related: 'no',
+                    related: 'yes',
                     required: 'yes',
                     flag: '0'
                 },
@@ -163,7 +168,7 @@ class FormConfigure extends React.Component {
                     validation1: '',
                     validation2: '',
                     error_msg: '',
-                    related: 'no',
+                    related: 'yes',
                     required: 'yes',
                     flag: '0'
                 },
@@ -182,7 +187,7 @@ class FormConfigure extends React.Component {
                     validation1: '',
                     validation2: '',
                     error_msg: '',
-                    related: 'no',
+                    related: 'yes',
                     required: 'yes',
                     flag: '0'
                 },
@@ -197,7 +202,7 @@ class FormConfigure extends React.Component {
                     validation1: '',
                     validation2: '',
                     error_msg: '',
-                    related: 'no',
+                    related: 'yes',
                     required: 'yes',
                     flag: '0'
                 },
@@ -212,37 +217,54 @@ class FormConfigure extends React.Component {
                     validation1: '',
                     validation2: '',
                     error_msg: '',
-                    related: 'no',
+                    related: 'yes',
+                    required: 'yes',
+                    flag: '0'
+                },
+                {
+                    question_id: 6,
+                    question: 'Reason for Rejection',
+                    description: '',
+                    field_type: '1',
+                    answer_type: 'SELECT',
+                    suggested_answers: [''],
+                    suggested_jump: [],
+                    validation1: '',
+                    validation2: '',
+                    error_msg: '',
+                    related: 'yes',
                     required: 'yes',
                     flag: '0'
                 }
             ]
-        };
+        }; 
         let { id } = this.props.match.params;
         let logopath = this.props.organizationsList.find((org) => org.id === Number(id)).logo_path;
         let headerColor = this.props.organizationsList.find((org) => org.id === Number(id)).header_color;
         let response = await fetchConfigureQuestions(id); 
-        this.setState((prevState) => ({
-            ...prevState,
-            sections: [...prevState.sections, lastSection]
-        })); 
-        let isOutcomes =
-            Array.isArray(response.response) &&
-            response.response.some((section) => (section.section === 'Outcomes' ? true : false));
-    
-        let sectionResponse = Array.isArray(response.response) && response.response.find((section) => section.section === 'Outcomes');
-        let index = Array.isArray(response.response) && response.response.findIndex((section) => section.section === 'Outcomes');
+         if(!Array.isArray(response.response)){
+            this.setState((prevState) => ({
+                ...prevState,
+                sections: [...prevState.sections, lastSection]
+            }));
+        }else{
+            let isOutcomes = response.response.some((section) => (section.section === 'Outcomes' ? true : false));
+            !isOutcomes && response.response.push(lastSection)
+
+            let sectionResponse = Array.isArray(response.response) && response.response.find((section) => section.section === 'Outcomes');
+            let index = Array.isArray(response.response) && response.response.findIndex((section) => section.section === 'Outcomes');
        
-        if (sectionResponse) { 
-            if (index >= 0) {
-                response.response.splice(index, 1);
-                response.response.push(sectionResponse); 
+            if (sectionResponse) { 
+                if (index >= 0) {
+                    response.response.splice(index, 1);
+                    response.response.push(sectionResponse); 
+                }
             }
-        } 
+        }
         if (response.message !== 'sections not available') {
             this.setState({
                 Org_id: id,
-                sections: Array.isArray(response.response) && isOutcomes ?
+                sections: Array.isArray(response.response) ?
                       response.response    
                     : this.state.sections, 
                 readOnly: response.is_prediction_available,
@@ -553,7 +575,7 @@ class FormConfigure extends React.Component {
                 ...prevState,
                 sections: [...prevState.sections, lastSectionValue]
             }));
-        }
+        } 
         let data = {
             customer: this.state.Org_id,
             sections: this.state.sections
@@ -627,7 +649,7 @@ class FormConfigure extends React.Component {
             sections
         });
     };
-    render() { 
+    render() {  
         toast.configure();
         let { sections, isPreview, logoPath, header_color } = this.state;
         let id = this.state.lastSectionId;
