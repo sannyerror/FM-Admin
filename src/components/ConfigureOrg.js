@@ -38,6 +38,7 @@ class ConfigureOrg extends React.Component {
             prompt: false,
             startBill: false,
             Org_Name: "",
+            Org_Type: null,
             Org_Id: "",
             logoPath: "",
             color: "#fff",
@@ -75,6 +76,7 @@ class ConfigureOrg extends React.Component {
         const org_name = this.state.Organizations.filter(org => org.id == id)
         this.setState({
             Org_Name: org_name[0].org_name,
+            Org_Type:org_name[0].org_type,
             Org_Id: org_name[0].id,
             logoPath: org_name[0].logo_path,
             color: org_name[0].header_color,
@@ -136,7 +138,7 @@ class ConfigureOrg extends React.Component {
     }
     render() {
         toast.configure()
-        const { Org_Name, Org_Id, header_color } = this.state;
+        const { Org_Name, Org_Type, Org_Id, header_color } = this.state;
         return (
 
             <div className="container-fluid">
@@ -193,9 +195,17 @@ class ConfigureOrg extends React.Component {
                                             <div className="col col-4">
                                                 <button className="btn btn-primary" onClick={this.uploadHandler} >Upload</button>
                                             </div>
-
+                                            
                                         </div>
-
+                                        {Org_Type &&
+                                         Org_Type === 2 ? 
+                                          <div className="row mt-2">
+                                            <div className="col col-2">Or</div>
+                                            <div className="col col-4">
+                                                    <button className="btn btn-primary">Enter a Text</button>
+                                            </div>  
+                                          </div> : ''
+                                        }
                                     </div>
                                     <div className="col-1" style={{ alignSelf: "center", fontSize: "18px" }}>
                                         <strong>Pick a color:</strong>
@@ -229,7 +239,7 @@ class ConfigureOrg extends React.Component {
                                 <div className="col-sm-3">
                                     <select name="group_id" className="form-control" id="exampleFormControlSelect1" onChange={this.handleChange} required>
                                         <option value="" >Select</option>
-                                        {this.state.Organizations.map((org, i) => <option key={i} value={org.id} selected={this.state.org === org.name}>{org.org_name}</option>)}
+                                        {this.state.Organizations?.map((org, i) => <option key={i} value={org.id} selected={this.state.org === org.name}>{org.org_name}</option>)}
                                     </select>
                                 </div>
                                 {this.state.group_idError && <div className="text-center text-danger">{this.state.group_idError}

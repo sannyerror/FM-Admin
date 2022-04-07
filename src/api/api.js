@@ -44,12 +44,10 @@ import createAuthRefreshInterceptor from "axios-auth-refresh"
 import { update } from '../redux/login/loginAction'
 import { clearUser } from '../redux/login/loginAction'
 import { store } from '../App'
-//UAT
-export const baseApiUrl = "http://3.7.135.210/api";
+//DEV
+export const baseApiUrl = "http://3.111.116.163/api";
 
 export const OrgbaseApiUrl = "http://3.7.135.210/";
-
-
 const refreshAuthLogic = async failedRequest => {
   //  const { store } = store
   const userState = store.getState().user;
@@ -934,7 +932,8 @@ export const AddOrganizations = async (data, id) => {
         org_name: data.org_name,
         mobile: data.mobile,
         email_id: data.email_id,
-        gender: "2"
+        gender: "2",
+        org_type: data.org_type,
       }
 
       return await axios.put(`${baseApiUrl}/customers/${id}/`, d, {
@@ -943,7 +942,7 @@ export const AddOrganizations = async (data, id) => {
         }
       })
         .then(response => {
-          
+       
           const addedOrganizations = response.data
           dispatch(addOrganizationsSuccess(addedOrganizations))
 
@@ -965,7 +964,8 @@ export const AddOrganizations = async (data, id) => {
         org_name: data.org_name,
         mobile: data.mobile,
         email_id: data.email_id,
-        gender: "2"
+        gender: "2",
+        org_type: data.org_type,
       }
       return await axios.post(`${baseApiUrl}/customers/`, d, {
         headers: {
@@ -973,7 +973,7 @@ export const AddOrganizations = async (data, id) => {
         }
       })
         .then(response => {
-          
+        
           const addedOrganizations = response.data
           dispatch(addOrganizationsSuccess(addedOrganizations))
 

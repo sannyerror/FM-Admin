@@ -180,8 +180,7 @@ class FormConfigure extends React.Component {
                     answer_type: 'SELECT',
                     suggested_answers: [
                         { id: 0, value: 'Secure Treatment', isChecked: false },
-                        { id: 1, value: 'abc', isChecked: false },
-                        { id: 2, value: 'abc 2', isChecked: false }
+                        { id: 1, value: 'Mental Health Treatment', isChecked: false }, 
                     ],
                     suggested_jump: [],
                     validation1: '',
@@ -208,7 +207,7 @@ class FormConfigure extends React.Component {
                 },
                 {
                     question_id: 5,
-                    question: 'Remain Out of Care',
+                    question: 'Remained Out of Care',
                     description: '',
                     field_type: '1',
                     answer_type: 'SELECT',
@@ -239,10 +238,56 @@ class FormConfigure extends React.Component {
             ]
         }; 
         let { id } = this.props.match.params;
+        const org_type = this.props.organizationsList.find((org) => org.id === Number(id)).org_type
         let logopath = this.props.organizationsList.find((org) => org.id === Number(id)).logo_path;
         let headerColor = this.props.organizationsList.find((org) => org.id === Number(id)).header_color;
         let response = await fetchConfigureQuestions(id); 
-         if(!Array.isArray(response.response)){
+        if(org_type && org_type === 2){
+            this.setState((prevState)=>({
+                ...prevState,
+                sections : [
+                    {
+                    section: 'Demographics',
+                    section_id: 0,
+                    related: 'false',
+                    questions : [
+                        {
+                            question_id: 0,
+                            question: 'JID',
+                            description: '',
+                            field_type: '1',
+                            answer_type: 'TEXT',
+                            suggested_answers: [],
+                            suggested_jump: [],
+                            validation1: 'Contains',
+                            validation2: 'Both',
+                            error_msg: '',
+                            related: 'no',
+                            required: 'yes',
+                            flag: '0'
+                        },
+                        {
+                            question_id: 1,
+                            question: 'Date of Birth',
+                            description: '',
+                            field_type: '1',
+                            answer_type: 'DATE',
+                            suggested_answers: [],
+                            suggested_jump: [],
+                            validation1: '',
+                            validation2: '',
+                            error_msg: '',
+                            related: 'no',
+                            required: 'yes',
+                            flag: '0'
+                        },
+
+                    ]
+                  } 
+                 ]
+            })) 
+        } 
+        if(!Array.isArray(response.response)){
             this.setState((prevState) => ({
                 ...prevState,
                 sections: [...prevState.sections, lastSection]

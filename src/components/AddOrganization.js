@@ -17,6 +17,7 @@ class AddOrganization extends React.Component {
       mobile: "",
       email_id: "",
       error: "",
+      org_type:null,
     };
   }
   async componentDidMount() {
@@ -38,7 +39,8 @@ class AddOrganization extends React.Component {
           org_name: response.org_name,
           email_id: response.email_id,
           mobile: response.mobile,
-        });
+          org_type: response.org_type,
+        }); 
       } catch (error) {
         console.log(error, "error");
       }
@@ -47,7 +49,7 @@ class AddOrganization extends React.Component {
   addORG = async (e) => {
     e.preventDefault();
     const { id } = this.props.match.params;
-    const data = this.state;
+    const data = this.state; 
     try {
       const response = await AddOrganizations(data, id);
       if (response.status === "failed") {
@@ -77,8 +79,13 @@ class AddOrganization extends React.Component {
       this.setState({
         [name]: value,
       });
-    } else {
+    }else if (name === "org_type"){
       this.setState({
+        [name]: value && parseInt(value)
+      });
+    }
+    else {
+       this.setState({
         [name]: value.charAt(0).toUpperCase() + value.substr(1),
       });
     }
@@ -89,8 +96,13 @@ class AddOrganization extends React.Component {
     });
   };
 
-  render() {
+  render() { 
     const { id } = this.props.match.params;
+    const org_options = [
+      {value: '', label : 'Select'},
+      {value: '1', label : 'Provider'},
+      {value: '2', label : 'County'},
+    ]
     toast.configure();
     return (
       <div className="container-fluid">
@@ -164,7 +176,32 @@ class AddOrganization extends React.Component {
                 />
               </div>
             </div>
-
+            <div className="form-group row">
+              <label className="col-sm-2 col-form-label font-weight-bold">
+                Organization Type:
+              </label>
+              <div className="col-sm-4">
+                <div class="dropdown">
+                <select className="form-control" 
+                  id="org_type" 
+                  name="org_type" 
+                  onChange={this.handleChange} 
+                  value={this.state.org_type}
+                  required
+                  disabled={
+                    id
+                  }> 
+                  {org_options.map((org, i)=> (
+                   <option key={i} value={org.value}>{org.label}</option>
+                  ))} 
+                </select> 
+               {
+                this.state.org_type ? <span className={`small ${id ? "text-danger" : "text-primary"}`}>You can not re-change organization type, after successfully creation of organization.</span>
+               : ''
+               }
+                 </div>
+              </div>
+            </div>
             <div className="form-group row">
               <label className="col-sm-2 col-form-label font-weight-bold "></label>
               <div className="col-sm-4">
