@@ -237,61 +237,62 @@ class FormConfigure extends React.Component {
                 }
             ]
         }; 
+        let countyDemographics = {
+            section: 'Demographics',
+            section_id: 0,
+            related: 'false',
+            questions : [
+                {
+                    question_id: 0,
+                    question: 'JID',
+                    description: '',
+                    field_type: '1',
+                    answer_type: 'TEXT',
+                    suggested_answers: [],
+                    suggested_jump: [],
+                    validation1: 'Contains',
+                    validation2: 'Both',
+                    error_msg: '',
+                    related: 'no',
+                    required: 'yes',
+                    flag: '0'
+                },
+                {
+                    question_id: 1,
+                    question: 'Date of Birth',
+                    description: '',
+                    field_type: '1',
+                    answer_type: 'DATE',
+                    suggested_answers: [],
+                    suggested_jump: [],
+                    validation1: '',
+                    validation2: '',
+                    error_msg: '',
+                    related: 'no',
+                    required: 'yes',
+                    flag: '0'
+                },
+
+            ]
+        };
+
         let { id } = this.props.match.params;
         const org_type = this.props.organizationsList.find((org) => org.id === Number(id)).org_type
         let logopath = this.props.organizationsList.find((org) => org.id === Number(id)).logo_path;
         let headerColor = this.props.organizationsList.find((org) => org.id === Number(id)).header_color;
         let response = await fetchConfigureQuestions(id); 
-        if(org_type && org_type === 2){
-            this.setState((prevState)=>({
-                ...prevState,
-                sections : [
-                    {
-                    section: 'Demographics',
-                    section_id: 0,
-                    related: 'false',
-                    questions : [
-                        {
-                            question_id: 0,
-                            question: 'JID',
-                            description: '',
-                            field_type: '1',
-                            answer_type: 'TEXT',
-                            suggested_answers: [],
-                            suggested_jump: [],
-                            validation1: 'Contains',
-                            validation2: 'Both',
-                            error_msg: '',
-                            related: 'no',
-                            required: 'yes',
-                            flag: '0'
-                        },
-                        {
-                            question_id: 1,
-                            question: 'Date of Birth',
-                            description: '',
-                            field_type: '1',
-                            answer_type: 'DATE',
-                            suggested_answers: [],
-                            suggested_jump: [],
-                            validation1: '',
-                            validation2: '',
-                            error_msg: '',
-                            related: 'no',
-                            required: 'yes',
-                            flag: '0'
-                        },
-
-                    ]
-                  } 
-                 ]
-            })) 
-        } 
+        
         if(!Array.isArray(response.response)){
-            this.setState((prevState) => ({
-                ...prevState,
-                sections: [...prevState.sections, lastSection]
-            }));
+             if(org_type && org_type === 2){
+                this.setState((preState)=>({...preState, 
+                    sections :[countyDemographics, lastSection] 
+                }))
+             }else{
+                this.setState((prevState) => ({
+                    ...prevState,
+                    sections: [...prevState.sections, lastSection]
+                }));
+             }
         }else{
             let isOutcomes = response.response.some((section) => (section.section === 'Outcomes' ? true : false));
             !isOutcomes && response.response.push(lastSection)
@@ -306,6 +307,7 @@ class FormConfigure extends React.Component {
                 }
             }
         }
+
         if (response.message !== 'sections not available') {
             this.setState({
                 Org_id: id,
