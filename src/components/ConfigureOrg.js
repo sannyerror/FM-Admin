@@ -202,7 +202,7 @@ class ConfigureOrg extends React.Component {
                                           <div className="row mt-2">
                                             <div className="col col-2">Or</div>
                                             <div className="col col-4">
-                                                    <button className="btn btn-primary">Enter a Text</button>
+                                                    <button className="btn btn-primary" type="button">Enter a Text</button>
                                             </div>  
                                           </div> : ''
                                         }
