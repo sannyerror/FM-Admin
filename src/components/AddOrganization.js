@@ -196,7 +196,7 @@ class AddOrganization extends React.Component {
                   ))} 
                 </select> 
                {
-                this.state.org_type ? <span className={`small ${id ? "text-danger" : "text-primary"}`}>You can not re-change organization type, after successfully creation of organization.</span>
+                this.state.org_type ? <span className={`small ${id ? "text-danger" : "text-primary"}`}>{`You can not ${id ? "change" : "re-change"} organization type, after successful creation of organization.`}</span>
                : ''
                }
                  </div>
