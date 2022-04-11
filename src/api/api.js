@@ -47,7 +47,7 @@ import { store } from '../App'
 //DEV
 export const baseApiUrl = "http://3.111.116.163/api";
 
-export const OrgbaseApiUrl = "http://3.7.135.210/";
+export const OrgbaseApiUrl = "http://3.111.116.163/";
 const refreshAuthLogic = async failedRequest => {
   //  const { store } = store
   const userState = store.getState().user;
