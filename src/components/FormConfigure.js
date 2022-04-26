@@ -105,7 +105,9 @@ class FormConfigure extends React.Component {
             isPreview: false,
             isOpen: false,
             logoPath: '',
-            header_color: ''
+            header_color: '',
+            hasError:false,
+            err_msg:[],
         };
     }
     componentDidMount = async () => { 
@@ -207,7 +209,7 @@ class FormConfigure extends React.Component {
                 },
                 {
                     question_id: 5,
-                    question: 'Remained Out of Care',
+                    question: 'Remain Out of Care',
                     description: '',
                     field_type: '1',
                     answer_type: 'SELECT',
@@ -429,7 +431,7 @@ class FormConfigure extends React.Component {
         this.setState({ sections });
     };
 
-    handleChange = (e) => {
+    handleChange = (e) => { 
         let secid = e.target.dataset.secid;
         if (
             [
@@ -477,6 +479,17 @@ class FormConfigure extends React.Component {
 
                     this.setState({ sections });
                 } else {
+                    if(e.target.dataset.name === 'question'){
+                        if(e.target.value.includes(".") || e.target.value.includes(",")){
+                          this.setState({
+                            hasError : true,
+                            err_msg : `Question ${parseInt(e.target.dataset.id)+1} : ${e.target.value} should not contains special characters`
+                          })  
+                        }else{
+                            sections[secid].questions[e.target.dataset.id][e.target.dataset.name] = e.target.value;
+                            this.setState({ sections, hasError : false, err_msg: [] });
+                        } 
+                    }
                     sections[secid].questions[e.target.dataset.id][e.target.dataset.name] = e.target.value;
 
                     this.setState({ sections });
@@ -627,19 +640,29 @@ class FormConfigure extends React.Component {
             customer: this.state.Org_id,
             sections: this.state.sections
         };
-
-        const response = await saveClientConfigure(data);
-        if (response.status === 'success') {
-            toast.info(`Questions configured successfully. `, {
-                position: toast.POSITION.TOP_CENTER,
-                autoClose: 3000
-            });
-        } else {
-            toast.error(response.message, {
+        
+        if(!this.state.hasError){
+            const response = await saveClientConfigure(data);
+            if (response.status === 'success') {
+                toast.info(`Questions configured successfully. `, {
+                    position: toast.POSITION.TOP_CENTER,
+                    autoClose: 3000
+                });
+            } else {
+                toast.error(response.message, {
+                    position: toast.POSITION.TOP_CENTER,
+                    autoClose: 3000
+                });
+            }
+        }
+        else{
+            toast.error(this.state.err_msg, {
                 position: toast.POSITION.TOP_CENTER,
                 autoClose: 3000
             });
         }
+
+
     };
     handleClose = () => {
         this.setState({
