@@ -129,7 +129,7 @@ class FormConfigure extends React.Component {
                         { id: 3, value: 'Not Placed', isChecked: false }
                     ],
                     suggested_jump: [
-                        {answer: 'Pending', jumpto: [], question_jumpto:[]},
+                        {answer: 'Pending', jumpto: [], question_jumpto:['Program']},
                         {answer: 'Placed', jumpto: [], question_jumpto: ['Program', 'Start Date', 'Program Completion', 'End Date', 'Remain Out of Care']},
                         {answer: 'Rejected', jumpto: [], question_jumpto: ['Reason for Rejection']},
                         {answer: 'Not Placed',  jumpto: [], question_jumpto: ['Program', 'Start Date']}
