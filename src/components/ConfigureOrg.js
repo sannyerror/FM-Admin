@@ -239,7 +239,7 @@ class ConfigureOrg extends React.Component {
                                 <div className="col-sm-3">
                                     <select name="group_id" className="form-control" id="exampleFormControlSelect1" onChange={this.handleChange} required>
                                         <option value="" >Select</option>
-                                        {this.state.Organizations?.map((org, i) => <option key={i} value={org.id} selected={this.state.org === org.name}>{org.org_name}</option>)}
+                                        {this.state.Organizations && this.state.Organizations?.map((org, i) => <option key={i} value={org.id} selected={this.state.org === org.name}>{org.org_name}</option>)}
                                     </select>
                                 </div>
                                 {this.state.group_idError && <div className="text-center text-danger">{this.state.group_idError}

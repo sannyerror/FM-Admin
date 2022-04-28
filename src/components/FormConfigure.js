@@ -105,7 +105,9 @@ class FormConfigure extends React.Component {
             isPreview: false,
             isOpen: false,
             logoPath: '',
-            header_color: ''
+            header_color: '',
+            hasError:false,
+            err_msg:[],
         };
     }
     componentDidMount = async () => { 
@@ -127,7 +129,7 @@ class FormConfigure extends React.Component {
                         { id: 3, value: 'Not Placed', isChecked: false }
                     ],
                     suggested_jump: [
-                        {answer: 'Pending', jumpto: [], question_jumpto:[]},
+                        {answer: 'Pending', jumpto: [], question_jumpto:['Program']},
                         {answer: 'Placed', jumpto: [], question_jumpto: ['Program', 'Start Date', 'Program Completion', 'End Date', 'Remain Out of Care']},
                         {answer: 'Rejected', jumpto: [], question_jumpto: ['Reason for Rejection']},
                         {answer: 'Not Placed',  jumpto: [], question_jumpto: ['Program', 'Start Date']}
@@ -207,7 +209,7 @@ class FormConfigure extends React.Component {
                 },
                 {
                     question_id: 5,
-                    question: 'Remained Out of Care',
+                    question: 'Remain Out of Care',
                     description: '',
                     field_type: '1',
                     answer_type: 'SELECT',
@@ -236,8 +238,8 @@ class FormConfigure extends React.Component {
                     flag: '0'
                 }
             ]
-        };
-        let countyDemographics =  {
+        }; 
+        let countyDemographics = { 
             section: 'Demographics',
             section_id: 0,
             related: 'false',
@@ -274,7 +276,8 @@ class FormConfigure extends React.Component {
                 },
 
             ]
-        }
+        } 
+   
         let { id } = this.props.match.params;
         const org_type = this.props.organizationsList.find((org) => org.id === Number(id)).org_type
         let logopath = this.props.organizationsList.find((org) => org.id === Number(id)).logo_path;
@@ -293,6 +296,16 @@ class FormConfigure extends React.Component {
                 sections: [...prevState.sections, lastSection]
             }));
             }
+             if(org_type && org_type === 2){
+                this.setState((preState)=>({...preState, 
+                    sections :[countyDemographics, lastSection] 
+                }))
+             }else{
+                this.setState((prevState) => ({
+                    ...prevState,
+                    sections: [...prevState.sections, lastSection]
+                }));
+             }
         }else{
             let isOutcomes = response.response.some((section) => (section.section === 'Outcomes' ? true : false));
             !isOutcomes && response.response.push(lastSection)
@@ -307,6 +320,7 @@ class FormConfigure extends React.Component {
                 }
             }
         }
+
         if (response.message !== 'sections not available') {
             this.setState({
                 Org_id: id,
@@ -428,7 +442,7 @@ class FormConfigure extends React.Component {
         this.setState({ sections });
     };
 
-    handleChange = (e) => {
+    handleChange = (e) => { 
         let secid = e.target.dataset.secid;
         if (
             [
@@ -476,6 +490,17 @@ class FormConfigure extends React.Component {
 
                     this.setState({ sections });
                 } else {
+                    if(e.target.dataset.name === 'question'){
+                        if(e.target.value.includes(".") || e.target.value.includes(",")){
+                          this.setState({
+                            hasError : true,
+                            err_msg : `Question ${parseInt(e.target.dataset.id)+1} : ${e.target.value} should not contains special characters`
+                          })  
+                        }else{
+                            sections[secid].questions[e.target.dataset.id][e.target.dataset.name] = e.target.value;
+                            this.setState({ sections, hasError : false, err_msg: [] });
+                        } 
+                    }
                     sections[secid].questions[e.target.dataset.id][e.target.dataset.name] = e.target.value;
 
                     this.setState({ sections });
@@ -626,19 +651,29 @@ class FormConfigure extends React.Component {
             customer: this.state.Org_id,
             sections: this.state.sections
         };
-
-        const response = await saveClientConfigure(data);
-        if (response.status === 'success') {
-            toast.info(`Questions configured successfully. `, {
-                position: toast.POSITION.TOP_CENTER,
-                autoClose: 3000
-            });
-        } else {
-            toast.error(response.message, {
+        
+        if(!this.state.hasError){
+            const response = await saveClientConfigure(data);
+            if (response.status === 'success') {
+                toast.info(`Questions configured successfully. `, {
+                    position: toast.POSITION.TOP_CENTER,
+                    autoClose: 3000
+                });
+            } else {
+                toast.error(response.message, {
+                    position: toast.POSITION.TOP_CENTER,
+                    autoClose: 3000
+                });
+            }
+        }
+        else{
+            toast.error(this.state.err_msg, {
                 position: toast.POSITION.TOP_CENTER,
                 autoClose: 3000
             });
         }
+
+
     };
     handleClose = () => {
         this.setState({

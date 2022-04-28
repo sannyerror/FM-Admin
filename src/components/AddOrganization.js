@@ -195,9 +195,9 @@ class AddOrganization extends React.Component {
                    <option key={i} value={org.value}>{org.label}</option>
                   ))} 
                 </select> 
-               {
+               { 
                 this.state.org_type ? <span className={`small ${id ? "text-danger" : "text-primary"}`}>{`You can not ${id ? "change" : "re-change"} organization type, after successful creation of organization.`}</span>
-               : ''
+                : ''
                }
                  </div>
               </div>
