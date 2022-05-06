@@ -621,7 +621,7 @@ class FormConfigure extends React.Component {
 													return {
 														...s,
 														jumpto:
-															Array.isArray(s.jumpto) && s.jumpto.length > 0
+															Array.isArray(s?.jumpto) && s?.jumpto.length > 0
 																? s?.jumpto.filter((j) => j != secname)
 																: [],
 													};
