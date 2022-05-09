@@ -784,7 +784,7 @@ class FormConfigure extends React.Component {
 					autoClose: 3000,
 				});
 			} else {
-				toast.error(response.message, {
+				toast.error(response?.message, {
 					position: toast.POSITION.TOP_CENTER,
 					autoClose: 3000,
 				});
@@ -825,9 +825,11 @@ class FormConfigure extends React.Component {
 		let sections = [...this.state.sections];
 		let jumpValues = Array.isArray(e) ? e.map((arr) => arr.value) : [];
 		sections[id].questions[idx].suggested_jump[idy] =
-			jumpValues?.length === 0 &&
-			sections[id].questions[idx].suggested_jump[idy]?.jumpto?.length === 0
-				? []
+			jumpValues.length === 0
+				? {
+						...sections[id].questions[idx].suggested_jump[idy],
+						jumpto: [],
+				  }
 				: {
 						answer: sections[id].questions[idx].suggested_answers[idy].value,
 						jumpto: jumpValues,
@@ -843,10 +845,11 @@ class FormConfigure extends React.Component {
 		let sections = [...this.state.sections];
 		let jumpValues = Array.isArray(e) ? e.map((arr) => arr.value) : [];
 		sections[id].questions[idx].suggested_jump[idy] =
-			jumpValues?.length === 0 &&
-			sections[id].questions[idx].suggested_jump[idy]?.question_jumpto
-				?.length === 0
-				? []
+			jumpValues.length === 0
+				? {
+						...sections[id].questions[idx].suggested_jump[idy],
+						question_jumpto: [],
+				  }
 				: {
 						answer: sections[id].questions[idx].suggested_answers[idy].value,
 						jumpto: sections[id].questions[idx].suggested_jump[idy]
