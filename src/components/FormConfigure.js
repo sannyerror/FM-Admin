@@ -272,7 +272,8 @@ class FormConfigure extends React.Component {
 					suggested_jump: [],
 					validation1: "Contains",
 					validation2: "Both",
-					error_msg: "",
+					error_msg:
+						"Invalid JID format. It should contain 4 digits Number, - , 6 digits Number (eg: 1234-123456)",
 					related: "no",
 					required: "yes",
 					flag: "0",
