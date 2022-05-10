@@ -772,9 +772,33 @@ class FormConfigure extends React.Component {
 				sections: [...prevState.sections, lastSectionValue],
 			}));
 		}
+		sections = [...this.state.sections];
+		sections = sections.map((sec) => {
+			return {
+				...sec,
+				questions: sec.questions.map((ques) => {
+					return {
+						...ques,
+						suggested_jump:
+							Array.isArray(ques.suggested_jump) &&
+							ques.suggested_jump.length > 0
+								? ques.suggested_jump
+										.map(
+											(s, i) =>
+												(s?.jumpto?.length > 0 ||
+													s?.question_jumpto?.length > 0) &&
+												s
+										)
+										.filter((item) => item != false)
+								: [],
+					};
+				}),
+			};
+		});
+
 		let data = {
 			customer: this.state.Org_id,
-			sections: this.state.sections,
+			sections: sections,
 		};
 
 		if (!this.state.hasError) {
