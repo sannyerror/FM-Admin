@@ -546,7 +546,7 @@ class FormConfigure extends React.Component {
 					this.setState({ sections });
 				} else {
 					if (e.target.dataset.name === "question") {
-						if (e.target.value.includes(".") || e.target.value.includes(",")) {
+						if (e.target.value.includes(".")) {
 							this.setState({
 								hasError: true,
 								err_msg: `Question ${parseInt(e.target.dataset.id) + 1} : ${
