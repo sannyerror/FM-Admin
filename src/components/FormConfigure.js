@@ -320,17 +320,6 @@ class FormConfigure extends React.Component {
 					sections: [...prevState.sections, lastSection],
 				}));
 			}
-			if (org_type && org_type === 2) {
-				this.setState((preState) => ({
-					...preState,
-					sections: [countyDemographics, lastSection],
-				}));
-			} else {
-				this.setState((prevState) => ({
-					...prevState,
-					sections: [...prevState.sections, lastSection],
-				}));
-			}
 		} else {
 			let isOutcomes = response.response.some((section) =>
 				section.section === "Outcomes" ? true : false
@@ -1049,6 +1038,14 @@ class FormConfigure extends React.Component {
 																									? this.state[`Ques-${idx}`]
 																										? false
 																										: true
+																									: id ===
+																											this.state.sections
+																												.length -
+																												1 &&
+																									  [
+																											0, 1, 2, 3, 4, 5, 6,
+																									  ].includes(idx)
+																									? true
 																									: false
 																							}
 																							value={
@@ -1090,6 +1087,13 @@ class FormConfigure extends React.Component {
 																									</Link>
 																								</div>
 																							)
+																						) : id ===
+																								this.state.sections.length -
+																									1 &&
+																						  [0, 1, 2, 3, 4, 5, 6].includes(
+																								idx
+																						  ) ? (
+																							""
 																						) : (
 																							<div
 																								style={{
