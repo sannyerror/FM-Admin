@@ -342,12 +342,54 @@ class FormConfigure extends React.Component {
 				}
 			}
 		}
+		let sections = [...response.response];
+		const section_mapped = (suggested_answers, suggested_jump) => {
+			let arrIndex = [];
+			let newSuggestedJumps = [];
+
+			suggested_jump.filter((o1) =>
+				suggested_answers.some((o2) => {
+					if (o1.answer === o2.value) {
+						let index = suggested_answers.indexOf(o2);
+						arrIndex.push(index);
+					}
+				})
+			);
+			suggested_answers.map(() => {
+				if (arrIndex.length > 0) {
+					newSuggestedJumps.push(null);
+				}
+			});
+			suggested_jump.map((obj, i) => {
+				arrIndex.map((a, j) => {
+					if (i === j) {
+						newSuggestedJumps.splice(a, 1, obj);
+					}
+				});
+			});
+			return newSuggestedJumps;
+		};
+
+		sections = sections.map((sec) => {
+			return {
+				...sec,
+				questions: sec.questions.map((ques) => {
+					return {
+						...ques,
+						suggested_jump: section_mapped(
+							ques.suggested_answers,
+							ques.suggested_jump
+						),
+					};
+				}),
+			};
+		});
 
 		if (response.message !== "sections not available") {
 			this.setState({
 				Org_id: id,
 				sections: Array.isArray(response.response)
-					? response.response
+					? sections
 					: this.state.sections,
 				readOnly: response.is_prediction_available,
 				logoPath: logopath,
