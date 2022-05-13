@@ -826,29 +826,31 @@ class FormConfigure extends React.Component {
                                     <div className="col-sm-5">
                                         <input className="form-control" type="text" name="section" id="section" data-secid={id} value={sections[id].section} />
                                     </div>
-                                    <div className="form-check form-check-inline col-sm-1 ml-3">
-                                        <input type="checkbox" className="form-check-input" name="related" data-secid={id} data-secname={this.state.sections[id] && this.state.sections[id].section} checked={this.state.sections[id].related === 'true'} value="false" />
-                                        <label className="form-check-label font-weight-bold">Related</label>
-                                    </div>
-                                    {id === 0 || this.state.sections.length - 1 ? (
+                                    {id === 0 || id === this.state.sections.length - 1 ? (
                                         ''
                                     ) : (
-                                        <div
-                                            style={{
-                                                position: 'relative',
-                                                top: '-5px',
-                                                right: '-0px',
-                                                width: '50px',
-                                                height: '44px'
-                                            }}
-                                            className="ml-3"
-                                            data-id={id}
-                                            onClick={this.sectionDelete(id)}
-                                        >
-                                            <Link data-id={id} className="btn btn-danger" to="#">
-                                                <i data-id={id} className="fa fa-trash-o fa-lg"></i>
-                                            </Link>
-                                        </div>
+                                        <React.Fragment>
+                                            <div className="form-check form-check-inline col-sm-1 ml-3">
+                                                <input type="checkbox" className="form-check-input" name="related" data-secid={id} data-secname={this.state.sections[id] && this.state.sections[id].section} checked={this.state.sections[id].related === 'true'} value="false" />
+                                                <label className="form-check-label font-weight-bold">Related</label>
+                                            </div>
+                                            <div
+                                                style={{
+                                                    position: 'relative',
+                                                    top: '-5px',
+                                                    right: '-0px',
+                                                    width: '50px',
+                                                    height: '44px'
+                                                }}
+                                                className="ml-3"
+                                                data-id={id}
+                                                onClick={this.sectionDelete(id)}
+                                            >
+                                                <Link data-id={id} className="btn btn-danger" to="#">
+                                                    <i data-id={id} className="fa fa-trash-o fa-lg"></i>
+                                                </Link>
+                                            </div>
+                                        </React.Fragment>
                                     )}
                                 </div>
                                 <DragDropContext
@@ -898,18 +900,7 @@ class FormConfigure extends React.Component {
                                                                                 <div className="form-group row">
                                                                                     <label className="col-sm-2 col-form-label font-weight-bold " htmlFor={catId}>{`Question #${idx + 1}:`}</label>
                                                                                     <div className="col-sm-6">
-                                                                                        <input
-                                                                                            type="text"
-                                                                                            name={catId}
-                                                                                            data-id={idx}
-                                                                                            data-secid={id}
-                                                                                            data-name="question"
-                                                                                            id={catId}
-                                                                                            required
-                                                                                            readOnly={this.state.readOnly === true ? (this.state[`Ques-${idx}`] ? false : true) : id === this.state.sections.length - 1 && OutcomesStaticQues.includes(val.question) ? true : false}
-                                                                                            value={sections[id].questions[idx].question}
-                                                                                            className="form-control"
-                                                                                        />
+                                                                                        <input type="text" name={catId} data-id={idx} data-secid={id} data-name="question" id={catId} required readOnly={this.state.readOnly === true ? (this.state[`Ques-${idx}`] ? false : true) : id === this.state.sections.length - 1 && OutcomesStaticQues.includes(val.question) ? true : false} value={sections[id].questions[idx].question} className="form-control" />
                                                                                     </div>
                                                                                     {!this.state.readOnly || this.state[`Ques-${idx}`] ? (
                                                                                         id === 0 ? (
@@ -1056,12 +1047,7 @@ class FormConfigure extends React.Component {
                                                                                                 </div>
                                                                                             </div>
                                                                                         </fieldset>
-                                                                                        {this.state.sections[id].questions[idx].answer_type === '' ||
-                                                                                        this.state.sections[id].questions[idx].answer_type === 'TEXT' ||
-                                                                                        this.state.sections[id].questions[idx].answer_type === 'NUMBER' ||
-                                                                                        this.state.sections[id].questions[idx].answer_type === 'RELATED' ||
-                                                                                        this.state.sections[id].questions[idx].answer_type === 'DATE' ||
-                                                                                        this.state.sections[id].questions[idx].answer_type === 'FILE'
+                                                                                        {this.state.sections[id].questions[idx].answer_type === '' || this.state.sections[id].questions[idx].answer_type === 'TEXT' || this.state.sections[id].questions[idx].answer_type === 'NUMBER' || this.state.sections[id].questions[idx].answer_type === 'RELATED' || this.state.sections[id].questions[idx].answer_type === 'DATE' || this.state.sections[id].questions[idx].answer_type === 'FILE'
                                                                                             ? ''
                                                                                             : this.state.sections[id].questions
                                                                                                   .filter((p) => p.question_id === this.state.sections[id].questions[idx].question_id)
@@ -1122,19 +1108,7 @@ class FormConfigure extends React.Component {
                                                                                                                   <>
                                                                                                                       <label className="col-sm-1 col-form-label font-weight-bold ml-3">Jump to:</label>
                                                                                                                       <div className="col-sm-3">
-                                                                                                                          <Select
-                                                                                                                              key={id}
-                                                                                                                              value={jumpOpt.filter((value) => this.state.sections[id].questions[idx].suggested_jump[idy] && Array.isArray(this.state.sections[id].questions[idx].suggested_jump[idy].jumpto) && this.state.sections[id].questions[idx].suggested_jump[idy].jumpto.includes(value.value))}
-                                                                                                                              isClearable
-                                                                                                                              styles={colourStyles}
-                                                                                                                              isMulti
-                                                                                                                              name="suggested_jump"
-                                                                                                                              components={animatedComponents}
-                                                                                                                              options={jumpOpt}
-                                                                                                                              className="basic-multi-select"
-                                                                                                                              placeholder="Select Sections jump"
-                                                                                                                              onChange={this.multihandleChange(id, idx, idy)}
-                                                                                                                          />
+                                                                                                                          <Select key={id} value={jumpOpt.filter((value) => this.state.sections[id].questions[idx].suggested_jump[idy] && Array.isArray(this.state.sections[id].questions[idx].suggested_jump[idy].jumpto) && this.state.sections[id].questions[idx].suggested_jump[idy].jumpto.includes(value.value))} isClearable styles={colourStyles} isMulti name="suggested_jump" components={animatedComponents} options={jumpOpt} className="basic-multi-select" placeholder="Select Sections jump" onChange={this.multihandleChange(id, idx, idy)} />
 
                                                                                                                           {/* <select name="jumpto"
                                                                                 className="form-control" id="exampleFormControlSelect1"
@@ -1157,19 +1131,7 @@ class FormConfigure extends React.Component {
                                                                                                                       </div>
 
                                                                                                                       <div className="col-sm-3">
-                                                                                                                          <Select
-                                                                                                                              value={this.Question_jumpOptions(id).filter(
-                                                                                                                                  (value) => this.state.sections[id].questions[idx].suggested_jump[idy] && Array.isArray(this.state.sections[id].questions[idx].suggested_jump[idy].question_jumpto) && this.state.sections[id].questions[idx].suggested_jump[idy].question_jumpto.includes(value.value)
-                                                                                                                              )}
-                                                                                                                              isClearable
-                                                                                                                              styles={colourStyles}
-                                                                                                                              isMulti
-                                                                                                                              name="ques_suggested_jump"
-                                                                                                                              options={this.Question_jumpOptions(id)}
-                                                                                                                              className="basic-multi-select"
-                                                                                                                              placeholder="Select jump within Section"
-                                                                                                                              onChange={this.Question_multihandleChange(id, idx, idy)}
-                                                                                                                          />
+                                                                                                                          <Select value={this.Question_jumpOptions(id).filter((value) => this.state.sections[id].questions[idx].suggested_jump[idy] && Array.isArray(this.state.sections[id].questions[idx].suggested_jump[idy].question_jumpto) && this.state.sections[id].questions[idx].suggested_jump[idy].question_jumpto.includes(value.value))} isClearable styles={colourStyles} isMulti name="ques_suggested_jump" options={this.Question_jumpOptions(id)} className="basic-multi-select" placeholder="Select jump within Section" onChange={this.Question_multihandleChange(id, idx, idy)} />
                                                                                                                       </div>
                                                                                                                   </>
                                                                                                               )}
