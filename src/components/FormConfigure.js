@@ -532,7 +532,7 @@ class FormConfigure extends React.Component {
                                                     ? ques.suggested_jump.map((s, i) => {
                                                           return {
                                                               ...s,
-                                                              question_jumpto: Array.isArray(s.question_jumpto) && s.question_jumpto.length > 0 ? s?.question_jumpto.filter((j) => j != secname) : []
+                                                              question_jumpto: Array.isArray(s?.question_jumpto) && s?.question_jumpto.length > 0 ? s?.question_jumpto.filter((j) => j != secname) : []
                                                           };
                                                       })
                                                     : []
