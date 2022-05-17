@@ -328,7 +328,7 @@ class FormConfigure extends React.Component {
 
             suggested_jump.filter((o1) =>
                 suggested_answers.some((o2) => {
-                    if (o1.answer === o2.value) {
+                    if (o1?.answer === o2.value) {
                         let index = suggested_answers.indexOf(o2);
                         arrIndex.push(index);
                     }
