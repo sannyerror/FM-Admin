@@ -355,7 +355,8 @@ class FormConfigure extends React.Component {
                 questions: sec.questions.map((ques) => {
                     return {
                         ...ques,
-                        suggested_jump: section_mapped(ques.suggested_answers, ques.suggested_jump)
+                        suggested_jump: section_mapped(ques.suggested_answers, ques.suggested_jump),
+                        suggested_answers: ques.question === 'Referral Status' ? ques.suggested_answers.map((ans) => (ans.value === 'Pending' ? { ...ans, isChecked: true } : ans)) : ques.suggested_answers
                     };
                 })
             };
@@ -807,6 +808,7 @@ class FormConfigure extends React.Component {
         let jumpOpt = [];
         this.state.sections && this.state.sections.filter((sec, key) => sec.related === 'true').map((q, i) => jumpOpt.push({ value: q.section, label: q.section, id: i }));
         const OutcomesStaticQues = ['Referral Status', 'Program', 'Start Date', 'Program Completion', 'End Date', 'Remained Out of Care'];
+        const findIndex = this.state.sections.findIndex((section) => section.section === 'Outcomes');
         if (isPreview) {
             return (
                 <Modal isOpen={this.state.isOpen} ariaHideApp={false} onRequestClose={this.handleClose} style={customStyles} scrollable="true" contentLabel="Example Modal">
@@ -826,7 +828,7 @@ class FormConfigure extends React.Component {
                                     <div className="col-sm-5">
                                         <input className="form-control" type="text" name="section" id="section" data-secid={id} value={sections[id].section} />
                                     </div>
-                                    {id === 0 || id === this.state.sections.length - 1 ? (
+                                    {id === 0 || id === findIndex ? (
                                         ''
                                     ) : (
                                         <React.Fragment>
@@ -924,7 +926,7 @@ class FormConfigure extends React.Component {
                                                                                                     </Link>
                                                                                                 </div>
                                                                                             )
-                                                                                        ) : id === this.state.sections.length - 1 ? (
+                                                                                        ) : id === findIndex ? (
                                                                                             OutcomesStaticQues.includes(val.question) ? (
                                                                                                 ''
                                                                                             ) : (
