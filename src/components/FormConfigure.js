@@ -1015,23 +1015,24 @@ class FormConfigure extends React.Component {
                                                                                                             data-name="answer_type"
                                                                                                             id={typeId}
                                                                                                             type="radio"
+                                                                                                            disabled={sections[id].questions[idx].question === 'Referral Status' ? true : false}
                                                                                                             checked={sections[id].questions[idx].answer_type === 'SELECT'}
-                                                                                                            // disabled={this.state.answer_type !== "SELECT" ? true : false}
+                                                                                                            //disabled={this.state.answer_type !== "SELECT" ? true : false}
                                                                                                             value="SELECT"
                                                                                                             required
                                                                                                         />
                                                                                                         <label className="form-check-label">Drop Down</label>
                                                                                                     </div>
                                                                                                     <div className="form-check form-check-inline">
-                                                                                                        <input className="form-check-input" name={typeId} data-id={idx} data-secid={id} data-name="answer_type" id={typeId} type="radio" value="TEXT" checked={sections[id].questions[idx].answer_type === 'TEXT'} required />
+                                                                                                        <input className="form-check-input" name={typeId} data-id={idx} data-secid={id} data-name="answer_type" id={typeId} type="radio" value="TEXT" disabled={sections[id].questions[idx].question === 'Referral Status' ? true : false} checked={sections[id].questions[idx].answer_type === 'TEXT'} required />
                                                                                                         <label className="form-check-label">Text</label>
                                                                                                     </div>
                                                                                                     <div className="form-check form-check-inline">
-                                                                                                        <input className="form-check-input" name={typeId} data-id={idx} data-secid={id} data-name="answer_type" id={typeId} type="radio" value="NUMBER" checked={sections[id].questions[idx].answer_type === 'NUMBER'} required />
+                                                                                                        <input className="form-check-input" name={typeId} data-id={idx} data-secid={id} data-name="answer_type" id={typeId} type="radio" value="NUMBER" disabled={sections[id].questions[idx].question === 'Referral Status' ? true : false} checked={sections[id].questions[idx].answer_type === 'NUMBER'} required />
                                                                                                         <label className="form-check-label">Number</label>
                                                                                                     </div>
                                                                                                     <div className="form-check form-check-inline">
-                                                                                                        <input className="form-check-input" name={typeId} data-id={idx} data-secid={id} data-name="answer_type" id={typeId} type="radio" value="CHECKBOX" checked={sections[id].questions[idx].answer_type === 'CHECKBOX'} required />
+                                                                                                        <input className="form-check-input" name={typeId} data-id={idx} data-secid={id} data-name="answer_type" id={typeId} type="radio" value="CHECKBOX" disabled={sections[id].questions[idx].question === 'Referral Status' ? true : false} checked={sections[id].questions[idx].answer_type === 'CHECKBOX'} required />
                                                                                                         <label className="form-check-label">Checkbox</label>
                                                                                                     </div>
                                                                                                     <div className="form-check form-check-inline">
@@ -1039,11 +1040,11 @@ class FormConfigure extends React.Component {
                                                                                                         <label className="form-check-label">Radio</label>
                                                                                                     </div>
                                                                                                     <div className="form-check form-check-inline">
-                                                                                                        <input className="form-check-input" name={typeId} data-id={idx} data-secid={id} data-name="answer_type" id={typeId} type="radio" value="FILE" checked={sections[id].questions[idx].answer_type === 'FILE'} required />
+                                                                                                        <input className="form-check-input" name={typeId} data-id={idx} data-secid={id} data-name="answer_type" id={typeId} type="radio" value="FILE" disabled={sections[id].questions[idx].question === 'Referral Status' ? true : false} checked={sections[id].questions[idx].answer_type === 'FILE'} required />
                                                                                                         <label className="form-check-label">Upload File</label>
                                                                                                     </div>
                                                                                                     <div className="form-check form-check-inline">
-                                                                                                        <input className="form-check-input" name={typeId} data-id={idx} data-secid={id} data-name="answer_type" id={typeId} type="radio" value="DATE" checked={sections[id].questions[idx].answer_type === 'DATE'} required />
+                                                                                                        <input className="form-check-input" name={typeId} data-id={idx} data-secid={id} data-name="answer_type" id={typeId} type="radio" value="DATE" disabled={sections[id].questions[idx].question === 'Referral Status' ? true : false} checked={sections[id].questions[idx].answer_type === 'DATE'} required />
                                                                                                         <label className="form-check-label">Date</label>
                                                                                                     </div>
                                                                                                 </div>
