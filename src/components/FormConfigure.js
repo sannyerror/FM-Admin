@@ -466,6 +466,7 @@ class FormConfigure extends React.Component {
     };
 
     addAnswer = (i) => (e) => {
+        //console.log('addAnswer')
         e.preventDefault();
         let secid = e.target.dataset.secid;
         let sections = [...this.state.sections];
