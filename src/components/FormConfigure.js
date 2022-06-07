@@ -107,7 +107,9 @@ class FormConfigure extends React.Component {
             logoPath: '',
             header_color: '',
             hasError: false,
-            err_msg: []
+            err_msg: [],
+            relatedSections: [],
+            relatedQuestions: []
         };
     }
     componentDidMount = async () => {
@@ -697,6 +699,65 @@ class FormConfigure extends React.Component {
     handleSubmit = async (e) => {
         e.preventDefault();
         let sections = [...this.state.sections];
+        let relatedSections = [...this.state.relatedSections];
+        let relatedQuestions = [...this.state.relatedQuestions];
+
+        //Find : Related Sections
+        sections.map((section, id) => {
+            let length = 0;
+            section.related == 'true' &&
+                sections.map((section1, idx) => {
+                    section1.questions.map((question, idy) => {
+                        question.suggested_jump &&
+                            question.suggested_jump.map((suggestjump, idz) => {
+                                suggestjump != null &&
+                                    suggestjump.jumpto &&
+                                    suggestjump.jumpto.map((jmpto, idz1) => {
+                                        jmpto == sections[id].section && length++;
+                                    });
+                            });
+                    });
+                });
+            if (length == 0) {
+                section.related == 'true' && relatedSections.push({ section: section.section, id: id + 1 });
+            }
+        });
+        for (var a in relatedSections) {
+            relatedSections.length > 0 && toast.warning('Section ' + relatedSections[a].id + ': *' + relatedSections[a].section.toUpperCase() + '* is Related but not used in any other jump while configuration', { position: toast.POSITION.TOP_CENTER });
+        }
+        //Find : Related Question
+        var newQues = [];
+        sections.map((section, id) => {
+            section.questions.filter((ques, id1) => {
+                ques.related == 'yes' && newQues.push({ sectionid: id, quesid: id1 });
+            });
+        });
+        newQues &&
+            newQues.map((section) => {
+                let id = section.sectionid;
+                let id1 = section.quesid;
+                let reqArray = [];
+                sections[id].questions.map((question, idy) => {
+                    question.suggested_jump &&
+                        question.suggested_jump.map((suggestedjump) => {
+                            suggestedjump != null &&
+                                suggestedjump.question_jumpto &&
+                                suggestedjump.question_jumpto.map((questionjumpto) => {
+                                    questionjumpto == sections[id].questions[id1].question && reqArray.push(questionjumpto);
+                                });
+                        });
+                });
+                reqArray.length === 0 && relatedQuestions.push(section);
+                reqArray.length > 0 && relatedQuestions.slice(reqArray.indexOf(section));
+                //reqarray.length == 0 ? alertSections1.push(section) : alertSections1.slice(reqarray.indexOf(section))
+            });
+
+        for (var a in relatedQuestions) {
+            let id = relatedQuestions[a].sectionid + 1;
+            let id1 = relatedQuestions[a].quesid + 1;
+            relatedQuestions.length > 0 && toast.warning('Section ' + id + ': Question ' + id1 + ' **' + sections[id - 1].questions[id1 - 1].question.toUpperCase() + '** is Related but not used in any other question jump while configuration', { position: toast.POSITION.TOP_CENTER });
+        }
+
         //FIND : Outcomes Section
         let lastSectionValue = this.state.sections.find((section) => section.section === 'Outcomes');
         const findIndex = this.state.sections.findIndex((section) => section.section === 'Outcomes');
@@ -728,7 +789,7 @@ class FormConfigure extends React.Component {
             sections: sections
         };
 
-        if (!this.state.hasError) {
+        if (!this.state.hasError && relatedSections.length === 0 && relatedQuestions.length === 0) {
             const response = await saveClientConfigure(data);
             if (response?.status === 'success') {
                 toast.info(`Questions configured successfully. `, {
@@ -742,10 +803,15 @@ class FormConfigure extends React.Component {
                 });
             }
         } else {
-            toast.error(this.state.err_msg, {
-                position: toast.POSITION.TOP_CENTER,
-                autoClose: 3000
-            });
+            relatedSections.length > 0 || relatedQuestions.length > 0
+                ? toast.error('The Data was not Submitted Due to improper usage of Related Sections or due to Related Questions ', {
+                      position: 'top-center',
+                      autoClose: 5000
+                  })
+                : toast.error(this.state.err_msg, {
+                      position: toast.POSITION.TOP_CENTER,
+                      autoClose: 3000
+                  });
         }
     };
     handleClose = () => {
