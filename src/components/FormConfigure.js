@@ -875,6 +875,7 @@ class FormConfigure extends React.Component {
         let jumpOpt = [];
         this.state.sections && this.state.sections.filter((sec, key) => sec.related === 'true').map((q, i) => jumpOpt.push({ value: q.section, label: q.section, id: i }));
         const OutcomesStaticQues = ['Referral Status', 'Program', 'Start Date', 'Program Completion', 'End Date', 'Remained Out of Care'];
+        const NonEditSection = ['Demographics', 'Outcomes'];
         const findIndex = this.state.sections.findIndex((section) => section.section === 'Outcomes');
         if (isPreview) {
             return (
@@ -893,7 +894,7 @@ class FormConfigure extends React.Component {
                                         Section {id + 1}:
                                     </label>
                                     <div className="col-sm-5">
-                                        <input className="form-control" type="text" name="section" id="section" data-secid={id} value={sections[id].section} />
+                                        <input className="form-control" type="text" name="section" id="section" data-secid={id} value={sections[id].section} readOnly={NonEditSection.includes(sections[id].section) ? true : false} />
                                     </div>
                                     {id === 0 || id === findIndex ? (
                                         ''
