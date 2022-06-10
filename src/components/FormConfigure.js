@@ -9,6 +9,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import Modal from 'react-modal';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
+import { BeatLoader } from 'react-spinners';
 
 const animatedComponents = makeAnimated();
 const customStyles = {
@@ -108,6 +109,7 @@ class FormConfigure extends React.Component {
             header_color: '',
             hasError: false,
             err_msg: [],
+            isLoading: false,
             relatedSections: [],
             relatedQuestions: []
         };
@@ -463,12 +465,12 @@ class FormConfigure extends React.Component {
         let id = this.state.lastSectionId;
         this.setState({
             sections,
-            lastSectionId: id - 1
+            lastSectionId: id
+            //lastSectionId: id - 1,
         });
     };
 
     addAnswer = (i) => (e) => {
-        //console.log("addAnswers")
         e.preventDefault();
         let secid = e.target.dataset.secid;
         let sections = [...this.state.sections];
@@ -749,7 +751,7 @@ class FormConfigure extends React.Component {
                 });
                 reqArray.length === 0 && relatedQuestions.push(section);
                 reqArray.length > 0 && relatedQuestions.slice(reqArray.indexOf(section));
-                //reqarray.length == 0 ? alertSections1.push(section) : alertSections1.slice(reqarray.indexOf(section))
+                //reqArray.length == 0 ? alertSections1.push(section) : alertSections1.slice(reqArray.indexOf(section))
             });
 
         for (var a in relatedQuestions) {
@@ -761,7 +763,6 @@ class FormConfigure extends React.Component {
         //FIND : Outcomes Section
         let lastSectionValue = this.state.sections.find((section) => section.section === 'Outcomes');
         const findIndex = this.state.sections.findIndex((section) => section.section === 'Outcomes');
-
         if (findIndex >= 0) {
             let sections = [...this.state.sections];
             sections.splice(findIndex, 1);
@@ -771,6 +772,7 @@ class FormConfigure extends React.Component {
                 sections: [...prevState.sections, lastSectionValue]
             }));
         }
+        //Making : Suggestions Jump values proper
         sections = [...this.state.sections];
         sections = sections.map((sec) => {
             return {
@@ -790,13 +792,16 @@ class FormConfigure extends React.Component {
         };
 
         if (!this.state.hasError && relatedSections.length === 0 && relatedQuestions.length === 0) {
+            this.setState({ isLoading: true });
             const response = await saveClientConfigure(data);
             if (response?.status === 'success') {
+                this.setState({ isLoading: false });
                 toast.info(`Questions configured successfully. `, {
                     position: toast.POSITION.TOP_CENTER,
                     autoClose: 3000
                 });
             } else {
+                this.setState({ isLoading: false });
                 toast.error(response?.message, {
                     position: toast.POSITION.TOP_CENTER,
                     autoClose: 3000
@@ -814,6 +819,7 @@ class FormConfigure extends React.Component {
                   });
         }
     };
+
     handleClose = () => {
         this.setState({
             isOpen: false,
@@ -869,7 +875,7 @@ class FormConfigure extends React.Component {
     };
     render() {
         toast.configure();
-        let { sections, isPreview, logoPath, header_color } = this.state;
+        let { sections, isPreview, logoPath, header_color, isLoading } = this.state;
         let id = this.state.lastSectionId;
         const sectionLength = this.state.sections.length - 1;
         let jumpOpt = [];
@@ -882,6 +888,16 @@ class FormConfigure extends React.Component {
                 <Modal isOpen={this.state.isOpen} ariaHideApp={false} onRequestClose={this.handleClose} style={customStyles} scrollable="true" contentLabel="Example Modal">
                     <Preview DynamicQuestions={this.state.sections} logoPath={logoPath} headerColor={header_color} />
                 </Modal>
+            );
+        } else if (isLoading) {
+            return (
+                <div className="container">
+                    <div className="d-flex justify-content-center align-items-center" style={{ height: '75vh' }}>
+                        <span className="font-weight-bold h5">Loading</span>
+                        <BeatLoader size={24} color="#0099CC" loading={isLoading} />
+                        <BeatLoader size={24} color="#0099CC" loading={isLoading} />
+                    </div>
+                </div>
             );
         } else {
             return (
