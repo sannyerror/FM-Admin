@@ -513,7 +513,7 @@ class FormConfigure extends React.Component {
                         if (e.target.value.includes('.')) {
                             this.setState({
                                 hasError: true,
-                                err_msg: `Question ${parseInt(e.target.dataset.id) + 1} : ${e.target.value} should not contains special characters`
+                                err_msg: `Section ${parseInt(secid) + 1} :- Question ${parseInt(e.target.dataset.id) + 1} : ${e.target.value} should not contains special characters`
                             });
                         } else {
                             sections[secid].questions[e.target.dataset.id][e.target.dataset.name] = e.target.value;
@@ -727,11 +727,13 @@ class FormConfigure extends React.Component {
         for (var a in relatedSections) {
             relatedSections.length > 0 && toast.warning('Section ' + relatedSections[a].id + ': *' + relatedSections[a].section.toUpperCase() + '* is Related but not used in any other jump while configuration', { position: toast.POSITION.TOP_CENTER });
         }
-        //Find : Related Question
+        //Find : Related Question 1
         var newQues = [];
+        let validatedQuestions = [];
         sections.map((section, id) => {
             section.questions.filter((ques, id1) => {
                 ques.related == 'yes' && newQues.push({ sectionid: id, quesid: id1 });
+                ques.answer_type === 'NUMBER' && (ques.validation1 === '' || ques.validation2 === '' || ques.error_msg === '') && validatedQuestions.push({ id: id, idx: id1 });
             });
         });
         newQues &&
@@ -753,11 +755,17 @@ class FormConfigure extends React.Component {
                 reqArray.length > 0 && relatedQuestions.slice(reqArray.indexOf(section));
                 //reqArray.length == 0 ? alertSections1.push(section) : alertSections1.slice(reqArray.indexOf(section))
             });
-
+        //Find : Related Question 2
         for (var a in relatedQuestions) {
             let id = relatedQuestions[a].sectionid + 1;
             let id1 = relatedQuestions[a].quesid + 1;
             relatedQuestions.length > 0 && toast.warning('Section ' + id + ': Question ' + id1 + ' **' + sections[id - 1].questions[id1 - 1].question.toUpperCase() + '** is Related but not used in any other question jump while configuration', { position: toast.POSITION.TOP_CENTER });
+        }
+        //Validate : Questions answer type Number
+        for (var a in validatedQuestions) {
+            let id = validatedQuestions[a].id + 1;
+            let idx = validatedQuestions[a].idx + 1;
+            validatedQuestions.length > 0 && toast.error('Section ' + id + ': Question ' + idx + ' **' + sections[id - 1].questions[idx - 1].question.toUpperCase() + '** Answer should be validated properly', { position: toast.POSITION.TOP_CENTER });
         }
 
         //FIND : Outcomes Section
@@ -791,7 +799,7 @@ class FormConfigure extends React.Component {
             sections: sections
         };
 
-        if (!this.state.hasError && relatedSections.length === 0 && relatedQuestions.length === 0) {
+        if (!this.state.hasError && relatedSections.length === 0 && relatedQuestions.length === 0 && validatedQuestions.length === 0) {
             this.setState({ isLoading: true });
             const response = await saveClientConfigure(data);
             if (response?.status === 'success') {
@@ -1272,15 +1280,18 @@ class FormConfigure extends React.Component {
                                                                                                     </label>
                                                                                                     <label className="col-sm-1 col-form-label font-weight-bold ">Between</label>
                                                                                                     <div className="col-sm-1">
-                                                                                                        <input type="text" name={validationId1} data-id={idx} data-secid={id} data-name="validation1" id={validationId1} placeholder="Number" value={sections[id].questions[idx].validation1} className="form-control" />
+                                                                                                        <input type="text" name={validationId1} data-id={idx} data-secid={id} data-name="validation1" id={validationId1} placeholder="Number" value={sections[id].questions[idx].validation1} className="form-control" style={{ border: `${this.state.sections[id].questions[idx].validation1 === '' ? '2px solid #FF0000' : ''}` }} />
+                                                                                                        {this.state.sections[id].questions[idx].validation1 === '' ? <span className="text-danger fs-6">Required!</span> : ''}
                                                                                                     </div>
                                                                                                     <span className="text-center"> and</span>
 
                                                                                                     <div className="col-sm-1">
-                                                                                                        <input type="text" name={validationId2} data-id={idx} data-secid={id} data-name="validation2" id={validationId2} placeholder="Number" value={sections[id].questions[idx].validation2} className="form-control" />
+                                                                                                        <input type="text" name={validationId2} data-id={idx} data-secid={id} data-name="validation2" id={validationId2} placeholder="Number" value={sections[id].questions[idx].validation2} className="form-control" style={{ border: `${this.state.sections[id].questions[idx].validation1 != '' && this.state.sections[id].questions[idx].validation2 === '' ? '2px solid #FF0000' : ''}` }} />
+                                                                                                        {this.state.sections[id].questions[idx].validation1 != '' && this.state.sections[id].questions[idx].validation2 === '' ? <span className="text-danger fs-6">Required!</span> : ''}
                                                                                                     </div>
                                                                                                     <div className="col-sm-2">
-                                                                                                        <input type="text" name={errorId} data-id={idx} data-secid={id} data-name="error_msg" id={errorId} placeholder="Error message" value={sections[id].questions[idx].error_msg} className="form-control" />
+                                                                                                        <input type="text" name={errorId} data-id={idx} data-secid={id} data-name="error_msg" id={errorId} placeholder="Error message" value={sections[id].questions[idx].error_msg} className="form-control" style={{ border: `${this.state.sections[id].questions[idx].validation1 != '' && this.state.sections[id].questions[idx].error_msg === '' ? '2px solid #FF0000' : ''}` }} />
+                                                                                                        {this.state.sections[id].questions[idx].validation1 != '' && this.state.sections[id].questions[idx].error_msg === '' ? <span className="text-danger fs-6">Required!</span> : ''}
                                                                                                     </div>
                                                                                                 </div>
                                                                                             </React.Fragment>
