@@ -888,7 +888,7 @@ class FormConfigure extends React.Component {
         const sectionLength = this.state.sections.length - 1;
         let jumpOpt = [];
         this.state.sections && this.state.sections.filter((sec, key) => sec.related === 'true').map((q, i) => jumpOpt.push({ value: q.section, label: q.section, id: i }));
-        const OutcomesStaticQues = ['Referral Status', 'Program', 'Start Date', 'Program Completion', 'End Date', 'Remained Out of Care'];
+        const OutcomesStaticQues = ['Client Code', 'JID', 'Date of Birth', 'Referral Status', 'Program', 'Start Date', 'Program Completion', 'End Date', 'Remained Out of Care'];
         const NonEditSection = ['Demographics', 'Outcomes'];
         const findIndex = this.state.sections.findIndex((section) => section.section === 'Outcomes');
         if (isPreview) {
@@ -994,11 +994,11 @@ class FormConfigure extends React.Component {
                                                                                 <div className="form-group row">
                                                                                     <label className="col-sm-2 col-form-label font-weight-bold " htmlFor={catId}>{`Question #${idx + 1}:`}</label>
                                                                                     <div className="col-sm-6">
-                                                                                        <input type="text" name={catId} data-id={idx} data-secid={id} data-name="question" id={catId} required readOnly={this.state.readOnly === true ? (this.state[`Ques-${idx}`] ? false : true) : id === this.state.sections.length - 1 && OutcomesStaticQues.includes(val.question) ? true : false} value={sections[id].questions[idx].question} className="form-control" />
+                                                                                        <input type="text" name={catId} data-id={idx} data-secid={id} data-name="question" id={catId} required readOnly={this.state.readOnly === true ? (this.state[`Ques-${idx}`] ? false : true) : (id === 0 && OutcomesStaticQues.includes(val.question) ? true : false) || (id === this.state.sections.length - 1 && OutcomesStaticQues.includes(val.question) ? true : false)} value={sections[id].questions[idx].question} className="form-control" />
                                                                                     </div>
                                                                                     {!this.state.readOnly || this.state[`Ques-${idx}`] ? (
                                                                                         id === 0 ? (
-                                                                                            idx === 0 || idx === 1 || idx === 2 ? (
+                                                                                            idx === 0 || idx === 1 || idx === 2 || OutcomesStaticQues.includes(val.question) ? (
                                                                                                 ''
                                                                                             ) : (
                                                                                                 <div
