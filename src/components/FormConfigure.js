@@ -891,6 +891,9 @@ class FormConfigure extends React.Component {
         const OutcomesStaticQues = ['Client Code', 'JID', 'Date of Birth', 'Referral Status', 'Program', 'Start Date', 'Program Completion', 'End Date', 'Remained Out of Care'];
         const NonEditSection = ['Demographics', 'Outcomes'];
         const findIndex = this.state.sections.findIndex((section) => section.section === 'Outcomes');
+        //Removing Duplicate values
+        const StaticQuesIndex = [];
+        OutcomesStaticQues.filter((ques1, i) => this.state.sections.length > 1 && this.state.sections[id].questions?.some((ques2, j) => ques1 === ques2.question && StaticQuesIndex.push(ques2.question_id)));
         if (isPreview) {
             return (
                 <Modal isOpen={this.state.isOpen} ariaHideApp={false} onRequestClose={this.handleClose} style={customStyles} scrollable="true" contentLabel="Example Modal">
@@ -994,11 +997,11 @@ class FormConfigure extends React.Component {
                                                                                 <div className="form-group row">
                                                                                     <label className="col-sm-2 col-form-label font-weight-bold " htmlFor={catId}>{`Question #${idx + 1}:`}</label>
                                                                                     <div className="col-sm-6">
-                                                                                        <input type="text" name={catId} data-id={idx} data-secid={id} data-name="question" id={catId} required readOnly={this.state.readOnly === true ? (this.state[`Ques-${idx}`] ? false : true) : (id === 0 && OutcomesStaticQues.includes(val.question) ? true : false) || (id === this.state.sections.length - 1 && OutcomesStaticQues.includes(val.question) ? true : false)} value={sections[id].questions[idx].question} className="form-control" />
+                                                                                        <input type="text" name={catId} data-id={idx} data-secid={id} data-name="question" id={catId} required readOnly={this.state.readOnly === true ? (this.state[`Ques-${idx}`] ? false : true) : (id === 0 && StaticQuesIndex.includes(val.question_id) ? true : false) || (id === this.state.sections.length - 1 && StaticQuesIndex.includes(val.question_id) ? true : false)} value={sections[id].questions[idx].question} className="form-control" />
                                                                                     </div>
                                                                                     {!this.state.readOnly || this.state[`Ques-${idx}`] ? (
                                                                                         id === 0 ? (
-                                                                                            idx === 0 || idx === 1 || idx === 2 || OutcomesStaticQues.includes(val.question) ? (
+                                                                                            idx === 0 || idx === 1 || idx === 2 || StaticQuesIndex.includes(val.question_id) ? (
                                                                                                 ''
                                                                                             ) : (
                                                                                                 <div
@@ -1019,7 +1022,7 @@ class FormConfigure extends React.Component {
                                                                                                 </div>
                                                                                             )
                                                                                         ) : id === findIndex ? (
-                                                                                            OutcomesStaticQues.includes(val.question) ? (
+                                                                                            StaticQuesIndex.includes(val.question_id) ? (
                                                                                                 ''
                                                                                             ) : (
                                                                                                 <div
