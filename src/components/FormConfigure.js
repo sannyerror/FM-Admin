@@ -11,6 +11,9 @@ import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 import { BeatLoader } from 'react-spinners';
 
+import { BsFillArrowDownCircleFill } from 'react-icons/bs';
+import { BsFillArrowUpCircleFill } from 'react-icons/bs';
+
 const animatedComponents = makeAnimated();
 const customStyles = {
     content: {
@@ -114,6 +117,28 @@ class FormConfigure extends React.Component {
             relatedQuestions: []
         };
     }
+    handleNavToTop = () => {
+        document.body.scrollTop = 0;
+        document.documentElement.scrollTop = 0;
+    };
+    handleNavToBottom = () => {
+        window.scrollTo(0, document.body.scrollHeight);
+    };
+    handleScroll = () => {
+        let mybuttonTop = document.getElementById('btn-back-to-top');
+        let mybuttonBottom = document.getElementById('btn-back-to-bottom');
+        if (document.body.scrollTop > 99 || document.documentElement.scrollTop > 99) {
+            mybuttonTop.style.display = 'block';
+        } else {
+            mybuttonTop.style.display = 'none';
+        }
+
+        if (document.documentElement.scrollHeight - 1033 < document.documentElement.scrollTop) {
+            mybuttonBottom.style.display = 'none';
+        } else {
+            mybuttonBottom.style.display = 'block';
+        }
+    };
     componentDidMount = async () => {
         let lastSection = {
             section: 'Outcomes',
@@ -292,7 +317,7 @@ class FormConfigure extends React.Component {
                 }
             ]
         };
-
+        window.addEventListener('scroll', this.handleScroll);
         let { id } = this.props.match.params;
         const org_type = this.props.organizationsList.find((org) => org.id === Number(id)).org_type;
         let logopath = this.props.organizationsList.find((org) => org.id === Number(id)).logo_path;
@@ -725,7 +750,10 @@ class FormConfigure extends React.Component {
             }
         });
         for (var a in relatedSections) {
-            relatedSections.length > 0 && toast.warning('Section ' + relatedSections[a].id + ': *' + relatedSections[a].section.toUpperCase() + '* is Related but not used in any other jump while configuration', { position: toast.POSITION.TOP_CENTER });
+            relatedSections.length > 0 &&
+                toast.warning('Section ' + relatedSections[a].id + ': *' + relatedSections[a].section.toUpperCase() + '* is Related but not used in any other jump while configuration', {
+                    position: toast.POSITION.TOP_CENTER
+                });
         }
         //Find : Related Question 1
         var newQues = [];
@@ -759,7 +787,10 @@ class FormConfigure extends React.Component {
         for (var a in relatedQuestions) {
             let id = relatedQuestions[a].sectionid + 1;
             let id1 = relatedQuestions[a].quesid + 1;
-            relatedQuestions.length > 0 && toast.warning('Section ' + id + ': Question ' + id1 + ' **' + sections[id - 1].questions[id1 - 1].question.toUpperCase() + '** is Related but not used in any other question jump while configuration', { position: toast.POSITION.TOP_CENTER });
+            relatedQuestions.length > 0 &&
+                toast.warning('Section ' + id + ': Question ' + id1 + ' **' + sections[id - 1].questions[id1 - 1].question.toUpperCase() + '** is Related but not used in any other question jump while configuration', {
+                    position: toast.POSITION.TOP_CENTER
+                });
         }
         //Validate : Questions answer type Number
         for (var a in validatedQuestions) {
@@ -912,7 +943,7 @@ class FormConfigure extends React.Component {
             );
         } else {
             return (
-                <div className="container-fluid">
+                <div className="container-fluid mb-5">
                     {this.state.sections.length > 0 ? (
                         <div style={{ border: '1px solid #007bff' }}>
                             <form onChange={this.handleChange} className="m-3">
@@ -1209,23 +1240,23 @@ class FormConfigure extends React.Component {
                                                                                                                           <Select key={id} value={jumpOpt.filter((value) => this.state.sections[id].questions[idx].suggested_jump[idy] && Array.isArray(this.state.sections[id].questions[idx].suggested_jump[idy].jumpto) && this.state.sections[id].questions[idx].suggested_jump[idy].jumpto.includes(value.value))} isClearable styles={colourStyles} isMulti name="suggested_jump" components={animatedComponents} options={jumpOpt} className="basic-multi-select" placeholder="Select Sections jump" onChange={this.multihandleChange(id, idx, idy)} />
 
                                                                                                                           {/* <select name="jumpto"
-                                                                                className="form-control" id="exampleFormControlSelect1"
-                                                                                multiple
-                                                                                data-id={idx}
-                                                                                data-secid={id}
-                                                                                data-name="suggested_jump"
-                                                                                id={answerId}
-                                                                                data-idy={idy} required>
-                                                                                <option value="" >Select</option>
-                                                                                {this.state.sections.filter((sec, key) => sec.related === "true").map(
-                                                                                    (q, i) =>
-                                                                                        <option key={i} value={q.section}
-                                                                                            selected={q.section === `${this.state.sections[id].questions[idx].suggested_jump[idy] && this.state.sections[id].questions[idx].suggested_jump[idy].jumpto}`}
-                                                                                        >
-                                                                                            {q.section}
-                                                                                        </option>
-                                                                                )}
-                                                                            </select> */}
+                                                                                                                            className="form-control" id="exampleFormControlSelect1"
+                                                                                                                            multiple
+                                                                                                                            data-id={idx}
+                                                                                                                            data-secid={id}
+                                                                                                                            data-name="suggested_jump"
+                                                                                                                            id={answerId}
+                                                                                                                            data-idy={idy} required>
+                                                                                                                            <option value="" >Select</option>
+                                                                                                                            {this.state.sections.filter((sec, key) => sec.related === "true").map(
+                                                                                                                                (q, i) =>
+                                                                                                                                    <option key={i} value={q.section}
+                                                                                                                                        selected={q.section === `${this.state.sections[id].questions[idx].suggested_jump[idy] && this.state.sections[id].questions[idx].suggested_jump[idy].jumpto}`}
+                                                                                                                                    >
+                                                                                                                                        {q.section}
+                                                                                                                                    </option>
+                                                                                                                            )}
+                                                                                                                        </select> */}
                                                                                                                       </div>
 
                                                                                                                       <div className="col-sm-3">
@@ -1289,11 +1320,37 @@ class FormConfigure extends React.Component {
                                                                                                     <span className="text-center"> and</span>
 
                                                                                                     <div className="col-sm-1">
-                                                                                                        <input type="text" name={validationId2} data-id={idx} data-secid={id} data-name="validation2" id={validationId2} placeholder="Number" value={sections[id].questions[idx].validation2} className="form-control" style={{ border: `${this.state.sections[id].questions[idx].validation1 != '' && this.state.sections[id].questions[idx].validation2 === '' ? '2px solid #FF0000' : ''}` }} />
+                                                                                                        <input
+                                                                                                            type="text"
+                                                                                                            name={validationId2}
+                                                                                                            data-id={idx}
+                                                                                                            data-secid={id}
+                                                                                                            data-name="validation2"
+                                                                                                            id={validationId2}
+                                                                                                            placeholder="Number"
+                                                                                                            value={sections[id].questions[idx].validation2}
+                                                                                                            className="form-control"
+                                                                                                            style={{
+                                                                                                                border: `${this.state.sections[id].questions[idx].validation1 != '' && this.state.sections[id].questions[idx].validation2 === '' ? '2px solid #FF0000' : ''}`
+                                                                                                            }}
+                                                                                                        />
                                                                                                         {this.state.sections[id].questions[idx].validation1 != '' && this.state.sections[id].questions[idx].validation2 === '' ? <span className="text-danger fs-6">Required!</span> : ''}
                                                                                                     </div>
                                                                                                     <div className="col-sm-2">
-                                                                                                        <input type="text" name={errorId} data-id={idx} data-secid={id} data-name="error_msg" id={errorId} placeholder="Error message" value={sections[id].questions[idx].error_msg} className="form-control" style={{ border: `${this.state.sections[id].questions[idx].validation1 != '' && this.state.sections[id].questions[idx].error_msg === '' ? '2px solid #FF0000' : ''}` }} />
+                                                                                                        <input
+                                                                                                            type="text"
+                                                                                                            name={errorId}
+                                                                                                            data-id={idx}
+                                                                                                            data-secid={id}
+                                                                                                            data-name="error_msg"
+                                                                                                            id={errorId}
+                                                                                                            placeholder="Error message"
+                                                                                                            value={sections[id].questions[idx].error_msg}
+                                                                                                            className="form-control"
+                                                                                                            style={{
+                                                                                                                border: `${this.state.sections[id].questions[idx].validation1 != '' && this.state.sections[id].questions[idx].error_msg === '' ? '2px solid #FF0000' : ''}`
+                                                                                                            }}
+                                                                                                        />
                                                                                                         {this.state.sections[id].questions[idx].validation1 != '' && this.state.sections[id].questions[idx].error_msg === '' ? <span className="text-danger fs-6">Required!</span> : ''}
                                                                                                     </div>
                                                                                                 </div>
@@ -1381,36 +1438,46 @@ class FormConfigure extends React.Component {
                     ) : (
                         ''
                     )}
-                    <div className="row mt-3 text-center">
-                        <div className="col col-sm-2  mb-1">
-                            <button className="btn btn-primary" disabled={id === 0 ? true : sectionLength >= 1 ? false : true} onClick={this.onPreviuos}>
-                                Previous Section
-                            </button>
-                        </div>
-                        <div className="col col-sm-2 mb-1">
-                            <button className="btn btn-primary" disabled={sectionLength === id ? true : false} onClick={this.onNext}>
-                                Next Section
-                            </button>
-                        </div>
-                        <div className="col col-sm-2">
-                            <button className="btn btn-primary" onClick={this.addSection} disabled={sectionLength === id ? false : true}>
-                                Add Section
-                            </button>
-                        </div>
-                        <div className="col col-sm-2">
-                            <button onClick={this.handlePreview} className="btn btn-primary" disabled={sectionLength > -1 ? false : true}>
-                                Preview
-                            </button>
-                        </div>
-                        <div className="col col-sm-2">
-                            <button onClick={this.handleSubmit} className="btn btn-primary" disabled={sectionLength > -1 ? false : true}>
-                                Submit
-                            </button>
-                        </div>
-                        <div className="col col-sm-2">
-                            <button onClick={this.onLast} className="btn btn-primary" disabled={sectionLength === id ? true : false}>
-                                Last Section
-                            </button>
+                    {/* <button onClick={this.handleNavToTop} type="button" className="btn btn-primary rounded-pill mb-1" id="btn-back-to-top">
+                        <BsFillArrowUpCircleFill />
+                    </button>
+                    <button onClick={this.handleNavToBottom} type="button" className="btn btn-primary rounded-pill" id="btn-back-to-bottom">
+                        <BsFillArrowDownCircleFill />
+                    </button> */}
+
+                    <div className="pb-1">
+                        {/* <div className="footer row mt-3 text-center fixed-bottom bg-white p-1 pt-2"> */}
+                        <div className="row mt-3 text-center">
+                            <div className="col col-sm-2  mb-1">
+                                <button className="btn btn-primary" disabled={id === 0 ? true : sectionLength >= 1 ? false : true} onClick={this.onPreviuos}>
+                                    Previous Section
+                                </button>
+                            </div>
+                            <div className="col col-sm-2 mb-1">
+                                <button className="btn btn-primary" disabled={sectionLength === id ? true : false} onClick={this.onNext}>
+                                    Next Section
+                                </button>
+                            </div>
+                            <div className="col col-sm-2">
+                                <button className="btn btn-primary" onClick={this.addSection} disabled={sectionLength === id ? false : true}>
+                                    Add Section
+                                </button>
+                            </div>
+                            <div className="col col-sm-2">
+                                <button onClick={this.handlePreview} className="btn btn-primary" disabled={sectionLength > -1 ? false : true}>
+                                    Preview
+                                </button>
+                            </div>
+                            <div className="col col-sm-2">
+                                <button onClick={this.handleSubmit} className="btn btn-primary" disabled={sectionLength > -1 ? false : true}>
+                                    Submit
+                                </button>
+                            </div>
+                            <div className="col col-sm-2">
+                                <button onClick={this.onLast} className="btn btn-primary" disabled={sectionLength === id ? true : false}>
+                                    Last Section
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
