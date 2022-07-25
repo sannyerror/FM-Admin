@@ -67,7 +67,7 @@ class App extends React.Component {
                                     <Route path="/admin/eifmsg" component={EIFMSG} />
                                     <Route path="/admin/rafmsg" component={RAFMSG} />
                                     <Route path="/admin/login" component={Login} />
-                                    <Route path="/admin/create-password/:token" component={CreatePassword} />
+                                    <Route path="/admin/:token-password" component={CreatePassword} />
                                     <Route path="/admin/finddomain" component={FindDomain} />
                                     <Route path="/admin/raf/:customer" component={RAF} />
                                 </Switch>
