@@ -73,46 +73,57 @@ class CreatePassword extends React.Component {
                 error: 'Please provide Password / Retype-Password '
             });
         } else {
-            let pattern1 = /^(?=.*[!@#\$%\^&\*+=])/;
-            let pattern2 = /[a-zA-Z0-9]{8,12}/g;
+            // let pattern1 = /(?=.*[!@#\$%\^&\*+=])/;
+            // let pattern1 = /[a-zA-Z0-9!@#$%^&*+=]{8,12}/g;
+            const lowerCase = new RegExp('(?=.*[a-z])');
+            const upperCase = new RegExp('(?=.*[A-Z])');
+            const number = new RegExp('(?=.*[0-9])');
+            const specialChar = new RegExp('(?=.*[!@#$%^&*+=])');
+            const length = new RegExp('[A-Za-z0-9!@#$%^&*+=]{8,12}');
+
             if (password != retype_password) {
                 this.setState({
                     error: 'Passwords must match'
                 });
-            } else if (pattern1.test(password) && pattern2.test(password)) {
+            } else if (length.test(password) && specialChar.test(password) && number.test(password) && upperCase.test(password) && lowerCase.test(password)) {
                 const data = {
                     password: password,
                     retype_password: retype_password
                 };
-
-                try {
-                    const response = await axios
-                        .post(`${baseApiUrl}/admin/create-password`, data, {
-                            headers: {
-                                Authorization: `Bearer ${localStorage.getItem('forgotPassword')}`
-                            }
-                        })
-                        .then((response) => {
-                            return response.data;
-                        });
-
-                    if (response.status === 'success') {
-                        this.setState({
-                            isSuccess: true,
-                            error: 'Your password has been changed successfully. Go for Login!'
-                        });
-                        this.openModal();
-                    } else if (response.error) {
-                        this.setState({ error: response.error, isSuccess: false });
-                    } else {
-                        this.setState({ error: response.message, isSuccess: false });
-                    }
-                } catch (error) {
-                    const error1 = error.data ? (e.data.message ? e.data.message : 'Something went wrong. Please try again later. ') : 'Something went wrong. Please try again later. ';
+                if (password.length < 8 || password.length > 12) {
                     this.setState({
-                        error: error1,
-                        isSuccess: false
+                        error: 'Invalid password; allows 8 to 12 alphanumeric and "@#$%^&+=!*"'
                     });
+                } else {
+                    try {
+                        const response = await axios
+                            .post(`${baseApiUrl}/admin/create-password`, data, {
+                                headers: {
+                                    Authorization: `Bearer ${localStorage.getItem('forgotPassword')}`
+                                }
+                            })
+                            .then((response) => {
+                                return response.data;
+                            });
+
+                        if (response.status === 'success') {
+                            this.setState({
+                                isSuccess: true,
+                                error: 'Your password has been changed successfully. Go for Login!'
+                            });
+                            this.openModal();
+                        } else if (response.error) {
+                            this.setState({ error: response.error, isSuccess: false });
+                        } else {
+                            this.setState({ error: response.message, isSuccess: false });
+                        }
+                    } catch (error) {
+                        const error1 = error.data ? (e.data.message ? e.data.message : 'Something went wrong. Please try again later. ') : 'Something went wrong. Please try again later. ';
+                        this.setState({
+                            error: error1,
+                            isSuccess: false
+                        });
+                    }
                 }
             } else {
                 return this.setState({
