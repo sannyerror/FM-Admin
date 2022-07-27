@@ -45,7 +45,7 @@ class App extends React.Component {
         if (token) {
             if (action[0] !== 'reload') {
                 await logOut();
-                //localStorage.removeItem("refreshToken")
+                //localStorage.removeItem('refreshToken');
             } else {
             }
         }

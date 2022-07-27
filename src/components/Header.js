@@ -30,7 +30,7 @@ export class Header extends React.Component {
         const screenName = window.location.pathname.split('/').pop();
         return (
             <div id="app" className="container-fluid">
-                {refreshToken && pwd_expires_in <= 10 ? (
+                {token && pwd_expires_in <= 10 ? (
                     this.state.show ? (
                         ''
                     ) : (
