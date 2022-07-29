@@ -35,7 +35,7 @@ export class Header extends React.Component {
                         ''
                     ) : (
                         <div className="alert alert-danger alert-dismissible fade show" role="alert">
-                            Your password {is_pwd_expired ? 'has been expired' : `will be expire in ${pwd_expires_in} days`}.
+                            Your password {is_pwd_expired ? 'has been expired' : `will expire in ${pwd_expires_in} days`}.
                             {this.state.profilePage || screenName === 'changepassword' ? (
                                 ''
                             ) : (
