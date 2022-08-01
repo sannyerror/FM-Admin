@@ -11,8 +11,7 @@ import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 import { BeatLoader } from 'react-spinners';
 
-import { BsFillArrowDownCircleFill } from 'react-icons/bs';
-import { BsFillArrowUpCircleFill } from 'react-icons/bs';
+import { BsFillArrowDownCircleFill, BsFillArrowUpCircleFill } from 'react-icons/bs';
 
 const animatedComponents = makeAnimated();
 const customStyles = {
@@ -1438,16 +1437,16 @@ class FormConfigure extends React.Component {
                     ) : (
                         ''
                     )}
-                    {/* <button onClick={this.handleNavToTop} type="button" className="btn btn-primary rounded-pill mb-1" id="btn-back-to-top">
+                    <button onClick={this.handleNavToTop} type="button" className="btn btn-primary rounded-pill mb-1" id="btn-back-to-top">
                         <BsFillArrowUpCircleFill />
                     </button>
                     <button onClick={this.handleNavToBottom} type="button" className="btn btn-primary rounded-pill" id="btn-back-to-bottom">
                         <BsFillArrowDownCircleFill />
-                    </button> */}
+                    </button>
 
                     <div className="pb-1">
-                        {/* <div className="footer row mt-3 text-center fixed-bottom bg-white p-1 pt-2"> */}
-                        <div className="row mt-3 text-center">
+                        <div className="footer row mt-3 text-center fixed-bottom bg-white p-1 pt-2">
+                            {/* <div className="row mt-3 text-center"> */}
                             <div className="col col-sm-2  mb-1">
                                 <button className="btn btn-primary" disabled={id === 0 ? true : sectionLength >= 1 ? false : true} onClick={this.onPreviuos}>
                                     Previous Section
