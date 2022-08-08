@@ -17,9 +17,13 @@ class ChangePassword extends React.Component {
     changePwd = async (e) => {
         e.preventDefault();
         const { retype_password, old_password, password } = this.state;
-        if (!password && !retype_password && old_password) {
+        if (!password || !retype_password || !old_password) {
             return this.setState({
-                error: 'Please provide Password / Retype-Password / Old-Password'
+                error: `Please provide ${password === '' ? 'Password' : ''}${retype_password === '' ? ', Retype-Password' : ''}${old_password === '' ? ', Old-Password' : ''}`
+            });
+        } else if (password != retype_password) {
+            return this.setState({
+                error: `New Password and Retype-Password must match`
             });
         } else {
             const data = {
@@ -43,7 +47,7 @@ class ChangePassword extends React.Component {
 
                 if (response.status === 'failed') {
                     this.setState({
-                        error: response.status
+                        error: response.message
                     });
                 } else {
                     const user = {

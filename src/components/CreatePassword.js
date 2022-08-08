@@ -92,7 +92,7 @@ class CreatePassword extends React.Component {
                 };
                 if (password.length < 8 || password.length > 12) {
                     this.setState({
-                        error: 'Invalid password; allows 8 to 12 alphanumeric and "@#$%^&+=!*"'
+                        error: '"Must contain 8-12 characters, at least one capital letter, one number, and one special character (+@#$%^&+=!*)"'
                     });
                 } else {
                     try {
@@ -109,7 +109,7 @@ class CreatePassword extends React.Component {
                         if (response.status === 'success') {
                             this.setState({
                                 isSuccess: true,
-                                error: 'Your password has been changed successfully. Go for Login!'
+                                error: 'Your password has been changed successfully.'
                             });
                             this.openModal();
                         } else if (response.error) {
@@ -127,7 +127,7 @@ class CreatePassword extends React.Component {
                 }
             } else {
                 return this.setState({
-                    error: 'Invalid password; allows 8 to 12 alphanumeric and "@#$%^&+=!*"'
+                    error: '"Must contain 8-12 characters, at least one capital letter, one number, and one special character (+@#$%^&+=!*)"'
                 });
             }
         }

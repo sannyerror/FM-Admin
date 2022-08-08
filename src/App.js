@@ -28,6 +28,7 @@ import ChangePassword from './components/ChangePassword';
 import AddOrganization from './components/AddOrganization';
 import EmailList from './components/Emaillist';
 import BillingDetails from './components/BillingDetails';
+import QuestionConfigure from './components/QuestionConfigure';
 import FormConfigure from './components/FormConfigure';
 import ConfigureOrg from './components/ConfigureOrg';
 import Preview from './components/Preview_Questions';
@@ -90,8 +91,11 @@ class App extends React.Component {
                                     <PrivateRoute path="/admin/eiflist" component={EIFList} roles={['Super Admin', 'Admin', 'Coordinator']} />
                                     <PrivateRoute path="/admin/raflist" component={RAFList} roles={['Super Admin', 'Admin', 'Coordinator']} />
                                     <PrivateRoute path="/admin/configure/emailslist" component={EmailList} roles={['Super Admin', 'Admin', 'Coordinator']} />
+
                                     <PrivateRoute path="/admin/org-configure/" component={ConfigureOrg} roles={['Super Admin', 'Admin']} />
-                                    <PrivateRoute path="/admin/questions-configure/Org=:Org&id=:id" component={FormConfigure} roles={['Super Admin', 'Admin']} />
+                                    <PrivateRoute path="/admin/questions-configure/Org=:Org&id=:id" component={QuestionConfigure} roles={['Super Admin', 'Admin']} />
+                                    <PrivateRoute path="/admin/configure-form/Org=:Org&id=:id" component={FormConfigure} roles={['Super Admin', 'Admin']} />
+
                                     <PrivateRoute path="/admin/configure/questioncategorylist" component={QuestionsCategorylist} roles={['Super Admin', 'Admin']} />
                                     <PrivateRoute path="/admin/configure/organization/adduser/id:id" component={AddOrgUser} roles={['Super Admin', 'Admin']} />
                                 </Switch>
