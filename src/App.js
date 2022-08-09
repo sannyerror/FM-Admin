@@ -94,7 +94,7 @@ class App extends React.Component {
 
                                     <PrivateRoute path="/admin/org-configure/" component={ConfigureOrg} roles={['Super Admin', 'Admin']} />
                                     <PrivateRoute path="/admin/questions-configure/Org=:Org&id=:id" component={QuestionConfigure} roles={['Super Admin', 'Admin']} />
-                                    <PrivateRoute path="/admin/configure-form/Org=:Org&id=:id" component={FormConfigure} roles={['Super Admin', 'Admin']} />
+                                    <PrivateRoute path="/admin/forms-configure/Org=:Org&id=:id" component={FormConfigure} roles={['Super Admin', 'Admin']} />
 
                                     <PrivateRoute path="/admin/configure/questioncategorylist" component={QuestionsCategorylist} roles={['Super Admin', 'Admin']} />
                                     <PrivateRoute path="/admin/configure/organization/adduser/id:id" component={AddOrgUser} roles={['Super Admin', 'Admin']} />

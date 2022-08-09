@@ -158,3 +158,35 @@
     border-radius: 50%;
     padding-bottom: 10px;
 }
+
+/* Counter for 5 minutes Expire*/
+.show-counter {
+    padding: 0.5rem;
+    display: flex;
+    justify-content: center;
+}
+.show-counter .countdown {
+    line-height: 1.25rem;
+    padding: 0 0.75rem 0 0.75rem;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+}
+
+.show-counter .countdown.warning {
+    color: #0d6efd;
+}
+.show-counter .countdown.success {
+    color: #198754;
+}
+
+.show-counter .countdown > p {
+    margin: 0;
+}
+
+.show-counter .countdown > span {
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    line-height: 0.5rem;
+}
+/* End Login User Expire*/

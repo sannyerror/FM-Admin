@@ -149,7 +149,7 @@ class ConfigureOrg extends React.Component {
                                             <ul class="list-group">
                                                 {/* {Org_Type && Org_Type === 2 ? (
                                                     <li className="list-group-item border-0">
-                                                        <Link to={`/admin/configure-form/Org=${Org_Name}&id=${Org_Id}`}>
+                                                        <Link to={`/admin/forms-configure/Org=${Org_Name}&id=${Org_Id}`}>
                                                             <span className="h4">
                                                                 <GrDocumentUser />
                                                             </span>

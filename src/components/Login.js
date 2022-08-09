@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import { login, forgotPassWord } from '../api/api';
 import Modal from 'react-modal';
+import { useTimer } from 'react-timer-hook';
+import CountdownTimer from './CountdownTimer';
+
 import { connect } from 'react-redux';
 import '../App.css';
 
@@ -30,10 +33,29 @@ export class Login extends Component {
             email_id: '',
             user: '',
             showPOPUP: false,
-            error: ''
+            error: '',
+            lock_user: false
         };
     }
-
+    componentDidMount = () => {
+        localStorage.getItem('lock_user') &&
+            this.setState((prev) => ({
+                ...prev,
+                lock_user: true,
+                error: 'You have been locked for 5 minutes due to 3 failed attempts.'
+            }));
+        this.unlockUserTimer();
+    };
+    unlockUserTimer = () => {
+        return setTimeout(() => {
+            localStorage.removeItem('lock_user');
+            this.setState((prev) => ({
+                ...prev,
+                lock_user: false,
+                error: ''
+            }));
+        }, 300000);
+    };
     handleShow = () => {
         this.setState({
             showPOPUP: true
@@ -76,7 +98,18 @@ export class Login extends Component {
         } else {
             try {
                 const response = await login(email, password);
-                if (response.data.response.is_pwd_expired) {
+
+                if (response.data.status == 'failed') {
+                    this.setState((prev) => ({ ...prev, error: response.data.message }));
+                    if (response.data.message == 'You have been locked for 5 minutes due to 3 failed attempts.' || response.data.message == 'Please try again after some time') {
+                        this.setState((prev) => ({ ...prev, lock_user: true }));
+                        localStorage.setItem('lock_user', 'true');
+                        this.unlockUserTimer();
+                    } else {
+                        this.setState((prev) => ({ ...prev, lock_user: false }));
+                        localStorage.setItem('lock_user', 'false');
+                    }
+                } else if (response.data.response.is_pwd_expired) {
                     this.props.history.push('/admin/changepassword');
                 } else if (response.data.response.is_pwd_updated) {
                     if (response && response.data) {
@@ -104,43 +137,52 @@ export class Login extends Component {
             [name]: value
         });
     };
-
     render() {
+        const FIVE_MINUTES_IN_MS = 5 * 60 * 1000;
+        const NOW_IN_MS = new Date().getTime();
+        const afterFiveMinutes = NOW_IN_MS + FIVE_MINUTES_IN_MS;
         return (
             <div className="shadow-lg p-5 mb-5 bg-white rounded">
-                <form>
-                    <div className="text-center">
-                        <h2>Login</h2>
+                {this.state.lock_user ? (
+                    <div className="my-2">
+                        <CountdownTimer targetDate={afterFiveMinutes} />
+                        {this.state.error && <div className="text-center text-danger mt-5 mb-3">{this.state.error}</div>}
                     </div>
-                    <div className="form-group row">
-                        <label className="col-md-4 col-form-label text-md-right">Email ID:</label>
-                        <div className="col-md-4">
-                            <input type="text" className="form-control" name="email" onChange={this.handleChange} value={this.state.email} required />
+                ) : (
+                    <form>
+                        <div className="text-center">
+                            <h2>Login</h2>
                         </div>
-                    </div>
+                        <div className="form-group row">
+                            <label className="col-md-4 col-form-label text-md-right">Email ID:</label>
+                            <div className="col-md-4">
+                                <input type="text" className="form-control" name="email" onChange={this.handleChange} value={this.state.email} required />
+                            </div>
+                        </div>
 
-                    <div className="form-group row">
-                        <label className="col-md-4 col-form-label text-md-right">Password:</label>
-                        <div className="col-md-4">
-                            <input type="password" className="form-control" name="password" onChange={this.handleChange} value={this.state.password} required />
+                        <div className="form-group row">
+                            <label className="col-md-4 col-form-label text-md-right">Password:</label>
+                            <div className="col-md-4">
+                                <input type="password" className="form-control" name="password" onChange={this.handleChange} value={this.state.password} required />
+                            </div>
                         </div>
-                    </div>
-                    {this.state.error && <div className="col text-center text-danger mb-3">{this.state.error}</div>}
-                    <div className="row ">
-                        <div className="col text-center mb-3">
-                            <span className="btn btn-link text-primary" onClick={this.handleShow}>
-                                Forgot Password
-                            </span>
+                        {this.state.error && <div className="col text-center text-danger mb-3">{this.state.error}</div>}
+                        <div className="row ">
+                            <div className="col text-center mb-3">
+                                <span className="btn btn-link text-primary" onClick={this.handleShow}>
+                                    Forgot Password
+                                </span>
+                            </div>
                         </div>
-                    </div>
-                    <div className="row ">
-                        <div className="col text-center mb-3">
-                            <button className="button" onClick={this.signin}>
-                                Login
-                            </button>
+                        <div className="row ">
+                            <div className="col text-center mb-3">
+                                <button className={`button ${this.state.lock_user ? 'bg-secondary border border-0' : ''}`} onClick={this.signin} disabled={this.state.lock_user}>
+                                    {this.state.lock_user ? <s>Login</s> : <span>Login</span>}
+                                </button>
+                            </div>
                         </div>
-                    </div>
-                </form>
+                    </form>
+                )}
                 <Modal
                     isOpen={this.state.showPOPUP}
                     //   onAfterOpen={afterOpenModal}
