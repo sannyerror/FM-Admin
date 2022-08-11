@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { login, forgotPassWord } from '../api/api';
 import Modal from 'react-modal';
-import { useTimer } from 'react-timer-hook';
 import CountdownTimer from './CountdownTimer';
 
 import { connect } from 'react-redux';
@@ -101,7 +100,7 @@ export class Login extends Component {
 
                 if (response.data.status == 'failed') {
                     this.setState((prev) => ({ ...prev, error: response.data.message }));
-                    if (response.data.message == 'Your account has been temporarily locked after 3 failed attempts. If you feel you have received this message in error, please contact a FirstMatch team member. Otherwise, please try logging in again in 5 minutes.' || response.data.message == 'Please try again after some time') {
+                    if (response.data.message === 'Your account has been temporarily locked after 3 failed attempts. If you feel you have received this message in error, please contact a FirstMatch team member. Otherwise, please try logging in again in 5 minutes.' || response.data.message === 'Please try again after some time') {
                         this.setState((prev) => ({ ...prev, lock_user: true }));
                         localStorage.setItem('lock_user', 'true');
                         this.unlockUserTimer();

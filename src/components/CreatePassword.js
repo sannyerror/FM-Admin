@@ -70,7 +70,7 @@ class CreatePassword extends React.Component {
 
         if (!password && !retype_password) {
             return this.setState({
-                error: 'Please provide Password / Retype-Password '
+                error: 'Please provide New Password / Re-Type New Password '
             });
         } else {
             // let pattern1 = /(?=.*[!@#\$%\^&\*+=])/;
@@ -186,13 +186,13 @@ class CreatePassword extends React.Component {
                         </div>
                         <br />
                         <div className="form-group row">
-                            <label className="col-md-4  col-form-label text-md-right ">New password:</label>
+                            <label className="col-md-4  col-form-label text-md-right ">New Password:</label>
                             <div className="col-sm-4">
                                 <input type="password" onChange={this.handleChange} value={this.state.password} name="password" className="form-control " placeholder="" />
                             </div>
                         </div>
                         <div className="form-group row">
-                            <label className="col-md-4 col-form-label text-md-right">Retype password:</label>
+                            <label className="col-md-4 col-form-label text-md-right">Re-Type New Password:</label>
                             <div className="col-sm-4">
                                 <input type="password" onChange={this.handleChange} value={this.state.retype_password} name="retype_password" className="form-control " placeholder="" />
                             </div>

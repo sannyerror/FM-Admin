@@ -19,11 +19,11 @@ class ChangePassword extends React.Component {
         const { retype_password, old_password, password } = this.state;
         if (!password || !retype_password || !old_password) {
             return this.setState({
-                error: `Please provide ${password === '' ? 'Password' : ''}${retype_password === '' ? ', Retype-Password' : ''}${old_password === '' ? ', Old-Password' : ''}`
+                error: `Please provide ${password === '' ? 'New Password' : ''}${retype_password === '' ? ', Re-Type New Password' : ''}${old_password === '' ? ', Current Password' : ''}`
             });
         } else if (password != retype_password) {
             return this.setState({
-                error: `New Password and Retype-Password must match`
+                error: `New Password and Re-Type New Password must match`
             });
         } else {
             const data = {
@@ -95,13 +95,13 @@ class ChangePassword extends React.Component {
                             </div>
                         </div>
                         <div className="form-group row">
-                            <label className="col-sm-2 col-form-label font-weight-bold ">New password:</label>
+                            <label className="col-sm-2 col-form-label font-weight-bold ">New Password:</label>
                             <div className="col-sm-4">
                                 <input type="password" onChange={this.handleChange} value={this.state.password} name="password" className="form-control " placeholder="" />
                             </div>
                         </div>
                         <div className="form-group row">
-                            <label className="col-sm-2 col-form-label font-weight-bold ">Retype password:</label>
+                            <label className="col-sm-2 col-form-label font-weight-bold ">Re-Type New Password:</label>
                             <div className="col-sm-4">
                                 <input type="password" onChange={this.handleChange} value={this.state.retype_password} name="retype_password" className="form-control " placeholder="" />
                             </div>
