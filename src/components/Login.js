@@ -98,7 +98,7 @@ export class Login extends Component {
             try {
                 const response = await login(email, password);
 
-                if (response.data.status == 'failed') {
+                if (response.data.status === 'failed') {
                     this.setState((prev) => ({ ...prev, error: response.data.message }));
                     if (response.data.message === 'Your account has been temporarily locked after 3 failed attempts. If you feel you have received this message in error, please contact a FirstMatch team member. Otherwise, please try logging in again in 5 minutes.' || response.data.message === 'Please try again after some time') {
                         this.setState((prev) => ({ ...prev, lock_user: true }));
@@ -123,8 +123,9 @@ export class Login extends Component {
                     this.props.history.push('/admin/changepassword');
                 }
             } catch (e) {
+                const error = e.data ? (e.data.message ? e.data.message : 'Invalid Email ID / Password entered.') : 'Invalid Email ID / Password entered.';
                 this.setState({
-                    error: 'Invalid Email ID / Password entered.'
+                    error
                 });
             }
         }

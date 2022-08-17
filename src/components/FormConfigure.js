@@ -63,7 +63,7 @@ const FormConfigure = () => {
                 <div className="row py-4 px-2 shadow-sm text-body font-weight-bold">{org_name}</div>
 
                 {/*From and sections*/}
-                <div className="row mx-4 w-100">
+                <div className="row d-block mx-auto ">
                     <div className="accordion" id="accordionExample">
                         {forms.length > 0 ? (
                             forms.map((forms) => (

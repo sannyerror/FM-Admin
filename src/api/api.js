@@ -88,6 +88,20 @@ export const login = async (email, password) => {
     }
 };
 
+//export const preLogin = async () => {
+//     const currentUserEmail = store.getState().loginData.user.email ? store.getState().loginData.user.email : '';
+//     console.log('APi preLogin currentUserEmail : ', currentUserEmail);
+
+//     try {
+//         const response = await axios.post(`${baseApiUrl}/admin/pre-login-check`, { username: currentUserEmail });
+//         console.log('Api preLogin res:', response);
+//         return response;
+//     } catch (error) {
+//         console.log('Api preLogin error:', error);
+//         throwError(error);
+//     }
+// };
+
 export const forgotPassWord = async (email_id) => {
     const { dispatch } = store;
 
