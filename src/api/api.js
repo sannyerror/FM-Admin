@@ -29,10 +29,12 @@ import createAuthRefreshInterceptor from 'axios-auth-refresh';
 import { update } from '../redux/login/loginAction';
 import { clearUser } from '../redux/login/loginAction';
 import { store } from '../App';
+
 //DEV
 export const baseApiUrl = 'http://13.127.236.236/api';
 
 export const OrgbaseApiUrl = 'http://13.127.236.236/';
+
 const refreshAuthLogic = async (failedRequest) => {
     //  const { store } = store
     const userState = store.getState().user;
@@ -65,16 +67,31 @@ export const login = async (email, password) => {
     try {
         dispatch(fetchUsersRequest);
         const response = await axios.post(`${baseApiUrl}/admin/login`, { username: email, password: password });
+<<<<<<< HEAD
         const { token, user_id, role_type, is_pwd_updated } = response.data.response;
+=======
+        const { token, user_id, role_type, is_pwd_updated, is_pwd_expired, pwd_expires_in } = response.data.response;
+>>>>>>> uat
         const user = {
             email,
             token,
             user_id,
             role_type: role_type,
+<<<<<<< HEAD
             is_pwd_updated: is_pwd_updated
         };
         localStorage.setItem('refreshToken', response.data.response.token);
         localStorage.setItem('user_role', response.data.response.role_type);
+=======
+            is_pwd_updated: is_pwd_updated,
+            is_pwd_expired: is_pwd_expired,
+            pwd_expires_in: pwd_expires_in
+        };
+
+        localStorage.setItem('refreshToken', response.data.response.token);
+        localStorage.setItem('user_role', response.data.response.role_type);
+        localStorage.removeItem('forgotPassword');
+>>>>>>> uat
         dispatch(fetchUsersSuccess(user));
 
         return response;
@@ -84,9 +101,29 @@ export const login = async (email, password) => {
     }
 };
 
+<<<<<<< HEAD
 export const forgotPassWord = async (email_id) => {
     const { dispatch } = store;
 
+=======
+//export const preLogin = async () => {
+//     const currentUserEmail = store.getState().loginData.user.email ? store.getState().loginData.user.email : '';
+//     console.log('APi preLogin currentUserEmail : ', currentUserEmail);
+
+//     try {
+//         const response = await axios.post(`${baseApiUrl}/admin/pre-login-check`, { username: currentUserEmail });
+//         console.log('Api preLogin res:', response);
+//         return response;
+//     } catch (error) {
+//         console.log('Api preLogin error:', error);
+//         throwError(error);
+//     }
+// };
+
+export const forgotPassWord = async (email_id) => {
+    const { dispatch } = store;
+
+>>>>>>> uat
     try {
         return await axios.get(`${baseApiUrl}/admin/forgot-password?email_id=${email_id}`).then((response) => {
             return response.data;
