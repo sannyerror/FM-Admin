@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import DateTimeDisplay from './DateTimeDisplay';
 import { useCountdown } from '../hooks/useCountdown';
 
@@ -14,6 +14,11 @@ const ShowCounter = ({ minutes, seconds }) => {
 
 const CountdownTimer = ({ targetDate }) => {
     const [minutes, seconds] = useCountdown(targetDate);
+    useEffect(() => {
+        if (minutes === 0 && seconds === 1) {
+            window.location.reload();
+        }
+    }, [minutes, seconds]);
     return <ShowCounter minutes={minutes} seconds={seconds} />;
 };
 

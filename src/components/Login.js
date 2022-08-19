@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { login, forgotPassWord } from '../api/api';
+import { preLogin, login, forgotPassWord } from '../api/api';
 import Modal from 'react-modal';
 import CountdownTimer from './CountdownTimer';
 
@@ -32,28 +32,17 @@ export class Login extends Component {
             email_id: '',
             user: '',
             showPOPUP: false,
-            error: '',
-            lock_user: false
+            error: ''
         };
     }
-    componentDidMount = () => {
-        localStorage.getItem('lock_user') &&
-            this.setState((prev) => ({
-                ...prev,
-                lock_user: true,
-                error: 'Your account has been temporarily locked after 3 failed attempts. If you feel you have received this message in error, please contact a FirstMatch team member. Otherwise, please try logging in again in 5 minutes.'
-            }));
-        this.unlockUserTimer();
-    };
-    unlockUserTimer = () => {
-        return setTimeout(() => {
-            localStorage.removeItem('lock_user');
-            this.setState((prev) => ({
-                ...prev,
-                lock_user: false,
-                error: ''
-            }));
-        }, 300000);
+    componentDidMount = async () => {
+        try {
+            let response = await preLogin();
+            this.setState({ error: response.message });
+        } catch (e) {
+            const error = e.data ? (e.data.message ? e.data.message : 'Something went wrong. Please try again later.') : 'Something went wrong. Please try again later.';
+            this.setState({ error });
+        }
     };
     handleShow = () => {
         this.setState({
@@ -100,14 +89,6 @@ export class Login extends Component {
 
                 if (response.data.status === 'failed') {
                     this.setState((prev) => ({ ...prev, error: response.data.message }));
-                    if (response.data.message === 'Your account has been temporarily locked after 3 failed attempts. If you feel you have received this message in error, please contact a FirstMatch team member. Otherwise, please try logging in again in 5 minutes.' || response.data.message === 'Please try again after some time') {
-                        this.setState((prev) => ({ ...prev, lock_user: true }));
-                        localStorage.setItem('lock_user', 'true');
-                        this.unlockUserTimer();
-                    } else {
-                        this.setState((prev) => ({ ...prev, lock_user: false }));
-                        localStorage.setItem('lock_user', 'false');
-                    }
                 } else if (response.data.response.is_pwd_expired) {
                     this.props.history.push('/admin/changepassword');
                 } else if (response.data.response.is_pwd_updated) {
@@ -138,12 +119,12 @@ export class Login extends Component {
         });
     };
     render() {
-        const FIVE_MINUTES_IN_MS = 5 * 60 * 1000;
+        const FIVE_MINUTES_IN_MS = this.props.user.count_down * 1000;
         const NOW_IN_MS = new Date().getTime();
         const afterFiveMinutes = NOW_IN_MS + FIVE_MINUTES_IN_MS;
         return (
             <div className="shadow-lg p-5 mb-5 bg-white rounded">
-                {this.state.lock_user ? (
+                {this.props.user.count_down > 0 ? (
                     <div className="my-2">
                         <CountdownTimer targetDate={afterFiveMinutes} />
                         {this.state.error && <div className="text-center text-danger mt-5 mb-3">{this.state.error}</div>}
@@ -176,8 +157,8 @@ export class Login extends Component {
                         </div>
                         <div className="row ">
                             <div className="col text-center mb-3">
-                                <button className={`button ${this.state.lock_user ? 'bg-secondary border border-0' : ''}`} onClick={this.signin} disabled={this.state.lock_user}>
-                                    {this.state.lock_user ? <s>Login</s> : <span>Login</span>}
+                                <button className="button" onClick={this.signin}>
+                                    <span>Login</span>
                                 </button>
                             </div>
                         </div>
