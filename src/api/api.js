@@ -32,9 +32,9 @@ import { clearUser } from '../redux/login/loginAction';
 import { store } from '../App';
 
 //DEV
-export const baseApiUrl = 'http://13.232.194.174/api';
+export const baseApiUrl = 'http://15.207.183.204/api';
 
-export const OrgbaseApiUrl = 'http://13.232.194.174/';
+export const OrgbaseApiUrl = 'http://15.207.183.204/';
 
 const refreshAuthLogic = async (failedRequest) => {
     //  const { store } = store
