@@ -431,8 +431,8 @@ class QuestionConfigure extends React.Component {
         const index = e.target.dataset.id;
         const secid = e.target.dataset.secid;
         let sections = [...this.state.sections];
-        sections[secid].questions[idx].suggested_answers = sections[secid].questions[idx].suggested_answers.filter((item, i) => index !== i);
-        sections[secid].questions[idx].suggested_jump = sections[secid].questions[idx].suggested_jump.filter((item, i) => index !== i);
+        sections[secid].questions[idx].suggested_answers = sections[secid].questions[idx].suggested_answers.filter((item, i) => Number(index) !== i);
+        sections[secid].questions[idx].suggested_jump = sections[secid].questions[idx].suggested_jump.filter((item, i) => Number(index) !== i);
         // const sectionss = this.state.sections[secid].questions[idx].suggested_answers.filter((item, i) => index != i)
         sections[secid].questions[idx].suggested_answers = sections[secid].questions[idx].suggested_answers.map((item, id) => {
             return {
@@ -561,7 +561,7 @@ class QuestionConfigure extends React.Component {
                                                     ? ques.suggested_jump.map((s, i) => {
                                                           return {
                                                               ...s,
-                                                              question_jumpto: Array.isArray(s?.question_jumpto) && s?.question_jumpto.length > 0 ? s?.question_jumpto.filter((j) => j !== secname) : []
+                                                              question_jumpto: Array.isArray(s?.question_jumpto) && s?.question_jumpto.length > 0 ? s?.question_jumpto.filter((j) => j !== Number(secname)) : []
                                                           };
                                                       })
                                                     : []
@@ -593,7 +593,7 @@ class QuestionConfigure extends React.Component {
                                             ? ques.suggested_jump.map((s, i) => {
                                                   return {
                                                       ...s,
-                                                      jumpto: Array.isArray(s?.jumpto) && s?.jumpto.length > 0 ? s?.jumpto.filter((j) => j !== secname) : []
+                                                      jumpto: Array.isArray(s?.jumpto) && s?.jumpto.length > 0 ? s?.jumpto.filter((j) => j !== Number(secname)) : []
                                                   };
                                               })
                                             : []

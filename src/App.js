@@ -1,5 +1,6 @@
 import React from 'react';
-import createHistory from 'history/createBrowserHistory';
+// import createHistory from 'history/createBrowserHistory';
+import { createBrowserHistory } from 'history';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import configureStore from './redux/configureStore';
@@ -35,7 +36,7 @@ import Preview from './components/Preview_Questions';
 import { logOut } from './api/api';
 import PageNotFound from './components/PageNotFound';
 import AddOrgUser from './components/AddOrgUser';
-export const { store, persistor } = configureStore(createHistory());
+export const { store, persistor } = configureStore(createBrowserHistory());
 class App extends React.Component {
     async componentDidMount() {
         const entries = performance.getEntriesByType('navigation');
