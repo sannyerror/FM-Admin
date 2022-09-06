@@ -3,7 +3,7 @@ import createHistory from 'history/createBrowserHistory';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import configureStore from './redux/configureStore';
-import { Switch, Route, BrowserRouter as Router, Redirect, useHistory } from 'react-router-dom';
+import { Switch, Route, BrowserRouter as Router, Redirect } from 'react-router-dom';
 import './App.css';
 import Login from './components/Login';
 import CreatePassword from './components/CreatePassword';

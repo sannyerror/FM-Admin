@@ -21,7 +21,7 @@ class ChangePassword extends React.Component {
             return this.setState({
                 error: `Please provide ${password === '' ? 'New Password' : ''}${retype_password === '' ? ', Re-Type New Password' : ''}${old_password === '' ? ', Current Password' : ''}`
             });
-        } else if (password != retype_password) {
+        } else if (password !== retype_password) {
             return this.setState({
                 error: `New Password and Re-Type New Password must match`
             });

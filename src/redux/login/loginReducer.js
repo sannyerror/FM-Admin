@@ -7,7 +7,7 @@ import { CLEAR_USER } from './loginTypes';
 import { FETCH_PRE_LOGIN_REQUEST, FETCH_PRE_LOGIN_SUCCESS, FETCH_PRE_LOGIN_FAILURE } from './loginTypes';
 
 import { update } from './loginAction';
-import axios from 'axios';
+
 import store from '../configureStore';
 const initialstate = {
     email: '',

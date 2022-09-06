@@ -81,7 +81,7 @@ class CreatePassword extends React.Component {
             const specialChar = new RegExp('(?=.*[!@#$%^&*+=])');
             const length = new RegExp('[A-Za-z0-9!@#$%^&*+=]{8,12}');
 
-            if (password != retype_password) {
+            if (password !== retype_password) {
                 this.setState({
                     error: 'Passwords must match'
                 });
