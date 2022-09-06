@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { BeatLoader } from 'react-spinners';
 
 const FormConfigure = () => {
     const [organization, setOrganization] = useState([]);
-    // const dispatch = useDispatch();
     const { organizationsList } = useSelector((state) => state.getorganization);
     const { id } = useParams();
 
@@ -34,24 +33,24 @@ const FormConfigure = () => {
 
     useEffect(() => {
         if (organizationsList.length > 0) {
-            const findOrganization = organizationsList.find((org) => org.id == id && org);
+            const findOrganization = organizationsList.find((org) => org.id === id && org);
             setOrganization(findOrganization);
         } else {
             setOrganization([]);
         }
-    }, []);
+    }, [organizationsList, id]);
 
     // console.log('FormConfigure Redux', organizationsList);
     // console.log('FormConfigure organization', organization);
     // console.log('FormConfihgurer sid', id);
 
-    if (organization.length == 0) {
+    if (organization.length === 0) {
         return (
             <div className="container-fluid">
                 <div className="d-flex justify-content-center align-items-center" style={{ height: '75vh' }}>
                     <span className="font-weight-bold h5">Loading</span>
-                    <BeatLoader size={24} color="#0099CC" loading={organization.length == 0} />
-                    <BeatLoader size={24} color="#0099CC" loading={organization.length == 0} />
+                    <BeatLoader size={24} color="#0099CC" loading={organization.length === 0} />
+                    <BeatLoader size={24} color="#0099CC" loading={organization.length === 0} />
                 </div>
             </div>
         );

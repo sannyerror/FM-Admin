@@ -191,7 +191,6 @@ export const checkDomain = async (domain) => {
 };
 
 export const resendRAF = async (customer) => {
-    const { dispatch } = store;
     const currentUser = store.getState().loginData.user.token;
     try {
         return await axios
@@ -231,7 +230,7 @@ export const saveClientConfigure = async (data) => {
             )
             .then((response) => {
                 const saveConfig = response.data;
-                return response.data;
+                return saveConfig;
             });
     } catch (error) {
         console.log('error');
@@ -250,7 +249,7 @@ export const fetchConfigureQuestions = async (value) => {
             })
             .then((response) => {
                 const questionsList = response.data;
-                return response.data;
+                return questionsList;
             });
     } catch (error) {
         console.log('error');
@@ -313,7 +312,7 @@ export const fetchBillingStatus = async (id) => {
             })
             .then((response) => {
                 const bill = response.data;
-                return response.data;
+                return bill;
             });
     } catch (error) {
         console.log('error');
@@ -363,7 +362,6 @@ export const Email_Credetials = async (org_id, email_id) => {
                 }
             )
             .then((response) => {
-                const bill = response.data;
                 return response.data;
             });
     } catch (error) {
@@ -382,7 +380,6 @@ export const fetchAllRecords = async (id, sDate, EDate) => {
                 }
             })
             .then((response) => {
-                const bill = response.data;
                 return response.data;
             });
     } catch (error) {
@@ -401,7 +398,6 @@ export const getRecord = async (id) => {
                 }
             })
             .then((response) => {
-                const bill = response.data;
                 return response.data;
             });
     } catch (error) {
@@ -430,7 +426,6 @@ export const configureBilling = async (data, update) => {
                     }
                 )
                 .then((response) => {
-                    const bill = response.data;
                     return response.data;
                 });
         } else {
@@ -441,7 +436,6 @@ export const configureBilling = async (data, update) => {
                     }
                 })
                 .then((response) => {
-                    const bill = response.data;
                     return response.data;
                 });
         }
@@ -464,7 +458,6 @@ export const downloadAllRecords = async (id) => {
             .then((response) => {
                 const path = response.data.response;
                 window.open(`${baseApiUrl}/${path}`);
-                const records = response.data;
                 return response.data;
             });
     } catch (error) {
@@ -487,7 +480,6 @@ export const getOrderDownload = async (id, sDate, eDate) => {
                 const path = response.data.response;
 
                 window.open(`${baseApiUrl}/${path}`);
-                const records = response.data;
                 return response.data;
             });
     } catch (error) {
@@ -507,7 +499,6 @@ export const downloadReportCSV = async (id) => {
                 }
             })
             .then((response) => {
-                const bill = response.data;
                 const path = response.data.response;
                 window.open(`${baseApiUrl}/${path}`);
                 return response.data;
@@ -831,7 +822,7 @@ export const AddUsers = async (data, id) => {
 };
 
 export const AddOrgUsers = async (data) => {
-    const { dispatch } = store;
+    // const { dispatch } = store;
     const currentUser = store.getState().loginData.user.token;
     try {
         return await axios
@@ -842,7 +833,6 @@ export const AddOrgUsers = async (data) => {
             })
             .then((response) => {
                 console.log(response);
-                const addedusers = response.data;
                 return response.data;
             });
     } catch (error) {
@@ -1013,7 +1003,7 @@ export const rafQuestions = async (customer) => {
 };
 
 export const Org_Super_Admins = async (customer) => {
-    const { dispatch } = store;
+    // const { dispatch } = store;
     const currentUser = store.getState().loginData.user.token;
     try {
         return await axios
@@ -1023,7 +1013,6 @@ export const Org_Super_Admins = async (customer) => {
                 }
             })
             .then((response) => {
-                const loadrafquestions = response.data;
                 return response.data;
             });
     } catch (error) {
@@ -1058,7 +1047,6 @@ export const AddQuestionsCategory = async (data) => {
 
 export const logOut = () => {
     const { dispatch } = store;
-    const currentUser = store.getState().loginData.user.token;
     let token = localStorage.refreshToken ? (localStorage.refreshToken === undefined ? '' : localStorage.refreshToken === 'undefined' ? '' : localStorage.refreshToken) : '';
     let config = {
         method: 'post',

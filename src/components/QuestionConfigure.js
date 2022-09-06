@@ -3,7 +3,7 @@ import { saveClientConfigure, fetchConfigureQuestions } from '../api/api';
 import Preview from './Preview_Questions';
 import { toast } from 'react-toastify';
 import { connect } from 'react-redux';
-import { BrowserRouter as Router, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import 'react-toastify/dist/ReactToastify.css';
 import Modal from 'react-modal';
@@ -354,23 +354,23 @@ class QuestionConfigure extends React.Component {
             let arrIndex = [];
             let newSuggestedJumps = [];
 
-            suggested_jump.filter((o1) =>
-                suggested_answers.some((o2) => {
+            suggested_jump.filter((o1) => {
+                return suggested_answers.some((o2) => {
                     if (o1?.answer === o2.value) {
                         let index = suggested_answers.indexOf(o2);
-                        arrIndex.push(index);
+                        return arrIndex.push(index);
                     }
-                })
-            );
-            suggested_answers.map(() => {
+                });
+            });
+            suggested_answers.forEach(() => {
                 if (arrIndex.length > 0) {
                     newSuggestedJumps.push(null);
                 }
             });
-            suggested_jump.map((obj, i) => {
-                arrIndex.map((a, j) => {
+            suggested_jump.forEach((obj, i) => {
+                arrIndex.forEach((a, j) => {
                     if (i === j) {
-                        newSuggestedJumps.splice(a, 1, obj);
+                        return newSuggestedJumps.splice(a, 1, obj);
                     }
                 });
             });
@@ -410,8 +410,8 @@ class QuestionConfigure extends React.Component {
         e.preventDefault();
         const { srcI, desI, list } = this.state;
         if (desI) {
-            const src = list[srcI].id;
-            const des = list[desI].id;
+            // const src = list[srcI].id;
+            // const des = list[desI].id;
             list.splice(desI, 0, list.splice(srcI, 1)[0]);
             await this.saveList(list);
             //    const response = await alterQuestions(src, des)
@@ -431,8 +431,8 @@ class QuestionConfigure extends React.Component {
         const index = e.target.dataset.id;
         const secid = e.target.dataset.secid;
         let sections = [...this.state.sections];
-        sections[secid].questions[idx].suggested_answers = sections[secid].questions[idx].suggested_answers.filter((item, i) => index != i);
-        sections[secid].questions[idx].suggested_jump = sections[secid].questions[idx].suggested_jump.filter((item, i) => index != i);
+        sections[secid].questions[idx].suggested_answers = sections[secid].questions[idx].suggested_answers.filter((item, i) => index !== i);
+        sections[secid].questions[idx].suggested_jump = sections[secid].questions[idx].suggested_jump.filter((item, i) => index !== i);
         // const sectionss = this.state.sections[secid].questions[idx].suggested_answers.filter((item, i) => index != i)
         sections[secid].questions[idx].suggested_answers = sections[secid].questions[idx].suggested_answers.map((item, id) => {
             return {
@@ -483,7 +483,6 @@ class QuestionConfigure extends React.Component {
 
     sectionDelete = (i) => (e) => {
         e.preventDefault();
-        const idi = e.target.dataset.id;
         let sections = [...this.state.sections];
         sections = [...sections.slice(0, i), ...sections.slice(i + 1)];
         let id = this.state.lastSectionId;
@@ -562,7 +561,7 @@ class QuestionConfigure extends React.Component {
                                                     ? ques.suggested_jump.map((s, i) => {
                                                           return {
                                                               ...s,
-                                                              question_jumpto: Array.isArray(s?.question_jumpto) && s?.question_jumpto.length > 0 ? s?.question_jumpto.filter((j) => j != secname) : []
+                                                              question_jumpto: Array.isArray(s?.question_jumpto) && s?.question_jumpto.length > 0 ? s?.question_jumpto.filter((j) => j !== secname) : []
                                                           };
                                                       })
                                                     : []
@@ -594,7 +593,7 @@ class QuestionConfigure extends React.Component {
                                             ? ques.suggested_jump.map((s, i) => {
                                                   return {
                                                       ...s,
-                                                      jumpto: Array.isArray(s?.jumpto) && s?.jumpto.length > 0 ? s?.jumpto.filter((j) => j != secname) : []
+                                                      jumpto: Array.isArray(s?.jumpto) && s?.jumpto.length > 0 ? s?.jumpto.filter((j) => j !== secname) : []
                                                   };
                                               })
                                             : []
@@ -616,13 +615,21 @@ class QuestionConfigure extends React.Component {
 
     newItemId = () => {
         const id = this.state.lastItemId;
-        this.state.lastItemId += 1;
+        //this.state.lastItemId += 1;
+        this.setState((prevState) => ({
+            ...prevState,
+            lastItemId: prevState.lastItemId + 1
+        }));
         return id;
     };
 
     newSectionId = () => {
         const id = this.state.lastSectionId;
-        this.state.lastSectionId += 1;
+        //this.state.lastSectionId += 1;
+        this.setState((prevState) => ({
+            ...prevState,
+            lastSectionId: prevState.lastSectionId + 1
+        }));
         return id;
     };
 
@@ -729,23 +736,23 @@ class QuestionConfigure extends React.Component {
         let relatedQuestions = [...this.state.relatedQuestions];
 
         //Find : Related Sections
-        sections.map((section, id) => {
+        sections.forEach((section, id) => {
             let length = 0;
-            section.related == 'true' &&
-                sections.map((section1, idx) => {
-                    section1.questions.map((question, idy) => {
+            section.related === 'true' &&
+                sections.forEach((section1, idx) => {
+                    section1.questions.forEach((question, idy) => {
                         question.suggested_jump &&
-                            question.suggested_jump.map((suggestjump, idz) => {
+                            question.suggested_jump.forEach((suggestjump, idz) => {
                                 suggestjump != null &&
                                     suggestjump.jumpto &&
-                                    suggestjump.jumpto.map((jmpto, idz1) => {
-                                        jmpto == sections[id].section && length++;
+                                    suggestjump.jumpto.forEach((jmpto, idz1) => {
+                                        jmpto === sections[id].section && length++;
                                     });
                             });
                     });
                 });
-            if (length == 0) {
-                section.related == 'true' && relatedSections.push({ section: section.section, id: id + 1 });
+            if (length === 0) {
+                section.related === 'true' && relatedSections.push({ section: section.section, id: id + 1 });
             }
         });
         for (var a in relatedSections) {
@@ -757,25 +764,27 @@ class QuestionConfigure extends React.Component {
         //Find : Related Question 1
         var newQues = [];
         let validatedQuestions = [];
-        sections.map((section, id) => {
+        sections.forEach((section, id) => {
             section.questions.filter((ques, id1) => {
-                ques.related == 'yes' && newQues.push({ sectionid: id, quesid: id1 });
+                ques.related === 'yes' && newQues.push({ sectionid: id, quesid: id1 });
                 ques.answer_type === 'NUMBER' && (ques.validation1 === '' || ques.validation2 === '' || ques.error_msg === '') && validatedQuestions.push({ id: id, idx: id1 });
             });
         });
         newQues &&
-            newQues.map((section) => {
+            newQues.forEach((section) => {
                 let id = section.sectionid;
                 let id1 = section.quesid;
                 let reqArray = [];
-                sections[id].questions.map((question, idy) => {
+                sections[id].questions.forEach((question, idy) => {
                     question.suggested_jump &&
                         question.suggested_jump.map((suggestedjump) => {
-                            suggestedjump != null &&
+                            return (
+                                suggestedjump != null &&
                                 suggestedjump.question_jumpto &&
                                 suggestedjump.question_jumpto.map((questionjumpto) => {
-                                    questionjumpto == sections[id].questions[id1].question && reqArray.push(questionjumpto);
-                                });
+                                    return questionjumpto === sections[id].questions[id1].question && reqArray.push(questionjumpto);
+                                })
+                            );
                         });
                 });
                 reqArray.length === 0 && relatedQuestions.push(section);
@@ -783,18 +792,18 @@ class QuestionConfigure extends React.Component {
                 //reqArray.length == 0 ? alertSections1.push(section) : alertSections1.slice(reqArray.indexOf(section))
             });
         //Find : Related Question 2
-        for (var a in relatedQuestions) {
-            let id = relatedQuestions[a].sectionid + 1;
-            let id1 = relatedQuestions[a].quesid + 1;
+        for (var b in relatedQuestions) {
+            let id = relatedQuestions[b].sectionid + 1;
+            let id1 = relatedQuestions[b].quesid + 1;
             relatedQuestions.length > 0 &&
                 toast.warning('Section ' + id + ': Question ' + id1 + ' **' + sections[id - 1].questions[id1 - 1].question.toUpperCase() + '** is Related but not used in any other question jump while configuration', {
                     position: toast.POSITION.TOP_CENTER
                 });
         }
         //Validate : Questions answer type Number
-        for (var a in validatedQuestions) {
-            let id = validatedQuestions[a].id + 1;
-            let idx = validatedQuestions[a].idx + 1;
+        for (var c in validatedQuestions) {
+            let id = validatedQuestions[c].id + 1;
+            let idx = validatedQuestions[c].idx + 1;
             validatedQuestions.length > 0 && toast.error('Section ' + id + ': Question ' + idx + ' **' + sections[id - 1].questions[idx - 1].question.toUpperCase() + '** Answer should be validated properly', { position: toast.POSITION.TOP_CENTER });
         }
 
@@ -818,7 +827,7 @@ class QuestionConfigure extends React.Component {
                 questions: sec.questions.map((ques) => {
                     return {
                         ...ques,
-                        suggested_jump: Array.isArray(ques.suggested_jump) && ques.suggested_jump.length > 0 ? ques.suggested_jump.map((s, i) => (s?.jumpto?.length > 0 || s?.question_jumpto?.length > 0) && s).filter((item) => item != false) : []
+                        suggested_jump: Array.isArray(ques.suggested_jump) && ques.suggested_jump.length > 0 ? ques.suggested_jump.map((s, i) => (s?.jumpto?.length > 0 || s?.question_jumpto?.length > 0) && s).filter((item) => item !== false) : []
                     };
                 })
             };
@@ -1274,7 +1283,7 @@ class QuestionConfigure extends React.Component {
                                                                                                         Validation:
                                                                                                     </label>
                                                                                                     <div className="col-sm-2">
-                                                                                                        <select name={validationId1} data-id={idx} data-secid={id} data-name="validation1" id={validationId1} className="form-control" id="exampleFormControlSelect1" onChange={this.handleChange} required>
+                                                                                                        <select name={validationId1} data-id={idx} data-secid={id} data-name="validation1" id={validationId1} className="form-control" onChange={this.handleChange} required>
                                                                                                             <option value="">Select</option>
                                                                                                             <option value="Contains" selected={sections[id].questions[idx].validation1 === 'Contains'}>
                                                                                                                 Contains
@@ -1285,7 +1294,7 @@ class QuestionConfigure extends React.Component {
                                                                                                         </select>
                                                                                                     </div>
                                                                                                     <div className="col-sm-2">
-                                                                                                        <select name={validationId2} data-id={idx} data-secid={id} data-name="validation2" id={validationId1} className="form-control" id="exampleFormControlSelect1" onChange={this.handleChange} required>
+                                                                                                        <select name={validationId2} data-id={idx} data-secid={id} data-name="validation2" id={validationId1} className="form-control" onChange={this.handleChange} required>
                                                                                                             <option value="">Select</option>
                                                                                                             <option value="Numbers" selected={sections[id].questions[idx].validation2 === 'Numbers'}>
                                                                                                                 Numbers
@@ -1331,10 +1340,10 @@ class QuestionConfigure extends React.Component {
                                                                                                             value={sections[id].questions[idx].validation2}
                                                                                                             className="form-control"
                                                                                                             style={{
-                                                                                                                border: `${this.state.sections[id].questions[idx].validation1 != '' && this.state.sections[id].questions[idx].validation2 === '' ? '2px solid #FF0000' : ''}`
+                                                                                                                border: `${this.state.sections[id].questions[idx].validation1 !== '' && this.state.sections[id].questions[idx].validation2 === '' ? '2px solid #FF0000' : ''}`
                                                                                                             }}
                                                                                                         />
-                                                                                                        {this.state.sections[id].questions[idx].validation1 != '' && this.state.sections[id].questions[idx].validation2 === '' ? <span className="text-danger fs-6">Required!</span> : ''}
+                                                                                                        {this.state.sections[id].questions[idx].validation1 !== '' && this.state.sections[id].questions[idx].validation2 === '' ? <span className="text-danger fs-6">Required!</span> : ''}
                                                                                                     </div>
                                                                                                     <div className="col-sm-2">
                                                                                                         <input
@@ -1348,10 +1357,10 @@ class QuestionConfigure extends React.Component {
                                                                                                             value={sections[id].questions[idx].error_msg}
                                                                                                             className="form-control"
                                                                                                             style={{
-                                                                                                                border: `${this.state.sections[id].questions[idx].validation1 != '' && this.state.sections[id].questions[idx].error_msg === '' ? '2px solid #FF0000' : ''}`
+                                                                                                                border: `${this.state.sections[id].questions[idx].validation1 !== '' && this.state.sections[id].questions[idx].error_msg === '' ? '2px solid #FF0000' : ''}`
                                                                                                             }}
                                                                                                         />
-                                                                                                        {this.state.sections[id].questions[idx].validation1 != '' && this.state.sections[id].questions[idx].error_msg === '' ? <span className="text-danger fs-6">Required!</span> : ''}
+                                                                                                        {this.state.sections[id].questions[idx].validation1 !== '' && this.state.sections[id].questions[idx].error_msg === '' ? <span className="text-danger fs-6">Required!</span> : ''}
                                                                                                     </div>
                                                                                                 </div>
                                                                                             </React.Fragment>
@@ -1365,11 +1374,11 @@ class QuestionConfigure extends React.Component {
                                                                                                 </legend>
                                                                                                 <div className="col-sm-10">
                                                                                                     <div className="form-check form-check-inline">
-                                                                                                        <input type="radio" name={relatedId} className="form-check-input" data-id={idx} data-secid={id} data-name="related" id={relatedId} checked={sections[id].questions[idx].related == 'yes'} data-secname={sections[id] && sections[id].questions[idx].question} value="yes" />
+                                                                                                        <input type="radio" name={relatedId} className="form-check-input" data-id={idx} data-secid={id} data-name="related" id={relatedId} checked={sections[id].questions[idx].related === 'yes'} data-secname={sections[id] && sections[id].questions[idx].question} value="yes" />
                                                                                                         <label className="form-check-label">Yes</label>
                                                                                                     </div>
                                                                                                     <div className="form-check form-check-inline">
-                                                                                                        <input type="radio" name={relatedId} className="form-check-input" data-id={idx} data-secid={id} data-name="related" id={relatedId} checked={sections[id].questions[idx].related == 'no'} data-secname={sections[id] && sections[id].questions[idx].question} value="no" />
+                                                                                                        <input type="radio" name={relatedId} className="form-check-input" data-id={idx} data-secid={id} data-name="related" id={relatedId} checked={sections[id].questions[idx].related === 'no'} data-secname={sections[id] && sections[id].questions[idx].question} value="no" />
                                                                                                         <label className="form-check-label">No</label>
                                                                                                     </div>
                                                                                                 </div>
@@ -1382,11 +1391,11 @@ class QuestionConfigure extends React.Component {
                                                                                                 </legend>
                                                                                                 <div className="col-sm-10">
                                                                                                     <div className="form-check form-check-inline">
-                                                                                                        <input type="radio" name={requiredId} className="form-check-input" data-id={idx} data-secid={id} data-name="required" id={requiredId} checked={sections[id].questions[idx].required == 'yes'} value="yes" />
+                                                                                                        <input type="radio" name={requiredId} className="form-check-input" data-id={idx} data-secid={id} data-name="required" id={requiredId} checked={sections[id].questions[idx].required === 'yes'} value="yes" />
                                                                                                         <label className="form-check-label">Yes</label>
                                                                                                     </div>
                                                                                                     <div className="form-check form-check-inline">
-                                                                                                        <input type="radio" name={requiredId} className="form-check-input" data-id={idx} data-secid={id} data-name="required" id={requiredId} checked={sections[id].questions[idx].required == 'no'} value="no" />
+                                                                                                        <input type="radio" name={requiredId} className="form-check-input" data-id={idx} data-secid={id} data-name="required" id={requiredId} checked={sections[id].questions[idx].required === 'no'} value="no" />
                                                                                                         <label className="form-check-label">No</label>
                                                                                                     </div>
                                                                                                 </div>
@@ -1399,15 +1408,15 @@ class QuestionConfigure extends React.Component {
                                                                                                 </legend>
                                                                                                 <div className="col-sm-10">
                                                                                                     <div className="form-check form-check-inline">
-                                                                                                        <input type="radio" name={flagId} className="form-check-input" data-id={idx} data-secid={id} data-name="flag" id={flagId} checked={sections[id].questions[idx].flag == '0'} value="0" />
+                                                                                                        <input type="radio" name={flagId} className="form-check-input" data-id={idx} data-secid={id} data-name="flag" id={flagId} checked={sections[id].questions[idx].flag === '0'} value="0" />
                                                                                                         <label className="form-check-label">Add</label>
                                                                                                     </div>
                                                                                                     <div className="form-check form-check-inline">
-                                                                                                        <input type="radio" name={flagId} className="form-check-input" data-id={idx} data-secid={id} data-name="flag" id={flagId} checked={sections[id].questions[idx].flag == '1'} value="1" />
+                                                                                                        <input type="radio" name={flagId} className="form-check-input" data-id={idx} data-secid={id} data-name="flag" id={flagId} checked={sections[id].questions[idx].flag === '1'} value="1" />
                                                                                                         <label className="form-check-label">Edit</label>
                                                                                                     </div>
                                                                                                     <div className="form-check form-check-inline">
-                                                                                                        <input type="radio" name={flagId} className="form-check-input" data-id={idx} data-secid={id} data-name="flag" id={flagId} checked={sections[id].questions[idx].flag == '2'} value="2" />
+                                                                                                        <input type="radio" name={flagId} className="form-check-input" data-id={idx} data-secid={id} data-name="flag" id={flagId} checked={sections[id].questions[idx].flag === '2'} value="2" />
                                                                                                         <label className="form-check-label">Custom</label>
                                                                                                     </div>
                                                                                                 </div>
