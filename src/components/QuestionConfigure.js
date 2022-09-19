@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { saveClientConfigure, fetchConfigureQuestions } from '../api/api';
 import Preview from './Preview_Questions';
 import { toast } from 'react-toastify';
@@ -104,6 +104,7 @@ class QuestionConfigure extends React.Component {
             lastItemId: 3,
             lastSectionId: 0,
             Org_id: '',
+            org_type: '',
             readOnly: '',
             isPreview: false,
             isOpen: false,
@@ -126,16 +127,18 @@ class QuestionConfigure extends React.Component {
     handleScroll = () => {
         let mybuttonTop = document.getElementById('btn-back-to-top');
         let mybuttonBottom = document.getElementById('btn-back-to-bottom');
-        if (document.body.scrollTop > 99 || document.documentElement.scrollTop > 99) {
-            mybuttonTop.style.display = 'block';
-        } else {
-            mybuttonTop.style.display = 'none';
-        }
+        if (mybuttonTop || mybuttonBottom) {
+            if (document.body.scrollTop > 99 || document.documentElement.scrollTop > 99) {
+                mybuttonTop.style.display = 'block';
+            } else {
+                mybuttonTop.style.display = 'none';
+            }
 
-        if (document.documentElement.scrollHeight - 1033 < document.documentElement.scrollTop) {
-            mybuttonBottom.style.display = 'none';
-        } else {
-            mybuttonBottom.style.display = 'block';
+            if (document.documentElement.scrollHeight - 1033 < document.documentElement.scrollTop) {
+                mybuttonBottom.style.display = 'none';
+            } else {
+                mybuttonBottom.style.display = 'block';
+            }
         }
     };
     componentDidMount = async () => {
@@ -289,12 +292,12 @@ class QuestionConfigure extends React.Component {
                     question: 'JID',
                     description: '',
                     field_type: '1',
-                    answer_type: 'TEXT',
+                    answer_type: 'DYNAMIC',
                     suggested_answers: [],
                     suggested_jump: [],
-                    validation1: 'Contains',
-                    validation2: 'Both',
-                    error_msg: 'Invalid JID format. It should contain 4 digits Number, - , 6 digits Number (eg: 1234-123456)',
+                    validation1: 1,
+                    validation2: [{ type: '', value_in: '', err_msg: '' }],
+                    error_msg: '',
                     related: 'no',
                     required: 'yes',
                     flag: '0'
@@ -393,6 +396,7 @@ class QuestionConfigure extends React.Component {
         if (response.message !== 'sections not available') {
             this.setState({
                 Org_id: id,
+                org_type: org_type,
                 sections: Array.isArray(response.response) ? sections : this.state.sections,
                 readOnly: response.is_prediction_available,
                 logoPath: logopath,
@@ -401,6 +405,7 @@ class QuestionConfigure extends React.Component {
         } else {
             this.setState({
                 Org_id: id,
+                org_type: org_type,
                 logoPath: logopath,
                 header_color: headerColor
             });
@@ -920,6 +925,26 @@ class QuestionConfigure extends React.Component {
             sections
         });
     };
+    getDynamicPatternSize = (e) => {
+        e.preventDefault();
+        const secid = e.target.dataset.id;
+        const quesid = Number(e.target.dataset.idx);
+        const sections = [...this.state.sections];
+
+        let patternLen = sections[secid].questions[quesid].validation2.length;
+
+        if (e.target.dataset.type === 'decrease') {
+            sections[secid].questions[quesid].validation1 = Number(sections[secid].questions[quesid].validation1) > 1 ? Number(sections[secid].questions[quesid].validation1) - 1 : 1;
+            sections[secid].questions[quesid].validation2 = sections[secid].questions[quesid].validation2.length > 1 ? [...sections[secid].questions[quesid].validation2.slice(0, patternLen - 1)] : [...sections[secid].questions[quesid].validation2];
+
+            this.setState({ sections });
+        } else {
+            sections[secid].questions[quesid].validation1 = Number(sections[secid].questions[quesid].validation1) + 1;
+            sections[secid].questions[quesid].validation2 = [...sections[secid].questions[quesid].validation2, { type: '', value_in: '', err_msg: '' }];
+            this.setState({ sections });
+        }
+    };
+
     render() {
         toast.configure();
         let { sections, isPreview, logoPath, header_color, isLoading } = this.state;
@@ -1137,55 +1162,61 @@ class QuestionConfigure extends React.Component {
                                                                                     <React.Fragment>
                                                                                         <fieldset className="form-group">
                                                                                             <div className="row">
-                                                                                                <legend className="col-form-label col-sm-2 font-weight-bold" htmlFor={typeId}>
-                                                                                                    Answer Type:
-                                                                                                </legend>
-                                                                                                <div className="col-sm-8">
-                                                                                                    <div className="form-check form-check-inline">
-                                                                                                        <input
-                                                                                                            className="form-check-input"
-                                                                                                            name={typeId}
-                                                                                                            data-id={idx}
-                                                                                                            data-secid={id}
-                                                                                                            data-name="answer_type"
-                                                                                                            id={typeId}
-                                                                                                            type="radio"
-                                                                                                            disabled={sections[id].questions[idx].question === 'Referral Status' ? true : false}
-                                                                                                            checked={sections[id].questions[idx].answer_type === 'SELECT'}
-                                                                                                            //disabled={this.state.answer_type !== "SELECT" ? true : false}
-                                                                                                            value="SELECT"
-                                                                                                            required
-                                                                                                        />
-                                                                                                        <label className="form-check-label">Drop Down</label>
-                                                                                                    </div>
-                                                                                                    <div className="form-check form-check-inline">
-                                                                                                        <input className="form-check-input" name={typeId} data-id={idx} data-secid={id} data-name="answer_type" id={typeId} type="radio" value="TEXT" disabled={sections[id].questions[idx].question === 'Referral Status' ? true : false} checked={sections[id].questions[idx].answer_type === 'TEXT'} required />
-                                                                                                        <label className="form-check-label">Text</label>
-                                                                                                    </div>
-                                                                                                    <div className="form-check form-check-inline">
-                                                                                                        <input className="form-check-input" name={typeId} data-id={idx} data-secid={id} data-name="answer_type" id={typeId} type="radio" value="NUMBER" disabled={sections[id].questions[idx].question === 'Referral Status' ? true : false} checked={sections[id].questions[idx].answer_type === 'NUMBER'} required />
-                                                                                                        <label className="form-check-label">Number</label>
-                                                                                                    </div>
-                                                                                                    <div className="form-check form-check-inline">
-                                                                                                        <input className="form-check-input" name={typeId} data-id={idx} data-secid={id} data-name="answer_type" id={typeId} type="radio" value="CHECKBOX" disabled={sections[id].questions[idx].question === 'Referral Status' ? true : false} checked={sections[id].questions[idx].answer_type === 'CHECKBOX'} required />
-                                                                                                        <label className="form-check-label">Checkbox</label>
-                                                                                                    </div>
-                                                                                                    <div className="form-check form-check-inline">
-                                                                                                        <input className="form-check-input" name={typeId} data-id={idx} data-secid={id} data-name="answer_type" id={typeId} type="radio" value="RADIO" checked={sections[id].questions[idx].answer_type === 'RADIO'} required />
-                                                                                                        <label className="form-check-label">Radio</label>
-                                                                                                    </div>
-                                                                                                    <div className="form-check form-check-inline">
-                                                                                                        <input className="form-check-input" name={typeId} data-id={idx} data-secid={id} data-name="answer_type" id={typeId} type="radio" value="FILE" disabled={sections[id].questions[idx].question === 'Referral Status' ? true : false} checked={sections[id].questions[idx].answer_type === 'FILE'} required />
-                                                                                                        <label className="form-check-label">Upload File</label>
-                                                                                                    </div>
-                                                                                                    <div className="form-check form-check-inline">
-                                                                                                        <input className="form-check-input" name={typeId} data-id={idx} data-secid={id} data-name="answer_type" id={typeId} type="radio" value="DATE" disabled={sections[id].questions[idx].question === 'Referral Status' ? true : false} checked={sections[id].questions[idx].answer_type === 'DATE'} required />
-                                                                                                        <label className="form-check-label">Date</label>
-                                                                                                    </div>
-                                                                                                </div>
+                                                                                                {this.state.org_type === 2 && sections[id].questions[idx].question === 'JID' ? (
+                                                                                                    ''
+                                                                                                ) : (
+                                                                                                    <React.Fragment>
+                                                                                                        <legend className="col-form-label col-sm-2 font-weight-bold" htmlFor={typeId}>
+                                                                                                            Answer Type:
+                                                                                                        </legend>
+                                                                                                        <div className="col-sm-8">
+                                                                                                            <div className="form-check form-check-inline">
+                                                                                                                <input
+                                                                                                                    className="form-check-input"
+                                                                                                                    name={typeId}
+                                                                                                                    data-id={idx}
+                                                                                                                    data-secid={id}
+                                                                                                                    data-name="answer_type"
+                                                                                                                    id={typeId}
+                                                                                                                    type="radio"
+                                                                                                                    disabled={sections[id].questions[idx].question === 'Referral Status' ? true : false}
+                                                                                                                    checked={sections[id].questions[idx].answer_type === 'SELECT'}
+                                                                                                                    //disabled={this.state.answer_type !== "SELECT" ? true : false}
+                                                                                                                    value="SELECT"
+                                                                                                                    required
+                                                                                                                />
+                                                                                                                <label className="form-check-label">Drop Down</label>
+                                                                                                            </div>
+                                                                                                            <div className="form-check form-check-inline">
+                                                                                                                <input className="form-check-input" name={typeId} data-id={idx} data-secid={id} data-name="answer_type" id={typeId} type="radio" value="TEXT" disabled={sections[id].questions[idx].question === 'Referral Status' ? true : false} checked={sections[id].questions[idx].answer_type === 'TEXT'} required />
+                                                                                                                <label className="form-check-label">Text</label>
+                                                                                                            </div>
+                                                                                                            <div className="form-check form-check-inline">
+                                                                                                                <input className="form-check-input" name={typeId} data-id={idx} data-secid={id} data-name="answer_type" id={typeId} type="radio" value="NUMBER" disabled={sections[id].questions[idx].question === 'Referral Status' ? true : false} checked={sections[id].questions[idx].answer_type === 'NUMBER'} required />
+                                                                                                                <label className="form-check-label">Number</label>
+                                                                                                            </div>
+                                                                                                            <div className="form-check form-check-inline">
+                                                                                                                <input className="form-check-input" name={typeId} data-id={idx} data-secid={id} data-name="answer_type" id={typeId} type="radio" value="CHECKBOX" disabled={sections[id].questions[idx].question === 'Referral Status' ? true : false} checked={sections[id].questions[idx].answer_type === 'CHECKBOX'} required />
+                                                                                                                <label className="form-check-label">Checkbox</label>
+                                                                                                            </div>
+                                                                                                            <div className="form-check form-check-inline">
+                                                                                                                <input className="form-check-input" name={typeId} data-id={idx} data-secid={id} data-name="answer_type" id={typeId} type="radio" value="RADIO" checked={sections[id].questions[idx].answer_type === 'RADIO'} required />
+                                                                                                                <label className="form-check-label">Radio</label>
+                                                                                                            </div>
+                                                                                                            <div className="form-check form-check-inline">
+                                                                                                                <input className="form-check-input" name={typeId} data-id={idx} data-secid={id} data-name="answer_type" id={typeId} type="radio" value="FILE" disabled={sections[id].questions[idx].question === 'Referral Status' ? true : false} checked={sections[id].questions[idx].answer_type === 'FILE'} required />
+                                                                                                                <label className="form-check-label">Upload File</label>
+                                                                                                            </div>
+                                                                                                            <div className="form-check form-check-inline">
+                                                                                                                <input className="form-check-input" name={typeId} data-id={idx} data-secid={id} data-name="answer_type" id={typeId} type="radio" value="DATE" disabled={sections[id].questions[idx].question === 'Referral Status' ? true : false} checked={sections[id].questions[idx].answer_type === 'DATE'} required />
+                                                                                                                <label className="form-check-label">Date</label>
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                    </React.Fragment>
+                                                                                                )}
                                                                                             </div>
                                                                                         </fieldset>
-                                                                                        {this.state.sections[id].questions[idx].answer_type === '' || this.state.sections[id].questions[idx].answer_type === 'TEXT' || this.state.sections[id].questions[idx].answer_type === 'NUMBER' || this.state.sections[id].questions[idx].answer_type === 'RELATED' || this.state.sections[id].questions[idx].answer_type === 'DATE' || this.state.sections[id].questions[idx].answer_type === 'FILE'
+                                                                                        {this.state.sections[id].questions[idx].answer_type === '' || this.state.sections[id].questions[idx].answer_type === 'TEXT' || this.state.sections[id].questions[idx].answer_type === 'NUMBER' || this.state.sections[id].questions[idx].answer_type === 'RELATED' || this.state.sections[id].questions[idx].answer_type === 'DATE' || this.state.sections[id].questions[idx].answer_type === 'FILE' || this.state.sections[id].questions[idx].answer_type === 'DYNAMIC'
                                                                                             ? ''
                                                                                             : this.state.sections[id].questions
                                                                                                   .filter((p) => p.question_id === this.state.sections[id].questions[idx].question_id)
@@ -1364,6 +1395,75 @@ class QuestionConfigure extends React.Component {
                                                                                                     </div>
                                                                                                 </div>
                                                                                             </React.Fragment>
+                                                                                        ) : (
+                                                                                            ''
+                                                                                        )}
+                                                                                        {this.state.sections[id].questions[idx].answer_type === 'DYNAMIC' ? (
+                                                                                            <Fragment>
+                                                                                                <div className="form-data row" key={idx}>
+                                                                                                    <label className="col-sm-3 font-weight-bold" htmlFor={validationId1}>
+                                                                                                        Total Number Of Character:
+                                                                                                    </label>
+                                                                                                    <div className="col-sm-2">
+                                                                                                        <button type="button" className="btn btn-light font-weight-bold" data-id={id} data-idx={idx} data-type="decrease" onClick={this.getDynamicPatternSize}>
+                                                                                                            -
+                                                                                                        </button>
+                                                                                                        <span className="px-2">{this.state.sections[id].questions[idx].validation1}</span>
+                                                                                                        <button type="button" className="btn btn-light font-weight-bold" data-id={id} data-idx={idx} data-type="increase" onClick={this.getDynamicPatternSize}>
+                                                                                                            +
+                                                                                                        </button>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                {this.state.sections[id].questions[idx].validation2?.map((value, idy) => {
+                                                                                                    return (
+                                                                                                        <Fragment>
+                                                                                                            <div className="row form-group">
+                                                                                                                <label className="col-sm-2 col-form-label font-weight-bold">Character {idy + 1}:</label>
+                                                                                                                <div className="col-sm-2">
+                                                                                                                    <div class="form-check form-check-inline">
+                                                                                                                        <input class="form-check-input" type="radio" name="inlineRadioOptions1" data-toggle="tooltip" data-placement="top" title="Tooltip on top" id="inlineRadio1" value="option1" />
+                                                                                                                        <label class="form-check-label" for="inlineRadio1">
+                                                                                                                            Capital
+                                                                                                                        </label>
+                                                                                                                    </div>
+                                                                                                                </div>
+                                                                                                                <div className="col-sm-2">
+                                                                                                                    <div class="form-check form-check-inline">
+                                                                                                                        <input class="form-check-input" type="radio" name="inlineRadioOptions2" id="inlineRadio2" value="option2" />
+                                                                                                                        <label class="form-check-label" for="inlineRadio2">
+                                                                                                                            Small
+                                                                                                                        </label>
+                                                                                                                    </div>
+                                                                                                                </div>
+                                                                                                                <div className="col-sm-2">
+                                                                                                                    <div class="form-check form-check-inline">
+                                                                                                                        <input class="form-check-input" type="radio" name="inlineRadioOptions3" id="inlineRadio3" value="option3" />
+                                                                                                                        <label class="form-check-label" for="inlineRadio3">
+                                                                                                                            Number
+                                                                                                                        </label>
+                                                                                                                    </div>
+                                                                                                                </div>
+                                                                                                                <div className="col-sm-2">
+                                                                                                                    <div class="form-check form-check-inline">
+                                                                                                                        <input class="form-check-input" type="radio" name="inlineRadioOptions4" id="inlineRadio4" value="option4" />
+                                                                                                                        <label class="form-check-label" for="inlineRadio4">
+                                                                                                                            Special
+                                                                                                                        </label>
+                                                                                                                    </div>
+                                                                                                                </div>
+                                                                                                                <div className="col-sm-2">
+                                                                                                                    <div class="form-check form-check-inline">
+                                                                                                                        <input class="form-check-input" type="radio" name="inlineRadioOptions5" id="inlineRadio5" value="option5" />
+                                                                                                                        <label class="form-check-label" for="inlineRadio5">
+                                                                                                                            Error Msg
+                                                                                                                        </label>
+                                                                                                                    </div>
+                                                                                                                </div>
+                                                                                                            </div>
+                                                                                                        </Fragment>
+                                                                                                    );
+                                                                                                })}
+                                                                                            </Fragment>
                                                                                         ) : (
                                                                                             ''
                                                                                         )}
