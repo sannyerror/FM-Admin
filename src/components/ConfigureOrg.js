@@ -1,7 +1,7 @@
 import React, { createRef } from 'react';
 import fs from 'fs';
 import '../App.css';
-import { fetchOrganizations, uploadLogo, baseApiUrl, uploadHeaderColor } from '../api/api';
+import { fetchOrganizations, uploadLogo, OrgbaseApiUrl, uploadHeaderColor } from '../api/api';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { SketchPicker, PhotoshopPicker } from 'react-color';
@@ -199,7 +199,7 @@ class ConfigureOrg extends React.Component {
                                                             objectFit: 'contain'
                                                             //position: "absolute"
                                                         }}
-                                                        src={`${baseApiUrl}/${this.state.logoPath}`}
+                                                        src={`${OrgbaseApiUrl}/${this.state.logoPath}`}
                                                     />
                                                 </div>
                                             </div>

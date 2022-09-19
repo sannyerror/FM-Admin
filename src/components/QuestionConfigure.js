@@ -126,16 +126,19 @@ class QuestionConfigure extends React.Component {
     handleScroll = () => {
         let mybuttonTop = document.getElementById('btn-back-to-top');
         let mybuttonBottom = document.getElementById('btn-back-to-bottom');
-        if (document.body.scrollTop > 99 || document.documentElement.scrollTop > 99) {
-            mybuttonTop.style.display = 'block';
-        } else {
-            mybuttonTop.style.display = 'none';
-        }
 
-        if (document.documentElement.scrollHeight - 1033 < document.documentElement.scrollTop) {
-            mybuttonBottom.style.display = 'none';
-        } else {
-            mybuttonBottom.style.display = 'block';
+        if (mybuttonTop || mybuttonBottom) {
+            if (document.body.scrollTop > 99 || document.documentElement.scrollTop > 99) {
+                mybuttonTop.style.display = 'block';
+            } else {
+                mybuttonTop.style.display = 'none';
+            }
+
+            if (document.documentElement.scrollHeight - 1033 < document.documentElement.scrollTop) {
+                mybuttonBottom.style.display = 'none';
+            } else {
+                mybuttonBottom.style.display = 'block';
+            }
         }
     };
     componentDidMount = async () => {
