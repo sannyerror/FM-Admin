@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { saveClientConfigure, fetchConfigureQuestions } from '../api/api';
 import Preview from './Preview_Questions';
 import { toast } from 'react-toastify';
@@ -104,6 +104,7 @@ class QuestionConfigure extends React.Component {
             lastItemId: 3,
             lastSectionId: 0,
             Org_id: '',
+            org_type: '',
             readOnly: '',
             isPreview: false,
             isOpen: false,
@@ -111,6 +112,7 @@ class QuestionConfigure extends React.Component {
             header_color: '',
             hasError: false,
             err_msg: [],
+            isJidPattern: false,
             isLoading: false,
             relatedSections: [],
             relatedQuestions: []
@@ -133,7 +135,6 @@ class QuestionConfigure extends React.Component {
             } else {
                 mybuttonTop.style.display = 'none';
             }
-
             if (document.documentElement.scrollHeight - 1033 < document.documentElement.scrollTop) {
                 mybuttonBottom.style.display = 'none';
             } else {
@@ -292,12 +293,12 @@ class QuestionConfigure extends React.Component {
                     question: 'JID',
                     description: '',
                     field_type: '1',
-                    answer_type: 'TEXT',
+                    answer_type: 'DYNAMIC',
                     suggested_answers: [],
                     suggested_jump: [],
-                    validation1: 'Contains',
-                    validation2: 'Both',
-                    error_msg: 'Invalid JID format. It should contain 4 digits Number, - , 6 digits Number (eg: 1234-123456)',
+                    validation1: 1,
+                    validation2: [{ type: '', value_in: '', err_msg: '' }],
+                    error_msg: '',
                     related: 'no',
                     required: 'yes',
                     flag: '0'
@@ -326,6 +327,7 @@ class QuestionConfigure extends React.Component {
         let headerColor = this.props.organizationsList.find((org) => org.id === Number(id)).header_color;
         let response = await fetchConfigureQuestions(id);
 
+        // 1. When organization have not sections.
         if (!Array.isArray(response.response)) {
             if (org_type && org_type === 2) {
                 this.setState((prevState) => ({
@@ -339,6 +341,7 @@ class QuestionConfigure extends React.Component {
                 }));
             }
         } else {
+            // 2. When organization have sections.
             let isOutcomes = response.response.some((section) => (section.section === 'Outcomes' ? true : false));
             !isOutcomes && response.response.push(lastSection);
 
@@ -392,11 +395,15 @@ class QuestionConfigure extends React.Component {
                 })
             };
         });
+        //JID Pattern exist or not
+        const isExistJid = Array.isArray(response.response) ? response.response.find((sections) => sections.section === 'Demographics').questions.some((question) => question.question === 'JID' && question.validation1 > 1) : false;
 
         if (response.message !== 'sections not available') {
             this.setState({
                 Org_id: id,
+                org_type: org_type,
                 sections: Array.isArray(response.response) ? sections : this.state.sections,
+                isJidPattern: isExistJid,
                 readOnly: response.is_prediction_available,
                 logoPath: logopath,
                 header_color: headerColor
@@ -404,6 +411,7 @@ class QuestionConfigure extends React.Component {
         } else {
             this.setState({
                 Org_id: id,
+                org_type: org_type,
                 logoPath: logopath,
                 header_color: headerColor
             });
@@ -484,6 +492,13 @@ class QuestionConfigure extends React.Component {
         });
     };
 
+    dynamicQuesEdit = (i) => (e) => {
+        this.setState((prevState) => ({
+            ...prevState,
+            isJidPattern: !prevState.isJidPattern
+        }));
+    };
+
     sectionDelete = (i) => (e) => {
         e.preventDefault();
         let sections = [...this.state.sections];
@@ -508,10 +523,18 @@ class QuestionConfigure extends React.Component {
         let secid = e.target.dataset.secid;
         let secname = e.target.dataset.secname;
         let id = e.target.dataset.id;
-        if (['question', 'suggested_answers', 'suggested_jump', 'description', 'validation1', 'validation2', 'answer_type', 'error_msg', 'required', 'related', 'flag', 'field_type'].includes(e.target.dataset.name)) {
-            if (e.target.dataset.name === 'suggested_answers' || e.target.dataset.name === 'suggested_jump') {
+        if (['question', 'suggested_answers', 'suggested_jump', 'description', 'validation1', 'validation2', 'dynamic_answer', 'answer_type', 'error_msg', 'required', 'related', 'flag', 'field_type'].includes(e.target.dataset.name)) {
+            if (e.target.dataset.name === 'suggested_answers' || e.target.dataset.name === 'suggested_jump' || e.target.dataset.name === 'dynamic_answer') {
                 let sections = [...this.state.sections];
-                if (e.target.dataset.name === 'suggested_jump') {
+                if (e.target.dataset.name === 'dynamic_answer') {
+                    const { type } = e.target.dataset;
+                    let { validation2 } = sections[secid].questions[e.target.dataset.id];
+                    sections[secid].questions[e.target.dataset.id].validation2[e.target.dataset.idy] = {
+                        type: type === 'error_msg' ? validation2[e.target.dataset.idy].type : e.target.dataset.type,
+                        value_in: type === 'error_msg' ? validation2[e.target.dataset.idy].value_in : e.target.value,
+                        err_msg: type === 'error_msg' ? e.target.value : ''
+                    };
+                } else if (e.target.dataset.name === 'suggested_jump') {
                     sections[secid].questions[e.target.dataset.id].suggested_jump[e.target.dataset.idy] = {
                         answer: sections[secid].questions[e.target.dataset.id].suggested_answers[e.target.dataset.idy].value,
                         jumpto: e.target.value
@@ -845,7 +868,7 @@ class QuestionConfigure extends React.Component {
             this.setState({ isLoading: true });
             const response = await saveClientConfigure(data);
             if (response?.status === 'success') {
-                this.setState({ isLoading: false });
+                this.setState({ isLoading: false, isJidPattern: true });
                 toast.info(`Questions configured successfully. `, {
                     position: toast.POSITION.TOP_CENTER,
                     autoClose: 3000
@@ -923,6 +946,25 @@ class QuestionConfigure extends React.Component {
             sections
         });
     };
+    getDynamicPatternSize = (e) => {
+        const secid = e.target.dataset.id;
+        const quesid = Number(e.target.dataset.idx);
+        const sections = [...this.state.sections];
+
+        let patternLen = sections[secid].questions[quesid].validation2.length;
+
+        if (e.target.dataset.type === 'decrease') {
+            sections[secid].questions[quesid].validation1 = Number(sections[secid].questions[quesid].validation1) > 1 ? Number(sections[secid].questions[quesid].validation1) - 1 : 1;
+            sections[secid].questions[quesid].validation2 = sections[secid].questions[quesid].validation2.length > 1 ? [...sections[secid].questions[quesid].validation2.slice(0, patternLen - 1)] : [...sections[secid].questions[quesid].validation2];
+
+            this.setState({ sections });
+        } else {
+            sections[secid].questions[quesid].validation1 = Number(sections[secid].questions[quesid].validation1) + 1;
+            sections[secid].questions[quesid].validation2 = [...sections[secid].questions[quesid].validation2, { type: '', value_in: '', err_msg: '' }];
+            this.setState({ sections });
+        }
+    };
+
     render() {
         toast.configure();
         let { sections, isPreview, logoPath, header_color, isLoading } = this.state;
@@ -1042,6 +1084,24 @@ class QuestionConfigure extends React.Component {
                                                                                     <div className="col-sm-6">
                                                                                         <input type="text" name={catId} data-id={idx} data-secid={id} data-name="question" id={catId} required readOnly={this.state.readOnly === true ? (this.state[`Ques-${idx}`] ? false : true) : (id === 0 && StaticQuesIndex.includes(val.question_id) ? true : false) || (id === this.state.sections.length - 1 && StaticQuesIndex.includes(val.question_id) ? true : false)} value={sections[id].questions[idx].question} className="form-control" />
                                                                                     </div>
+                                                                                    {val.question === 'JID' && (
+                                                                                        <div
+                                                                                            style={{
+                                                                                                position: 'relative',
+                                                                                                top: '1px',
+                                                                                                right: '-20px',
+                                                                                                width: '50px',
+                                                                                                height: '25px'
+                                                                                            }}
+                                                                                            className=""
+                                                                                            data-id={id}
+                                                                                            onClick={this.dynamicQuesEdit(idx)}
+                                                                                        >
+                                                                                            <Link data-id={id} className={`btn ${this.state.isJidPattern ? 'btn-danger' : 'btn-success'}`} to="#">
+                                                                                                <i data-id={id} className={`fa fa-lg ${this.state.isJidPattern ? 'fa-edit' : 'fa-check'}`}></i>
+                                                                                            </Link>
+                                                                                        </div>
+                                                                                    )}
                                                                                     {!this.state.readOnly || this.state[`Ques-${idx}`] ? (
                                                                                         id === 0 ? (
                                                                                             idx === 0 || idx === 1 || idx === 2 || StaticQuesIndex.includes(val.question_id) ? (
@@ -1140,55 +1200,61 @@ class QuestionConfigure extends React.Component {
                                                                                     <React.Fragment>
                                                                                         <fieldset className="form-group">
                                                                                             <div className="row">
-                                                                                                <legend className="col-form-label col-sm-2 font-weight-bold" htmlFor={typeId}>
-                                                                                                    Answer Type:
-                                                                                                </legend>
-                                                                                                <div className="col-sm-8">
-                                                                                                    <div className="form-check form-check-inline">
-                                                                                                        <input
-                                                                                                            className="form-check-input"
-                                                                                                            name={typeId}
-                                                                                                            data-id={idx}
-                                                                                                            data-secid={id}
-                                                                                                            data-name="answer_type"
-                                                                                                            id={typeId}
-                                                                                                            type="radio"
-                                                                                                            disabled={sections[id].questions[idx].question === 'Referral Status' ? true : false}
-                                                                                                            checked={sections[id].questions[idx].answer_type === 'SELECT'}
-                                                                                                            //disabled={this.state.answer_type !== "SELECT" ? true : false}
-                                                                                                            value="SELECT"
-                                                                                                            required
-                                                                                                        />
-                                                                                                        <label className="form-check-label">Drop Down</label>
-                                                                                                    </div>
-                                                                                                    <div className="form-check form-check-inline">
-                                                                                                        <input className="form-check-input" name={typeId} data-id={idx} data-secid={id} data-name="answer_type" id={typeId} type="radio" value="TEXT" disabled={sections[id].questions[idx].question === 'Referral Status' ? true : false} checked={sections[id].questions[idx].answer_type === 'TEXT'} required />
-                                                                                                        <label className="form-check-label">Text</label>
-                                                                                                    </div>
-                                                                                                    <div className="form-check form-check-inline">
-                                                                                                        <input className="form-check-input" name={typeId} data-id={idx} data-secid={id} data-name="answer_type" id={typeId} type="radio" value="NUMBER" disabled={sections[id].questions[idx].question === 'Referral Status' ? true : false} checked={sections[id].questions[idx].answer_type === 'NUMBER'} required />
-                                                                                                        <label className="form-check-label">Number</label>
-                                                                                                    </div>
-                                                                                                    <div className="form-check form-check-inline">
-                                                                                                        <input className="form-check-input" name={typeId} data-id={idx} data-secid={id} data-name="answer_type" id={typeId} type="radio" value="CHECKBOX" disabled={sections[id].questions[idx].question === 'Referral Status' ? true : false} checked={sections[id].questions[idx].answer_type === 'CHECKBOX'} required />
-                                                                                                        <label className="form-check-label">Checkbox</label>
-                                                                                                    </div>
-                                                                                                    <div className="form-check form-check-inline">
-                                                                                                        <input className="form-check-input" name={typeId} data-id={idx} data-secid={id} data-name="answer_type" id={typeId} type="radio" value="RADIO" checked={sections[id].questions[idx].answer_type === 'RADIO'} required />
-                                                                                                        <label className="form-check-label">Radio</label>
-                                                                                                    </div>
-                                                                                                    <div className="form-check form-check-inline">
-                                                                                                        <input className="form-check-input" name={typeId} data-id={idx} data-secid={id} data-name="answer_type" id={typeId} type="radio" value="FILE" disabled={sections[id].questions[idx].question === 'Referral Status' ? true : false} checked={sections[id].questions[idx].answer_type === 'FILE'} required />
-                                                                                                        <label className="form-check-label">Upload File</label>
-                                                                                                    </div>
-                                                                                                    <div className="form-check form-check-inline">
-                                                                                                        <input className="form-check-input" name={typeId} data-id={idx} data-secid={id} data-name="answer_type" id={typeId} type="radio" value="DATE" disabled={sections[id].questions[idx].question === 'Referral Status' ? true : false} checked={sections[id].questions[idx].answer_type === 'DATE'} required />
-                                                                                                        <label className="form-check-label">Date</label>
-                                                                                                    </div>
-                                                                                                </div>
+                                                                                                {this.state.org_type === 2 && sections[id].questions[idx].question === 'JID' ? (
+                                                                                                    ''
+                                                                                                ) : (
+                                                                                                    <React.Fragment>
+                                                                                                        <legend className="col-form-label col-sm-2 font-weight-bold" htmlFor={typeId}>
+                                                                                                            Answer Type:
+                                                                                                        </legend>
+                                                                                                        <div className="col-sm-8">
+                                                                                                            <div className="form-check form-check-inline">
+                                                                                                                <input
+                                                                                                                    className="form-check-input"
+                                                                                                                    name={typeId}
+                                                                                                                    data-id={idx}
+                                                                                                                    data-secid={id}
+                                                                                                                    data-name="answer_type"
+                                                                                                                    id={typeId}
+                                                                                                                    type="radio"
+                                                                                                                    disabled={sections[id].questions[idx].question === 'Referral Status' ? true : false}
+                                                                                                                    checked={sections[id].questions[idx].answer_type === 'SELECT'}
+                                                                                                                    //disabled={this.state.answer_type !== "SELECT" ? true : false}
+                                                                                                                    value="SELECT"
+                                                                                                                    required
+                                                                                                                />
+                                                                                                                <label className="form-check-label">Drop Down</label>
+                                                                                                            </div>
+                                                                                                            <div className="form-check form-check-inline">
+                                                                                                                <input className="form-check-input" name={typeId} data-id={idx} data-secid={id} data-name="answer_type" id={typeId} type="radio" value="TEXT" disabled={sections[id].questions[idx].question === 'Referral Status' ? true : false} checked={sections[id].questions[idx].answer_type === 'TEXT'} required />
+                                                                                                                <label className="form-check-label">Text</label>
+                                                                                                            </div>
+                                                                                                            <div className="form-check form-check-inline">
+                                                                                                                <input className="form-check-input" name={typeId} data-id={idx} data-secid={id} data-name="answer_type" id={typeId} type="radio" value="NUMBER" disabled={sections[id].questions[idx].question === 'Referral Status' ? true : false} checked={sections[id].questions[idx].answer_type === 'NUMBER'} required />
+                                                                                                                <label className="form-check-label">Number</label>
+                                                                                                            </div>
+                                                                                                            <div className="form-check form-check-inline">
+                                                                                                                <input className="form-check-input" name={typeId} data-id={idx} data-secid={id} data-name="answer_type" id={typeId} type="radio" value="CHECKBOX" disabled={sections[id].questions[idx].question === 'Referral Status' ? true : false} checked={sections[id].questions[idx].answer_type === 'CHECKBOX'} required />
+                                                                                                                <label className="form-check-label">Checkbox</label>
+                                                                                                            </div>
+                                                                                                            <div className="form-check form-check-inline">
+                                                                                                                <input className="form-check-input" name={typeId} data-id={idx} data-secid={id} data-name="answer_type" id={typeId} type="radio" value="RADIO" checked={sections[id].questions[idx].answer_type === 'RADIO'} required />
+                                                                                                                <label className="form-check-label">Radio</label>
+                                                                                                            </div>
+                                                                                                            <div className="form-check form-check-inline">
+                                                                                                                <input className="form-check-input" name={typeId} data-id={idx} data-secid={id} data-name="answer_type" id={typeId} type="radio" value="FILE" disabled={sections[id].questions[idx].question === 'Referral Status' ? true : false} checked={sections[id].questions[idx].answer_type === 'FILE'} required />
+                                                                                                                <label className="form-check-label">Upload File</label>
+                                                                                                            </div>
+                                                                                                            <div className="form-check form-check-inline">
+                                                                                                                <input className="form-check-input" name={typeId} data-id={idx} data-secid={id} data-name="answer_type" id={typeId} type="radio" value="DATE" disabled={sections[id].questions[idx].question === 'Referral Status' ? true : false} checked={sections[id].questions[idx].answer_type === 'DATE'} required />
+                                                                                                                <label className="form-check-label">Date</label>
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                    </React.Fragment>
+                                                                                                )}
                                                                                             </div>
                                                                                         </fieldset>
-                                                                                        {this.state.sections[id].questions[idx].answer_type === '' || this.state.sections[id].questions[idx].answer_type === 'TEXT' || this.state.sections[id].questions[idx].answer_type === 'NUMBER' || this.state.sections[id].questions[idx].answer_type === 'RELATED' || this.state.sections[id].questions[idx].answer_type === 'DATE' || this.state.sections[id].questions[idx].answer_type === 'FILE'
+                                                                                        {this.state.sections[id].questions[idx].answer_type === '' || this.state.sections[id].questions[idx].answer_type === 'TEXT' || this.state.sections[id].questions[idx].answer_type === 'NUMBER' || this.state.sections[id].questions[idx].answer_type === 'RELATED' || this.state.sections[id].questions[idx].answer_type === 'DATE' || this.state.sections[id].questions[idx].answer_type === 'FILE' || this.state.sections[id].questions[idx].answer_type === 'DYNAMIC'
                                                                                             ? ''
                                                                                             : this.state.sections[id].questions
                                                                                                   .filter((p) => p.question_id === this.state.sections[id].questions[idx].question_id)
@@ -1367,6 +1433,93 @@ class QuestionConfigure extends React.Component {
                                                                                                     </div>
                                                                                                 </div>
                                                                                             </React.Fragment>
+                                                                                        ) : (
+                                                                                            ''
+                                                                                        )}
+                                                                                        {this.state.sections[id].questions[idx].answer_type === 'DYNAMIC' ? (
+                                                                                            <div className="mb-3">
+                                                                                                <div className="form-data mb-3" key={idx}>
+                                                                                                    <div className="d-flex">
+                                                                                                        <div className="">
+                                                                                                            <label className=" font-weight-bold" htmlFor={validationId1}>
+                                                                                                                Number Of Character:
+                                                                                                            </label>
+                                                                                                        </div>
+                                                                                                        <div className="mx-5 flex-grow-1">
+                                                                                                            <button type="button" className="btn btn-light font-weight-bold" disabled={this.state.isJidPattern} data-id={id} data-idx={idx} data-type="decrease" onClick={this.getDynamicPatternSize}>
+                                                                                                                -
+                                                                                                            </button>
+                                                                                                            <span className="px-2">{this.state.sections[id].questions[idx].validation1}</span>
+                                                                                                            <button type="button" className="btn btn-light font-weight-bold" disabled={this.state.isJidPattern} data-id={id} data-idx={idx} data-type="increase" onClick={this.getDynamicPatternSize}>
+                                                                                                                +
+                                                                                                            </button>
+                                                                                                            {/* {this.state.sections[id].questions[idx].validation1 > 1 ? <p className={`small ${this.state.isJidPattern ? 'text-danger' : 'text-primary'}`}>{`You can not ${this.state.isJidPattern ? 'change' : 're-change'} the size of JID, after successful creation of form.`}</p> : ''} */}
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                {this.state.sections[id].questions[idx].validation2?.map((value, idy) => {
+                                                                                                    let pattern = `pattern-${idy}`,
+                                                                                                        pattern_error = `pattern_error-${idy}`;
+                                                                                                    return (
+                                                                                                        <Fragment>
+                                                                                                            <div className="row form-group shadow-sm mb-2 py-2 bg-body border rounded">
+                                                                                                                <legend className="col-sm-2 col-form-label font-weight-bold">Character {idy + 1}:</legend>
+                                                                                                                <div className="col-sm-8">
+                                                                                                                    <div className="form-check form-check-inline">
+                                                                                                                        <input type="radio" name={pattern} className="form-check-input" disabled={this.state.isJidPattern} data-secid={id} data-id={idx} data-idy={idy} data-name="dynamic_answer" data-type="upper" value="A-Z" checked={value.type === 'upper'} />
+                                                                                                                        <label className="form-check-label">Capital</label>
+                                                                                                                    </div>
+                                                                                                                    <div className="form-check form-check-inline px-2">
+                                                                                                                        <input type="radio" name={pattern} className="form-check-input" disabled={this.state.isJidPattern} data-secid={id} data-id={idx} data-idy={idy} data-name="dynamic_answer" data-type="lower" value="a-z" checked={value.type === 'lower'} />
+                                                                                                                        <label className="form-check-label">Small</label>
+                                                                                                                    </div>
+                                                                                                                    <div className="form-check form-check-inline px-2">
+                                                                                                                        <input type="radio" name={pattern} className="form-check-input" disabled={this.state.isJidPattern} data-secid={id} data-id={idx} data-idy={idy} data-name="dynamic_answer" data-type="numeric" value="0-9" checked={value.type === 'numeric'} />
+                                                                                                                        <label className="form-check-label">Number</label>
+                                                                                                                    </div>
+                                                                                                                    <div className="form-check form-check-inline px-2">
+                                                                                                                        <input type="radio" name={pattern} className="form-check-input" disabled={this.state.isJidPattern} data-secid={id} data-id={idx} data-idy={idy} data-name="dynamic_answer" data-type="special" value="" checked={value.type === 'special'} />
+                                                                                                                        <label className="form-check-label">Special</label>
+                                                                                                                    </div>
+                                                                                                                    <div className={`form-check form-check-inline px-2 ${value.type === 'special' ? 'visible' : 'invisible'}`}>
+                                                                                                                        <select name={validationId1} className="form-control" disabled={this.state.isJidPattern} data-secid={id} data-id={idx} data-idy={idy} data-name="dynamic_answer" data-type="special" id={validationId1} required>
+                                                                                                                            <option value="">Select Special Character</option>
+                                                                                                                            <option value="/" selected={value.value_in === '/'}>
+                                                                                                                                /
+                                                                                                                            </option>
+                                                                                                                            <option value="_" selected={value.value_in === '_'}>
+                                                                                                                                _
+                                                                                                                            </option>
+                                                                                                                            <option value="-" selected={value.value_in === '-'}>
+                                                                                                                                -
+                                                                                                                            </option>
+                                                                                                                        </select>
+                                                                                                                    </div>
+                                                                                                                    <div className="form-check form-check-inline px-2 mx-auto">
+                                                                                                                        <input
+                                                                                                                            type="text"
+                                                                                                                            name={pattern_error}
+                                                                                                                            className="form-control"
+                                                                                                                            data-secid={id}
+                                                                                                                            data-id={idx}
+                                                                                                                            data-idy={idy}
+                                                                                                                            data-name="dynamic_answer"
+                                                                                                                            data-type="error_msg"
+                                                                                                                            disabled={!sections[id].questions[idx].validation2[idy].type}
+                                                                                                                            value={sections[id].questions[idx].validation2[idy].err_msg}
+                                                                                                                            placeholder="Error message"
+                                                                                                                            style={{
+                                                                                                                                border: sections[id].questions[idx].validation2[idy].type && !sections[id].questions[idx].validation2[idy].err_msg ? '2px solid #FF0000' : ''
+                                                                                                                            }}
+                                                                                                                            required
+                                                                                                                        />
+                                                                                                                    </div>
+                                                                                                                </div>
+                                                                                                            </div>
+                                                                                                        </Fragment>
+                                                                                                    );
+                                                                                                })}
+                                                                                            </div>
                                                                                         ) : (
                                                                                             ''
                                                                                         )}
