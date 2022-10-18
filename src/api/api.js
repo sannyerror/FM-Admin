@@ -1074,6 +1074,8 @@ function throwError(error) {
             dispatch(clearUser());
             localStorage.removeItem('refreshToken');
             localStorage.removeItem('user_role');
+            alert('These credentials are logged into another session on this site. Click “Ok” to logout');
+            window.location.reload();
         } else {
             const errorResponse = {
                 data: error.response.data || undefined,
