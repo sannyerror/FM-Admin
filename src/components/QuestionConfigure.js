@@ -64,7 +64,8 @@ class QuestionConfigure extends React.Component {
                             validation1: '100',
                             validation2: '99999',
                             error_msg: 'Should be range between 100 - 99999',
-                            re_type: '',
+                            re_type: 'no',
+                            is_to_be_mask: 'no',
                             related: 'no',
                             required: 'yes',
                             flag: '0'
@@ -81,6 +82,7 @@ class QuestionConfigure extends React.Component {
                             validation2: 'Both',
                             error_msg: 'Should not contain special characters',
                             re_type: 'no',
+                            is_to_be_mask: 'no',
                             related: 'no',
                             required: 'yes',
                             flag: '0'
@@ -97,6 +99,7 @@ class QuestionConfigure extends React.Component {
                             validation2: 'Both',
                             error_msg: 'Should not contain special characters',
                             re_type: 'no',
+                            is_to_be_mask: 'no',
                             related: 'no',
                             required: 'yes',
                             flag: '0'
@@ -184,6 +187,7 @@ class QuestionConfigure extends React.Component {
                     validation2: '',
                     error_msg: '',
                     re_type: '',
+                    is_to_be_mask: '',
                     related: 'no',
                     required: 'yes',
                     flag: '0'
@@ -203,6 +207,7 @@ class QuestionConfigure extends React.Component {
                     validation2: '',
                     error_msg: '',
                     re_type: '',
+                    is_to_be_mask: '',
                     related: 'yes',
                     required: 'yes',
                     flag: '0'
@@ -219,6 +224,7 @@ class QuestionConfigure extends React.Component {
                     validation2: '',
                     error_msg: '',
                     re_type: '',
+                    is_to_be_mask: '',
                     related: 'yes',
                     required: 'yes',
                     flag: '0'
@@ -238,6 +244,7 @@ class QuestionConfigure extends React.Component {
                     validation2: '',
                     error_msg: '',
                     re_type: '',
+                    is_to_be_mask: '',
                     related: 'yes',
                     required: 'yes',
                     flag: '0'
@@ -254,6 +261,7 @@ class QuestionConfigure extends React.Component {
                     validation2: '',
                     error_msg: '',
                     re_type: '',
+                    is_to_be_mask: '',
                     related: 'yes',
                     required: 'yes',
                     flag: '0'
@@ -270,6 +278,7 @@ class QuestionConfigure extends React.Component {
                     validation2: '',
                     error_msg: '',
                     re_type: '',
+                    is_to_be_mask: '',
                     related: 'no',
                     required: 'yes',
                     flag: '0'
@@ -286,6 +295,7 @@ class QuestionConfigure extends React.Component {
                     validation2: '',
                     error_msg: '',
                     re_type: '',
+                    is_to_be_mask: '',
                     related: 'no',
                     required: 'yes',
                     flag: '0'
@@ -309,6 +319,7 @@ class QuestionConfigure extends React.Component {
                     validation2: 'Both',
                     error_msg: 'Invalid Identification Number format. It should contain minimum 9 characters and alphanumeric with some special characters (-/+@_%&)',
                     re_type: 'no',
+                    is_to_be_mask: 'no',
                     related: 'no',
                     required: 'yes',
                     flag: '0'
@@ -325,6 +336,7 @@ class QuestionConfigure extends React.Component {
                     validation2: '',
                     error_msg: '',
                     re_type: '',
+                    is_to_be_mask: '',
                     related: 'no',
                     required: 'yes',
                     flag: '0'
@@ -479,6 +491,7 @@ class QuestionConfigure extends React.Component {
                 validation2: item.validation2,
                 error_msg: item.error_msg,
                 re_type: item.re_type,
+                is_to_be_mask: item.is_to_be_mask,
                 related: item.related,
                 required: item.required,
                 flag: item.flag
@@ -524,7 +537,7 @@ class QuestionConfigure extends React.Component {
         let secid = e.target.dataset.secid;
         let secname = e.target.dataset.secname;
         let id = e.target.dataset.id;
-        if (['question', 'suggested_answers', 'suggested_jump', 'description', 'validation1', 'validation2', 'answer_type', 're_type', 'error_msg', 'required', 'related', 'flag', 'field_type'].includes(e.target.dataset.name)) {
+        if (['question', 'suggested_answers', 'suggested_jump', 'description', 'validation1', 'validation2', 'answer_type', 're_type', 'is_to_be_mask', 'error_msg', 'required', 'related', 'flag', 'field_type'].includes(e.target.dataset.name)) {
             if (e.target.dataset.name === 'suggested_answers' || e.target.dataset.name === 'suggested_jump') {
                 let sections = [...this.state.sections];
                 if (e.target.dataset.name === 'suggested_jump') {
@@ -547,7 +560,7 @@ class QuestionConfigure extends React.Component {
                 if (e.target.dataset.name === 'answer_type') {
                     sections[secid].questions[e.target.dataset.id][e.target.dataset.name] = e.target.value;
                     sections[secid].questions[e.target.dataset.id]['re_type'] = e.target.value == 'TEXT' ? 'no' : '';
-
+                    sections[secid].questions[e.target.dataset.id]['is_to_be_mask'] = ['TEXT', 'NUMBER'].includes(e.target.value) ? 'no' : '';
                     sections[secid].questions[e.target.dataset.id].suggested_answers = sections[secid].questions[e.target.dataset.id].suggested_answers.length === 0 ? [''] : sections[secid].questions[e.target.dataset.id].suggested_answers;
 
                     this.setState({ sections });
@@ -673,6 +686,7 @@ class QuestionConfigure extends React.Component {
             validation2: '',
             error_msg: '',
             re_type: '',
+            is_to_be_mask: '',
             related: 'no',
             required: 'yes',
             flag: '0'
@@ -711,6 +725,7 @@ class QuestionConfigure extends React.Component {
                             validation2: '',
                             error_msg: '',
                             re_type: '',
+                            is_to_be_mask: '',
                             related: 'no',
                             required: 'yes',
                             flag: '0'
@@ -1036,6 +1051,7 @@ class QuestionConfigure extends React.Component {
                                                         typeId = `type-${idx}`,
                                                         errorId = `error-${idx}`,
                                                         re_typeId = `re_type-${idx}`,
+                                                        is_to_be_maskID = `is_to_be_mask-${idx}`,
                                                         relatedId = `related-${idx}`,
                                                         requiredId = `required-${idx}`,
                                                         flagId = `flag-${idx}`,
@@ -1410,6 +1426,32 @@ class QuestionConfigure extends React.Component {
                                                                                         ) : (
                                                                                             ''
                                                                                         )}
+                                                                                        {
+                                                                                            // Masking Question
+                                                                                            ['TEXT', 'NUMBER'].includes(this.state.sections[id].questions[idx].answer_type) ? (
+                                                                                                <Fragment>
+                                                                                                    <fieldset className="form-group">
+                                                                                                        <div className="row">
+                                                                                                            <legend className="col-form-label col-sm-2 font-weight-bold" htmlFor={is_to_be_maskID}>
+                                                                                                                Is To Be Mask?:
+                                                                                                            </legend>
+                                                                                                            <div className="col-sm-10">
+                                                                                                                <div className="form-check form-check-inline">
+                                                                                                                    <input type="radio" name={is_to_be_maskID} className="form-check-input" data-secid={id} data-id={idx} data-name="is_to_be_mask" id={is_to_be_maskID} checked={sections[id].questions[idx].is_to_be_mask === 'yes'} data-secname={sections[id] && sections[id].questions[idx].question} value="yes" />
+                                                                                                                    <label className="form-check-label">Yes</label>
+                                                                                                                </div>
+                                                                                                                <div className="form-check form-check-inline">
+                                                                                                                    <input type="radio" name={is_to_be_maskID} className="form-check-input" data-secid={id} data-id={idx} data-name="is_to_be_mask" id={is_to_be_maskID} checked={sections[id].questions[idx].is_to_be_mask === 'no'} data-secname={sections[id] && sections[id].questions[idx].question} value="no" />
+                                                                                                                    <label className="form-check-label">No</label>
+                                                                                                                </div>
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                    </fieldset>
+                                                                                                </Fragment>
+                                                                                            ) : (
+                                                                                                ''
+                                                                                            )
+                                                                                        }
                                                                                         <fieldset className="form-group">
                                                                                             <div className="row">
                                                                                                 <legend className="col-form-label col-sm-2 font-weight-bold" htmlFor={relatedId}>
