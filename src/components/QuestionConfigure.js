@@ -1433,7 +1433,7 @@ class QuestionConfigure extends React.Component {
                                                                                                     <fieldset className="form-group">
                                                                                                         <div className="row">
                                                                                                             <legend className="col-form-label col-sm-2 font-weight-bold" htmlFor={is_to_be_maskID}>
-                                                                                                                Is To Be Mask?:
+                                                                                                                To Be Masked:
                                                                                                             </legend>
                                                                                                             <div className="col-sm-10">
                                                                                                                 <div className="form-check form-check-inline">
