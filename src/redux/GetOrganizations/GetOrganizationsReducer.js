@@ -17,22 +17,22 @@ export function GetOrganizationsReducer(state = initialstate, action) {
             };
         case GET_ORGANIZATIONS_SUCCESS:
             return {
-                loading: false,
                 ...state,
+                loading: false,
                 organizationsList: action.organizationsList,
                 error: ''
             };
         case GET_ORGANIZATIONS_FAILURE:
             return {
-                loading: false,
                 ...state,
+                loading: false,
                 organizationsList: [],
                 error: action.payload
             };
         case GET_ORGANIZATIONS_UPDATE:
             return {
-                loading: false,
                 ...state,
+                loading: false,
                 organizationsList: action.organizationsList,
                 error: ''
             };

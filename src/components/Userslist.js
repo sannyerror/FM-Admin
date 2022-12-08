@@ -4,6 +4,7 @@ import axios from 'axios';
 import { connect } from 'react-redux';
 import '../App.css';
 import { toast } from 'react-toastify';
+import { BeatLoader } from 'react-spinners';
 import 'react-toastify/dist/ReactToastify.css';
 import { store } from '../App';
 export class UsersList extends React.Component {
@@ -75,6 +76,7 @@ export class UsersList extends React.Component {
     render() {
         toast.configure();
         const { role_type } = this.state;
+        const { loading, usersList } = this.props.getusers;
         return (
             <div className="container-fluid">
                 <div className="row p-2 bg-primary text-white">Users List</div>
@@ -90,7 +92,15 @@ export class UsersList extends React.Component {
                             </tr>
                         </thead>
                         <tbody>
-                            {this.props.usersList &&
+                            {loading ? (
+                                <tr>
+                                    {[0, 1, 2, 3, 4].map((cell) => (
+                                        <td key={cell} className="text-center">
+                                            <BeatLoader size={12} margin={4} color="#0099CC" loading={loading} />
+                                        </td>
+                                    ))}
+                                </tr>
+                            ) : usersList.length > 0 ? (
                                 this.state.Users.map((ques, index) => (
                                     <tr key={index}>
                                         <td>{ques.full_name}</td>
@@ -99,7 +109,14 @@ export class UsersList extends React.Component {
                                         <td className="text-center">{(role_type === 'Coordinator' ? '-' : role_type === 'Admin' && (ques.role_type === 'Super Admin' || ques.role_type === 'Admin')) ? '-' : <i className="fa fa-edit" style={{ fontSize: '20px', color: '#000000' }} data-id={ques.id} onClick={this.handleEdit}></i>}</td>
                                         <td className="text-center">{(role_type === 'Coordinator' ? '-' : role_type === 'Admin' && (ques.role_type === 'Super Admin' || ques.role_type === 'Admin')) ? '-' : <i className="fa fa-trash" style={{ fontSize: '20px', color: 'red' }} data-id={ques.id} onClick={(e) => window.confirm('Are you sure you wish to delete this User?') && this.handleDelete(e)}></i>}</td>
                                     </tr>
-                                ))}
+                                ))
+                            ) : (
+                                <tr>
+                                    <td colSpan={6} className="text-center">
+                                        <span>No Users Available</span>
+                                    </td>
+                                </tr>
+                            )}
                         </tbody>
                     </table>
                 </div>
@@ -110,7 +127,7 @@ export class UsersList extends React.Component {
 }
 const mapStateToProps = (state) => {
     return {
-        usersList: state.getusers.usersList,
+        getusers: state.getusers,
         user: state.loginData.user
     };
 };

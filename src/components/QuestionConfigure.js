@@ -317,7 +317,7 @@ class QuestionConfigure extends React.Component {
                     suggested_jump: [],
                     validation1: 'Contains',
                     validation2: 'Both',
-                    error_msg: 'Invalid Identification Number format. It should contain minimum 9 characters and alphanumeric with some special characters (_@./-)',
+                    error_msg: 'Identification Number must contain a minimum of 9 characters to include any combination of letters, numbers and special characters (_@./-).',
                     re_type: 'no',
                     is_to_be_mask: 'no',
                     related: 'no',

@@ -3,6 +3,7 @@ import { fetchOrganizations, fetchBillingStatus, isPrediction, deleteOrganizatio
 import { connect } from 'react-redux';
 import '../App.css';
 import { toast } from 'react-toastify';
+import { BeatLoader } from 'react-spinners';
 import 'react-toastify/dist/ReactToastify.css';
 import Modal from 'react-modal';
 
@@ -205,9 +206,20 @@ export class OrganizationList extends React.Component {
             super_admin_email_id
         });
     };
+    setTester = (e) => {
+        let { id, name } = e.target.dataset;
+        this.setState({
+            showPOPUP: false,
+            Delete_Org: false
+        });
+
+        this.props.history.push(`/admin/configure-tester-list/Org=${name}&id=${id}`);
+    };
     render() {
         toast.configure();
-        let { Delete_Org, Org_Name, active_lbl, suspend_lbl, showMessage, sendEmail, superAdminList } = this.state;
+        let { Delete_Org, Org_Id, Org_Name, active_lbl, suspend_lbl, showMessage, sendEmail, superAdminList } = this.state;
+        let { role_type } = this.props.user;
+        let { loading, organizationsList } = this.props.getorganization;
         return (
             <div className="container-fluid">
                 <div className="row p-2 bg-primary text-white">Organizations List</div>
@@ -224,7 +236,15 @@ export class OrganizationList extends React.Component {
                             </tr>
                         </thead>
                         <tbody>
-                            {this.state.Organizations &&
+                            {loading ? (
+                                <tr>
+                                    {[0, 1, 2, 3, 4, 5].map((cell) => (
+                                        <td key={cell} className="text-center">
+                                            <BeatLoader size={12} margin={4} color="#0099CC" loading={loading} />
+                                        </td>
+                                    ))}
+                                </tr>
+                            ) : organizationsList.length > 0 ? (
                                 this.state.Organizations.map((org, index) => (
                                     <tr key={index}>
                                         <td>{org.org_name}</td>
@@ -244,7 +264,14 @@ export class OrganizationList extends React.Component {
                                             <i className="fa fa-edit" style={{ fontSize: '20px', color: '#000000' }} data-id={org.id} onClick={this.handleEdit}></i>
                                         </td>
                                     </tr>
-                                ))}
+                                ))
+                            ) : (
+                                <tr>
+                                    <td colSpan={6} className="text-center">
+                                        <span>No Organizations Available</span>
+                                    </td>
+                                </tr>
+                            )}
                         </tbody>
                     </table>
                 </div>
@@ -273,6 +300,15 @@ export class OrganizationList extends React.Component {
                                         {suspend_lbl}
                                     </button>
                                 </div>
+                                {role_type === 'Super Admin' ? (
+                                    <div className="col text-center ">
+                                        <button className="btn btn-primary btn-lg" data-id={Org_Id} data-name={Org_Name} onClick={this.setTester}>
+                                            Testing Users
+                                        </button>
+                                    </div>
+                                ) : (
+                                    ''
+                                )}
                                 <div className="col text-center ">
                                     <button className="btn btn-primary btn-lg" data-id="delete" onClick={this.handleDelete}>
                                         Delete
@@ -360,7 +396,8 @@ export class OrganizationList extends React.Component {
 }
 const mapStateToProps = (state) => {
     return {
-        organizationlist: state.getorganization.organizationlist
+        getorganization: state.getorganization,
+        user: state.loginData.user
     };
 };
 export default connect(mapStateToProps)(OrganizationList);

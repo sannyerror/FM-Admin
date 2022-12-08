@@ -24,6 +24,7 @@ import { fetchRafListFailure, fetchRafListRequest, fetchRafListSuccess } from '.
 import { checkDomainFailure, checkDomainSuccess, checkDomainRequest } from '../redux/CheckDomain/CheckDomainAction';
 import { addUsersFailure, addUsersRequest, addUsersSuccess } from '../redux/AddUsers/AddUsersAction';
 import { getUsersFailure, getUsersRequest, getUsersSuccess } from '../redux/GetUsers/GetUsersAction';
+import { getTestersRequest, getTestersSuccess, getTestersFailure, getExistingTesterRequest, getExistingTesterSuccess, getExistingTesterFailure } from '../redux/Testers/TestersAction';
 import { getOrganizationsFailure, getOrganizationsRequest, getOrganizationsSuccess } from '../redux/GetOrganizations/GetOrganizationsAction';
 import { addOrganizationsFailure, addOrganizationsRequest, addOrganizationsSuccess } from '../redux/AddOrganization/AddOrganizationsAction';
 import createAuthRefreshInterceptor from 'axios-auth-refresh';
@@ -570,7 +571,7 @@ export const fetchUsers = async () => {
     const currentUser = store.getState().loginData.user.token;
 
     try {
-        dispatch(getUsersRequest);
+        dispatch(getUsersRequest());
         return await axios
             .get(`${baseApiUrl}/users/`, {
                 headers: {
@@ -589,13 +590,106 @@ export const fetchUsers = async () => {
         throwError(error);
     }
 };
+export const fetchTesters = async () => {
+    const { dispatch } = store;
+    const currentUser = store.getState().loginData.user.token;
+    try {
+        dispatch(getTestersRequest());
+        const response = await axios
+            .get(`${baseApiUrl}/users/?role_based=Super Admin`, {
+                headers: {
+                    Authorization: `Bearer ${currentUser}`
+                }
+            })
+            .then((response) => {
+                return response.data;
+            });
+        const testerList = response;
+        dispatch(getTestersSuccess(testerList));
+
+        return testerList;
+    } catch (error) {
+        console.log('error');
+        dispatch(getTestersFailure(error.message));
+        throwError(error);
+    }
+};
+export const getCustomerDetails = async (id) => {
+    const { dispatch } = store;
+    const currentUser = store.getState().loginData.user.token;
+    try {
+        dispatch(getExistingTesterRequest());
+        const response = await axios
+            .get(`${baseApiUrl}/customers/${id}/`, {
+                headers: {
+                    Authorization: `Bearer ${currentUser}`
+                }
+            })
+            .then((response) => {
+                return response.data;
+            });
+        const existingTesterList = response.test_users;
+        dispatch(getExistingTesterSuccess(existingTesterList));
+
+        return existingTesterList;
+    } catch (error) {
+        dispatch(getExistingTesterFailure(error.message));
+        console.log('error');
+        throwError(error);
+    }
+};
+export const saveTesters = async (Org_Id, email) => {
+    const currentUser = store.getState().loginData.user.token;
+    try {
+        let response = await axios.post(
+            `${baseApiUrl}/assign-tester`,
+            {
+                customer: Org_Id,
+                test_users: email
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${currentUser}`
+                }
+            }
+        );
+
+        return response.data;
+    } catch (error) {
+        console.log('error');
+        throwError(error);
+    }
+};
+export const deleteTesters = async (Org_Id, email) => {
+    const currentUser = store.getState().loginData.user.token;
+    try {
+        let data = new FormData();
+        data.append('customer', Org_Id);
+        data.append('test_user', email);
+        var config = {
+            method: 'delete',
+            url: `${baseApiUrl}/assign-tester`,
+            headers: {
+                Authorization: `Bearer ${currentUser}`
+            },
+            data: data
+        };
+        const response = await axios(config).then(function (response) {
+            return response.data;
+        });
+        return response;
+    } catch (error) {
+        console.log('error');
+        throwError(error);
+    }
+};
 
 export const fetchOrganizations = async () => {
     const { dispatch } = store;
     const currentUser = store.getState().loginData.user.token;
 
     try {
-        dispatch(getOrganizationsRequest);
+        dispatch(getOrganizationsRequest());
         return await axios
             .get(`${baseApiUrl}/customers/`, {
                 headers: {

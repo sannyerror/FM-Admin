@@ -24,6 +24,7 @@ import RAFMSG from './components/RAFMSG';
 import FindDomain from './components/FindDomain';
 import AddUser from './components/AddUser';
 import Userslist from './components/Userslist';
+import TesterList from './components/TesterList';
 import Organizationlist from './components/Organizationlist';
 import ChangePassword from './components/ChangePassword';
 import AddOrganization from './components/AddOrganization';
@@ -96,6 +97,7 @@ class App extends React.Component {
                                     <PrivateRoute path="/admin/org-configure/" component={ConfigureOrg} roles={['Super Admin', 'Admin']} />
                                     <PrivateRoute path="/admin/questions-configure/Org=:Org&id=:id" component={QuestionConfigure} roles={['Super Admin', 'Admin']} />
                                     <PrivateRoute path="/admin/forms-configure/Org=:Org&id=:id" component={FormConfigure} roles={['Super Admin', 'Admin']} />
+                                    <PrivateRoute path="/admin/configure-tester-list/Org=:Org&id=:id" component={TesterList} roles={['Super Admin']} />
 
                                     <PrivateRoute path="/admin/configure/questioncategorylist" component={QuestionsCategorylist} roles={['Super Admin', 'Admin']} />
                                     <PrivateRoute path="/admin/configure/organization/adduser/id:id" component={AddOrgUser} roles={['Super Admin', 'Admin']} />

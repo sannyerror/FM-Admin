@@ -5,40 +5,40 @@ class AddQuestionCategory extends React.Component {
     constructor() {
         super();
         this.state = {
-            title: "",
-            description: "",
+            title: '',
+            description: '',
             isUpdated: false,
-            category_type: "",
+            category_type: '',
             Category_list: [],
             CheckedSub: false,
-            parent: "",
-            error: ""
-        }
+            parent: '',
+            error: ''
+        };
     }
     addCategory = async (e) => {
         e.preventDefault();
         const { title, description, parent, CheckedSub } = this.state;
-        const data = CheckedSub === true ? {
-            title: title,
-            description: description,
-            parent: parent
-        } : {
-            title: title,
-            description: description,
-           
-        } 
+        const data =
+            CheckedSub === true
+                ? {
+                      title: title,
+                      description: description,
+                      parent: parent
+                  }
+                : {
+                      title: title,
+                      description: description
+                  };
         try {
             const response = await AddQuestionsCategory(data);
-             if (response.status === "failed") {
+            if (response.status === 'failed') {
                 this.setState({
-                    error: response.title ? response.title : "Please select sub category."
+                    error: response.title ? response.title : 'Please select sub category.'
                 });
             } else {
-                this.setState({ isUpdated: true })
+                this.setState({ isUpdated: true });
             }
-
-        }
-        catch (e) {
+        } catch (e) {
             this.setState({
                 error: e.data.title
             });
@@ -49,84 +49,66 @@ class AddQuestionCategory extends React.Component {
         const { name, value } = e.target;
         this.setState({
             [name]: value,
-            error:""
+            error: ''
         });
-    }
+    };
     addAnother = (e) => {
-        this.setState({ title: "", description: "", isUpdated: false, parent:"", CheckedSub: false })  
-    } 
+        this.setState({ title: '', description: '', isUpdated: false, parent: '', CheckedSub: false });
+    };
 
     onRadioChange = async (e) => {
-        const {  value } = e.target;
-        if (value === "sub") {
+        const { value } = e.target;
+        if (value === 'sub') {
             const response = await fetchQuestionsCategory();
             this.setState({
                 Category_list: response,
                 CheckedSub: true,
-                title:"",
-                isUpdated: false,
-                
-            })
+                title: '',
+                isUpdated: false
+            });
         } else {
             this.setState({
                 CheckedSub: false,
-                error:"",
-                parent:""
-            })
+                error: '',
+                parent: ''
+            });
         }
-    }
+    };
 
     categoryList = () => {
-        const categoryList = this.state.Category_list.response &&
-            this.state.Category_list.response.map((data, idx) =>
-               data.id !== 1 && <option value={data.id}>{data.title}</option>
-            )
-        return categoryList
-    }
+        const categoryList = this.state.Category_list.response && this.state.Category_list.response.map((data, idx) => data.id !== 1 && <option value={data.id}>{data.title}</option>);
+        return categoryList;
+    };
 
     render() {
         const { CheckedSub } = this.state;
         return (
-
             <div className="container-fluid">
-                <form >
+                <form>
                     <div className="form-group d-flex flex-column bd-highlight mb-2">
                         <div className="row p-2 bg-primary text-white mb-3">Add Question Categories</div>
-                        {this.state.error &&
+                        {this.state.error && (
                             <div className="form-group row d-flex justify-content-center  text-danger mb-3 font-weight-bold">
-                                {this.state.error}<br/>
+                                {this.state.error}
+                                <br />
                             </div>
-                        }
+                        )}
                         <div className="row p-2 bd-highlight align">
                             <div className="form-check col col-1 form-check-inline"></div>
                             <div className="form-check col col-3 form-check-inline">
-                                <input
-                                    onChange={this.onRadioChange}
-                                    className="form-check-input" name="category_type"
-                                    type="radio" id="gridCheck1" value="cat"
-                                    checked={CheckedSub ? "" : true}
-                                />
-                                <label className="form-check-label" >
-                                    Category
-                                    </label>
+                                <input onChange={this.onRadioChange} className="form-check-input" name="category_type" type="radio" id="gridCheck1" value="cat" checked={CheckedSub ? '' : true} />
+                                <label className="form-check-label">Category</label>
                             </div>
                             <div className="form-check col col-3 form-check-inline">
-                                <input
-                                    onChange={this.onRadioChange}
-                                    className="form-check-input" name="category_type"
-                                    type="radio" id="gridCheck1" value="sub"
-                                    checked={CheckedSub ? true : ""}
-                                />
-                                <label className="form-check-label" >
-                                    Sub Category
-                                    </label>
+                                <input onChange={this.onRadioChange} className="form-check-input" name="category_type" type="radio" id="gridCheck1" value="sub" checked={CheckedSub ? true : ''} />
+                                <label className="form-check-label">Sub Category</label>
                             </div>
                         </div>
-                        
-                        {this.state.CheckedSub &&
+
+                        {this.state.CheckedSub && (
                             <div className="row p-2 bd-highlight align">
-                               <div className="form-group  col-2 ">
-                                    <label className="font-weight-bold  " >Select Category</label>
+                                <div className="form-group  col-2 ">
+                                    <label className="font-weight-bold  ">Select Category</label>
                                 </div>
                                 <div className="form-group  col-3 ">
                                     <select name="parent" className="form-control" id="exampleFormControlSelect1" onChange={this.handleChange} required>
@@ -135,41 +117,40 @@ class AddQuestionCategory extends React.Component {
                                     </select>
                                 </div>
                             </div>
-                        }
-                        
+                        )}
+
                         <div className="row p-2 bd-highlight align">
                             <div className="col col-2">
-                                <label className="form-label font-weight-bold ">
-                                    Question Category:</label>
+                                <label className="form-label font-weight-bold ">Question Category:</label>
                             </div>
                             <div className="col col-4 form-group row">
-
-                                <input type="text"
-                                    onChange={this.handleChange}
-                                    value={this.state.title}
-                                    name="title"
-                                    className="form-control "
-                                    id="inputEmail3" placeholder="" />
+                                <input type="text" onChange={this.handleChange} value={this.state.title} name="title" className="form-control " id="inputEmail3" placeholder="" />
                             </div>
 
-
-                            {this.state.isUpdated ?
-                                (<><div className="col col-1"> <span className="text-primary">Saved!</span></div>
-                                    <div className="col col-2"><button type="button" className="btn btn-primary" onClick={this.addAnother}>Add Another</button></div>
-                                </>) :
-                                (<div className="col col-1"><button className="btn btn-primary" onClick={this.addCategory}>Save{this.state.isUpdated}</button></div>)}
-
-
+                            {this.state.isUpdated ? (
+                                <>
+                                    <div className="col col-1">
+                                        {' '}
+                                        <span className="text-primary">Saved!</span>
+                                    </div>
+                                    <div className="col col-2">
+                                        <button type="button" className="btn btn-primary" onClick={this.addAnother}>
+                                            Add Another
+                                        </button>
+                                    </div>
+                                </>
+                            ) : (
+                                <div className="col col-1">
+                                    <button className="btn btn-primary" onClick={this.addCategory}>
+                                        Save{this.state.isUpdated}
+                                    </button>
+                                </div>
+                            )}
                         </div>
-
                     </div>
-                    <div className="form-group row d-flex justify-content-center">
-                        &nbsp;
-                            </div>
+                    <div className="form-group row d-flex justify-content-center">&nbsp;</div>
                 </form>
-
             </div>
-
         );
     }
 }
