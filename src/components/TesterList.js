@@ -4,13 +4,14 @@ import { useParams } from 'react-router-dom';
 import { fetchTesters, getCustomerDetails, saveTesters, deleteTesters } from '../api/api';
 import { updateExistingTester, removeExistingTester } from '.././redux/Testers/TestersAction';
 import { toast } from 'react-toastify';
-import { BeatLoader } from 'react-spinners';
+import { BeatLoader, ClipLoader } from 'react-spinners';
 import 'react-toastify/dist/ReactToastify.css';
 
 const TesterList = () => {
     //Local State
     const [email, setEmail] = useState('');
     const [isSaving, setIsSaving] = useState(false);
+    const [deleteEmail, setDeleteEmail] = useState('');
     //Redux State
     const { loading, allTesterList, error, fetching, existingTesterList, isError } = useSelector((state) => state.testers);
     const dispatch = useDispatch();
@@ -62,8 +63,9 @@ const TesterList = () => {
     const handleDeleteTester = async (e) => {
         e.preventDefault();
         let email = e.target.dataset.email_id ? e.target.dataset.email_id : '';
-
+        setDeleteEmail(email);
         let response = await deleteTesters(Org_Id, email);
+        setDeleteEmail('');
         if (response.status === 'success') {
             dispatch(removeExistingTester(email));
             toast.info(response.message, { position: toast.POSITION.TOP_CENTER, autoClose: 3000 });
@@ -150,9 +152,7 @@ const TesterList = () => {
                                                 <td>{name}</td>
                                                 <td>{email_id}</td>
                                                 <td>{role}</td>
-                                                <td className="text-center">
-                                                    <i className="fa fa-trash" style={{ fontSize: '20px', color: 'red' }} data-email_id={email_id} onClick={(e) => window.confirm('Are you sure you wish to delete this Testing User?') && handleDeleteTester(e)}></i>
-                                                </td>
+                                                <td className="text-center">{deleteEmail && email_id == deleteEmail ? <ClipLoader color="#bac0c4" loading={deleteEmail} size={18} speedMultiplier={1} /> : <i className="fa fa-trash" style={{ fontSize: '20px', color: 'red' }} data-email_id={email_id} onClick={(e) => window.confirm('Are you sure you wish to delete this Testing User?') && handleDeleteTester(e)}></i>}</td>
                                             </tr>
                                         </Fragment>
                                     );

@@ -29,7 +29,7 @@ export function TestersReducer(state = initialstate, action) {
                 ...state,
                 loading: false,
                 allTesterList: [],
-                error: action.payload
+                error: action.error
             };
 
         // Existing Testers for table view
@@ -51,15 +51,17 @@ export function TestersReducer(state = initialstate, action) {
                 ...state,
                 fetching: false,
                 existingTesterList: [],
-                isError: action.payload
+                isError: action.error
             };
 
+        // Updating Testing User
         case GET_EXISTING_TESTERS_UPDATE:
             return {
                 ...state,
                 existingTesterList: [action.newTester, ...state.existingTesterList],
                 error: ''
             };
+        // Deleting Testing User
         case REMOVE_EXISTING_TESTER:
             return {
                 ...state,
