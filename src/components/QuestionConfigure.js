@@ -965,7 +965,7 @@ class QuestionConfigure extends React.Component {
         const sectionLength = this.state.sections.length - 1;
         let jumpOpt = [];
         this.state.sections && this.state.sections.filter((sec, key) => sec.related === 'true').map((q, i) => jumpOpt.push({ value: q.section, label: q.section, id: i }));
-        const OutcomesStaticQues = ['Client Code', 'Identification Number', 'Date of Birth', 'Referral Status', 'Program', 'Start Date', 'Program Completion', 'End Date', 'Remained Out of Care'];
+        const OutcomesStaticQues = ['Client Code', 'First Name', 'Last Name', 'Identification Number', 'Date of Birth', 'Referral Status', 'Program', 'Start Date', 'Program Completion', 'End Date', 'Remained Out of Care'];
         const NonEditSection = ['Demographics', 'Outcomes'];
         const findIndex = this.state.sections.findIndex((section) => section.section === 'Outcomes');
         //Removing Duplicate values
