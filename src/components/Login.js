@@ -90,6 +90,7 @@ export class Login extends Component {
                 if (response.data.status === 'failed') {
                     this.setState((prev) => ({ ...prev, error: response.data.message }));
                 } else if (response.data.response.is_pwd_expired) {
+                    // Auto redirect to changepassword screen once password expired and also hide all the extra tab
                     this.props.history.push('/admin/changepassword');
                 } else if (response.data.response.is_pwd_updated) {
                     if (response && response.data) {
