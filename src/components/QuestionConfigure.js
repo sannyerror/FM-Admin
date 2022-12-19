@@ -1356,7 +1356,7 @@ class QuestionConfigure extends React.Component {
                                                                                                         <input type="text" name={errorId} data-id={idx} data-secid={id} data-name="error_msg" id={errorId} placeholder="Error message" value={sections[id].questions[idx].error_msg} className="form-control" />
                                                                                                     </div>
                                                                                                 </div>
-                                                                                                <fieldset className="form-group">
+                                                                                                <fieldset className={`form-group ${sectionLength === id && sections[id].section === 'Outcomes' ? 'd-none' : 'd-block'}`}>
                                                                                                     <div className="row">
                                                                                                         <legend className="col-form-label col-sm-2 font-weight-bold" htmlFor={re_typeId}>
                                                                                                             Re-Type Question:
