@@ -170,7 +170,7 @@ class QuestionConfigure extends React.Component {
                         {
                             answer: 'Placed',
                             jumpto: [],
-                            question_jumpto: ['Program', 'Start Date', 'Program Completion', 'End Date', 'Remain Out of Care']
+                            question_jumpto: ['Program', 'Start Date', 'Program Completion', 'End Date']
                         },
                         {
                             answer: 'Rejected',
@@ -199,8 +199,8 @@ class QuestionConfigure extends React.Component {
                     field_type: '1',
                     answer_type: 'SELECT',
                     suggested_answers: [
-                        { id: 0, value: 'yes', isChecked: false },
-                        { id: 1, value: 'no', isChecked: false }
+                        { id: 0, value: 'Secure Treatment', isChecked: false },
+                        { id: 1, value: 'Mental Health Treatment', isChecked: false }
                     ],
                     suggested_jump: [],
                     validation1: '',
@@ -236,8 +236,8 @@ class QuestionConfigure extends React.Component {
                     field_type: '1',
                     answer_type: 'SELECT',
                     suggested_answers: [
-                        { id: 0, value: 'Secure Treatment', isChecked: false },
-                        { id: 1, value: 'Mental Health Treatment', isChecked: false }
+                        { id: 0, value: 'Yes', isChecked: false },
+                        { id: 1, value: 'No', isChecked: false }
                     ],
                     suggested_jump: [],
                     validation1: '',
@@ -272,7 +272,10 @@ class QuestionConfigure extends React.Component {
                     description: '',
                     field_type: '1',
                     answer_type: 'SELECT',
-                    suggested_answers: [{ id: 0, value: '', isChecked: false }],
+                    suggested_answers: [
+                        { id: 0, value: 'Yes', isChecked: false },
+                        { id: 1, value: 'No', isChecked: false }
+                    ],
                     suggested_jump: [],
                     validation1: '',
                     validation2: '',
@@ -296,7 +299,7 @@ class QuestionConfigure extends React.Component {
                     error_msg: '',
                     re_type: '',
                     is_to_be_mask: '',
-                    related: 'no',
+                    related: 'yes',
                     required: 'yes',
                     flag: '0'
                 }
