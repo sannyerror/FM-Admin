@@ -25,6 +25,7 @@ import { checkDomainFailure, checkDomainSuccess, checkDomainRequest } from '../r
 import { addUsersFailure, addUsersRequest, addUsersSuccess } from '../redux/AddUsers/AddUsersAction';
 import { getUsersFailure, getUsersRequest, getUsersSuccess } from '../redux/GetUsers/GetUsersAction';
 import { getTestersRequest, getTestersSuccess, getTestersFailure, getExistingTesterRequest, getExistingTesterSuccess, getExistingTesterFailure } from '../redux/Testers/TestersAction';
+import { getDashboardRequest, getDashboardSuccess, getDashboardFailure, saveDashboardRequest, saveDashboardSuccess, saveDashboardFailure, publishDashboardRequest, publishDashboardSuccess, publishDashboardFailure, deleteDashboardRequest, deleteDashboardSuccess, deleteDashboardFailure } from '../redux/Dashboard/DashBoardAction';
 import { getOrganizationsFailure, getOrganizationsRequest, getOrganizationsSuccess } from '../redux/GetOrganizations/GetOrganizationsAction';
 import { addOrganizationsFailure, addOrganizationsRequest, addOrganizationsSuccess } from '../redux/AddOrganization/AddOrganizationsAction';
 import createAuthRefreshInterceptor from 'axios-auth-refresh';
@@ -680,6 +681,132 @@ export const deleteTesters = async (Org_Id, email) => {
         return response;
     } catch (error) {
         console.log('error');
+        throwError(error);
+    }
+};
+
+export const getDashboard = async (id) => {
+    const { dispatch } = store;
+    const currentUser = store.getState().loginData.user.token;
+    try {
+        dispatch(getDashboardRequest());
+        const response = await axios
+            .get(`${baseApiUrl}/dashboard/?customer=${id}`, {
+                headers: {
+                    Authorization: `Bearer ${currentUser}`
+                }
+            })
+            .then((response) => {
+                return response.data;
+            });
+
+        let getDashboardList = response;
+        dispatch(getDashboardSuccess(getDashboardList));
+        return response;
+    } catch (error) {
+        dispatch(getDashboardFailure(error.message));
+        throwError(error);
+    }
+};
+
+export const saveDashboard = async (dashboard, id) => {
+    const { dispatch } = store;
+    const currentUser = store.getState().loginData.user.token;
+
+    id && delete dashboard.customer;
+    try {
+        dispatch(saveDashboardRequest());
+
+        let response = id
+            ? await axios
+                  .put(
+                      `${baseApiUrl}/dashboard/${id}/`,
+                      {
+                          ...dashboard
+                      },
+                      {
+                          headers: {
+                              Authorization: `Bearer ${currentUser}`
+                          }
+                      }
+                  )
+                  .then((response) => {
+                      return response.data;
+                  })
+            : await axios
+                  .post(
+                      `${baseApiUrl}/dashboard/`,
+                      {
+                          ...dashboard
+                      },
+                      {
+                          headers: {
+                              Authorization: `Bearer ${currentUser}`
+                          }
+                      }
+                  )
+                  .then((response) => {
+                      return response.data;
+                  });
+
+        let dashboardList = id ? '' : response.response;
+        dispatch(saveDashboardSuccess(dashboardList));
+        return response;
+    } catch (error) {
+        console.log('error while saving dashboard nalytics');
+        dispatch(saveDashboardFailure(error.message));
+        throwError(error);
+    }
+};
+
+export const publishDashboard = async (reportId, publish) => {
+    const { dispatch } = store;
+    const currentUser = store.getState().loginData.user.token;
+
+    try {
+        dispatch(publishDashboardRequest());
+        let response = await axios
+            .patch(
+                `${baseApiUrl}/dashboard/${reportId}/`,
+                {
+                    is_published: publish
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${currentUser}`
+                    }
+                }
+            )
+            .then((response) => response.data);
+
+        dispatch(publishDashboardSuccess());
+        return response;
+    } catch (error) {
+        console.log('Dashboard Publish failed');
+        dispatch(publishDashboardFailure());
+        throwError(error);
+    }
+};
+
+export const deleteDashboard = async (reportId) => {
+    const { dispatch } = store;
+    const currentUser = store.getState().loginData.user.token;
+
+    try {
+        dispatch(deleteDashboardRequest());
+        let response = await axios
+            .delete(`${baseApiUrl}/dashboard/${reportId}/`, {
+                headers: {
+                    Authorization: `Bearer ${currentUser}`
+                }
+            })
+            .then((response) => response.data);
+
+        dispatch(deleteDashboardSuccess());
+        return response;
+    } catch (error) {
+        console.log('Dashboard deleteDashboard failed');
+        dispatch(deleteDashboardFailure());
         throwError(error);
     }
 };

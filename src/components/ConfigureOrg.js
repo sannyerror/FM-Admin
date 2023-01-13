@@ -10,6 +10,7 @@ import { BrowserRouter as Router, Switch, Route, Link, useRouteMatch } from 'rea
 import { connect } from 'react-redux';
 import { GrDocumentUser } from 'react-icons/gr';
 import { MdOutlineEditCalendar } from 'react-icons/md';
+import { TbDeviceDesktopAnalytics } from 'react-icons/tb';
 
 const customStyles = {
     content: {
@@ -165,6 +166,14 @@ class ConfigureOrg extends React.Component {
                                                             <MdOutlineEditCalendar color="black" />
                                                         </span>
                                                         <strong className="px-2">Questions</strong>
+                                                    </Link>
+                                                </li>
+                                                <li className="list-group-item border-0">
+                                                    <Link to={`/admin/dashboard-details/Org=${Org_Name}&id=${Org_Id}`}>
+                                                        <span className="h3">
+                                                            <TbDeviceDesktopAnalytics color="black" />
+                                                        </span>
+                                                        <strong className="px-2">DashBoard</strong>
                                                     </Link>
                                                 </li>
                                             </ul>

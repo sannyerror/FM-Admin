@@ -33,6 +33,7 @@ import BillingDetails from './components/BillingDetails';
 import QuestionConfigure from './components/QuestionConfigure';
 import FormConfigure from './components/FormConfigure';
 import ConfigureOrg from './components/ConfigureOrg';
+import DashboardDetails from './components/DashboardDetails';
 import Preview from './components/Preview_Questions';
 import { logOut } from './api/api';
 import PageNotFound from './components/PageNotFound';
@@ -96,6 +97,7 @@ class App extends React.Component {
 
                                     <PrivateRoute path="/admin/org-configure/" component={ConfigureOrg} roles={['Super Admin', 'Admin']} />
                                     <PrivateRoute path="/admin/questions-configure/Org=:Org&id=:id" component={QuestionConfigure} roles={['Super Admin', 'Admin']} />
+                                    <PrivateRoute path="/admin/dashboard-details/Org=:Org&id=:id" component={DashboardDetails} roles={['Super Admin', 'Admin']} />
                                     <PrivateRoute path="/admin/forms-configure/Org=:Org&id=:id" component={FormConfigure} roles={['Super Admin', 'Admin']} />
                                     <PrivateRoute path="/admin/configure-tester-list/Org=:Org&id=:id" component={TesterList} roles={['Super Admin']} />
 

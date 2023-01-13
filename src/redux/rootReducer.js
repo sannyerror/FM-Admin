@@ -14,6 +14,7 @@ import { CheckDomainReducer } from './CheckDomain/CheckDomainReducer';
 import { AddUsersReducer } from './AddUsers/AddUsersReducer';
 import { GetUsersReducer } from './GetUsers/GetUsersReducer';
 import { TestersReducer } from './Testers/TestersReducer';
+import { DashboardReducer } from './Dashboard/DashBoardReducer';
 import { GetOrganizationsReducer } from './GetOrganizations/GetOrganizationsReducer';
 import { AddOrganizationsReducer } from './AddOrganization/AddOrganizationsReducer';
 
@@ -33,6 +34,7 @@ export const rootReducer = combineReducers({
     adduser: AddUsersReducer,
     getusers: GetUsersReducer,
     testers: TestersReducer,
+    dashboard: DashboardReducer,
     getorganization: GetOrganizationsReducer,
     addorganization: AddOrganizationsReducer
 });
