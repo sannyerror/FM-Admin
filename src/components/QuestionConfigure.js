@@ -471,7 +471,8 @@ class QuestionConfigure extends React.Component {
             return {
                 id: id,
                 value: item.value,
-                isChecked: item.isChecked
+                isChecked: item.isChecked,
+                ...(sections[secid].questions[idx].answer_type === 'CHECKBOX' && { setType: item.setType })
             };
         });
         this.setState({
@@ -531,8 +532,9 @@ class QuestionConfigure extends React.Component {
     addAnswer = (i) => (e) => {
         e.preventDefault();
         let secid = e.target.dataset.secid;
+        let answer_type = e.target.dataset.answer;
         let sections = [...this.state.sections];
-        sections[secid].questions[i].suggested_answers = this.state.sections[secid].questions[i].suggested_answers.concat(['']);
+        sections[secid].questions[i].suggested_answers = this.state.sections[secid].questions[i].suggested_answers.concat(answer_type === 'CHECKBOX' ? [{ id: '', value: '', isChecked: false, setType: 'setA' }] : ['']);
         this.setState({ sections });
     };
 
@@ -540,19 +542,26 @@ class QuestionConfigure extends React.Component {
         let secid = e.target.dataset.secid;
         let secname = e.target.dataset.secname;
         let id = e.target.dataset.id;
-        if (['question', 'suggested_answers', 'suggested_jump', 'description', 'validation1', 'validation2', 'answer_type', 're_type', 'is_to_be_mask', 'error_msg', 'required', 'related', 'flag', 'field_type'].includes(e.target.dataset.name)) {
-            if (e.target.dataset.name === 'suggested_answers' || e.target.dataset.name === 'suggested_jump') {
+
+        if (['question', 'suggested_answers', 'suggested_jump', 'description', 'validation1', 'validation2', 'answer_type', 're_type', 'is_to_be_mask', 'setType', 'error_msg', 'required', 'related', 'flag', 'field_type'].includes(e.target.dataset.name)) {
+            if (['suggested_answers', 'suggested_jump', 'setType'].includes(e.target.dataset.name)) {
                 let sections = [...this.state.sections];
                 if (e.target.dataset.name === 'suggested_jump') {
                     sections[secid].questions[e.target.dataset.id].suggested_jump[e.target.dataset.idy] = {
                         answer: sections[secid].questions[e.target.dataset.id].suggested_answers[e.target.dataset.idy].value,
                         jumpto: e.target.value
                     };
+                } else if (e.target.dataset.name === 'setType' && e.target.name === `set_type-${id}${e.target.dataset.idy}`) {
+                    sections[secid].questions[e.target.dataset.id].suggested_answers[e.target.dataset.idy] = {
+                        ...sections[secid].questions[e.target.dataset.id].suggested_answers[e.target.dataset.idy],
+                        setType: e.target.value
+                    };
                 } else {
                     sections[secid].questions[e.target.dataset.id].suggested_answers[e.target.dataset.idy] = {
                         id: parseInt(e.target.dataset.idy),
                         value: e.target.value,
-                        isChecked: false
+                        isChecked: false,
+                        ...(sections[secid].questions[e.target.dataset.id].answer_type === 'CHECKBOX' && { setType: sections[secid].questions[e.target.dataset.id].suggested_answers[e.target.dataset.idy].setType ? sections[secid].questions[e.target.dataset.id].suggested_answers[e.target.dataset.idy].setType : 'setA' })
                     };
                 }
 
@@ -566,6 +575,12 @@ class QuestionConfigure extends React.Component {
                     sections[secid].questions[e.target.dataset.id]['is_to_be_mask'] = ['TEXT', 'NUMBER'].includes(e.target.value) ? 'no' : '';
                     sections[secid].questions[e.target.dataset.id].suggested_answers = sections[secid].questions[e.target.dataset.id].suggested_answers.length === 0 ? [''] : sections[secid].questions[e.target.dataset.id].suggested_answers;
 
+                    //Remove all setType keys from suggested answer when answer type is not CHECKBOX
+                    e.target.value != 'CHECKBOX' &&
+                        sections[secid].questions[e.target.dataset.id].suggested_answers &&
+                        sections[secid].questions[e.target.dataset.id].suggested_answers.map((answer) => {
+                            delete answer.setType;
+                        });
                     this.setState({ sections });
                 } else {
                     if (e.target.dataset.name === 'question') {
@@ -1235,65 +1250,78 @@ class QuestionConfigure extends React.Component {
                                                                                             : this.state.sections[id].questions
                                                                                                   .filter((p) => p.question_id === this.state.sections[id].questions[idx].question_id)
                                                                                                   .map((q, i) =>
-                                                                                                      q.suggested_answers.map((question, idy) => (
-                                                                                                          <div className="form-group row">
-                                                                                                              <label className="col-sm-1 col-form-label font-weight-bold">Answer {idy + 1}:</label>
-                                                                                                              <div className="col-sm-3">
-                                                                                                                  <input type="text" name={answerId} data-id={idx} data-secid={id} data-name="suggested_answers" id={answerId} data-idy={idy} value={question.value ? question.value : ''} className="form-control" required />
-                                                                                                                  {idy !== 0 && (
-                                                                                                                      <div
-                                                                                                                          style={{
-                                                                                                                              position: 'absolute',
-                                                                                                                              top: '1px',
-                                                                                                                              right: '-0px',
-                                                                                                                              width: '25px',
-                                                                                                                              height: '25px',
-                                                                                                                              fontSize: '24px',
-                                                                                                                              color: 'red'
-                                                                                                                          }}
-                                                                                                                          className="font-text-bold text-center "
-                                                                                                                          data-secid={id}
-                                                                                                                          data-id={idy}
-                                                                                                                          onClick={this.handleDelete(idx, idy)}
-                                                                                                                      >
-                                                                                                                          <i className="fa fa-remove" data-secid={id} data-id={idy}></i>
-                                                                                                                      </div>
-                                                                                                                  )}
-                                                                                                                  {idy === this.state.sections[id].questions[idx].suggested_answers.length - 1 && (
-                                                                                                                      <div
-                                                                                                                          style={{
-                                                                                                                              position: 'absolute',
-                                                                                                                              top: '1px',
-                                                                                                                              right: '-25px',
-                                                                                                                              width: '25px',
-                                                                                                                              height: '25px',
-                                                                                                                              fontSize: '24px'
-                                                                                                                          }}
-                                                                                                                          className="font-text-bold text-center "
-                                                                                                                          data-secid={id}
-                                                                                                                          data-id={idy}
-                                                                                                                          onClick={this.addAnswer(idx)}
-                                                                                                                      >
-                                                                                                                          <i
-                                                                                                                              className="fa fa-plus"
+                                                                                                      q.suggested_answers.map((question, idy) => {
+                                                                                                          let setTypeID = `set_type-${idx}${idy}`;
+                                                                                                          return (
+                                                                                                              <div className="form-group row">
+                                                                                                                  <label className="col-sm-1 col-form-label font-weight-bold">Answer {idy + 1}:</label>
+                                                                                                                  <div className="col-sm-3">
+                                                                                                                      <input type="text" name={answerId} data-id={idx} data-secid={id} data-name="suggested_answers" id={answerId} data-idy={idy} value={question.value ? question.value : ''} className="form-control" required />
+                                                                                                                      {idy !== 0 && (
+                                                                                                                          <div
                                                                                                                               style={{
-                                                                                                                                  fontSize: '28px'
+                                                                                                                                  position: 'absolute',
+                                                                                                                                  top: '1px',
+                                                                                                                                  right: '-0px',
+                                                                                                                                  width: '25px',
+                                                                                                                                  height: '25px',
+                                                                                                                                  fontSize: '24px',
+                                                                                                                                  color: 'red'
                                                                                                                               }}
+                                                                                                                              className="font-text-bold text-center "
                                                                                                                               data-secid={id}
                                                                                                                               data-id={idy}
-                                                                                                                          ></i>
+                                                                                                                              onClick={this.handleDelete(idx, idy)}
+                                                                                                                          >
+                                                                                                                              <i className="fa fa-remove" data-secid={id} data-id={idy}></i>
+                                                                                                                          </div>
+                                                                                                                      )}
+                                                                                                                      {idy === this.state.sections[id].questions[idx].suggested_answers.length - 1 && (
+                                                                                                                          <div
+                                                                                                                              style={{
+                                                                                                                                  position: 'absolute',
+                                                                                                                                  top: '1px',
+                                                                                                                                  right: '-25px',
+                                                                                                                                  width: '25px',
+                                                                                                                                  height: '25px',
+                                                                                                                                  fontSize: '24px'
+                                                                                                                              }}
+                                                                                                                              className="font-text-bold text-center "
+                                                                                                                              data-answer={q.answer_type}
+                                                                                                                              data-secid={id}
+                                                                                                                              data-id={idy}
+                                                                                                                              onClick={this.addAnswer(idx)}
+                                                                                                                          >
+                                                                                                                              <i
+                                                                                                                                  className="fa fa-plus"
+                                                                                                                                  style={{
+                                                                                                                                      fontSize: '28px'
+                                                                                                                                  }}
+                                                                                                                                  data-answer={q.answer_type}
+                                                                                                                                  data-secid={id}
+                                                                                                                                  data-id={idy}
+                                                                                                                              ></i>
+                                                                                                                          </div>
+                                                                                                                      )}
+                                                                                                                  </div>
+                                                                                                                  {this.state.sections[id].questions[idx].answer_type === 'CHECKBOX' ? (
+                                                                                                                      <div className="col-sm-4 mx-4 px-3 py-2">
+                                                                                                                          <div className="form-check form-check-inline">
+                                                                                                                              <input type="radio" name={setTypeID} className="form-check-input" data-secid={id} data-id={idx} data-idy={idy} data-name="setType" id={setTypeID} checked={sections[id].questions[idx].suggested_answers[idy].setType === 'setA'} value="setA" required />
+                                                                                                                              <label className="form-check-label">Set-A</label>
+                                                                                                                          </div>
+                                                                                                                          <div className="form-check form-check-inline">
+                                                                                                                              <input type="radio" name={setTypeID} className="form-check-input" data-secid={id} data-id={idx} data-idy={idy} data-name="setType" id={setTypeID} checked={sections[id].questions[idx].suggested_answers[idy].setType === 'setB'} value="setB" required />
+                                                                                                                              <label className="form-check-label">Set-B</label>
+                                                                                                                          </div>
                                                                                                                       </div>
-                                                                                                                  )}
-                                                                                                              </div>
-                                                                                                              {this.state.sections[id].questions[idx].answer_type === 'CHECKBOX' ? (
-                                                                                                                  ''
-                                                                                                              ) : (
-                                                                                                                  <>
-                                                                                                                      <label className="col-sm-1 col-form-label font-weight-bold ml-3">Jump to:</label>
-                                                                                                                      <div className="col-sm-3">
-                                                                                                                          <Select key={id} value={jumpOpt.filter((value) => this.state.sections[id].questions[idx].suggested_jump[idy] && Array.isArray(this.state.sections[id].questions[idx].suggested_jump[idy].jumpto) && this.state.sections[id].questions[idx].suggested_jump[idy].jumpto.includes(value.value))} isClearable styles={colourStyles} isMulti name="suggested_jump" components={animatedComponents} options={jumpOpt} className="basic-multi-select" placeholder="Select Sections jump" onChange={this.multihandleChange(id, idx, idy)} />
+                                                                                                                  ) : (
+                                                                                                                      <>
+                                                                                                                          <label className="col-sm-1 col-form-label font-weight-bold ml-3">Jump to:</label>
+                                                                                                                          <div className="col-sm-3">
+                                                                                                                              <Select key={id} value={jumpOpt.filter((value) => this.state.sections[id].questions[idx].suggested_jump[idy] && Array.isArray(this.state.sections[id].questions[idx].suggested_jump[idy].jumpto) && this.state.sections[id].questions[idx].suggested_jump[idy].jumpto.includes(value.value))} isClearable styles={colourStyles} isMulti name="suggested_jump" components={animatedComponents} options={jumpOpt} className="basic-multi-select" placeholder="Select Sections jump" onChange={this.multihandleChange(id, idx, idy)} />
 
-                                                                                                                          {/* <select name="jumpto"
+                                                                                                                              {/* <select name="jumpto"
                                                                                                                             className="form-control" id="exampleFormControlSelect1"
                                                                                                                             multiple
                                                                                                                             data-id={idx}
@@ -1311,15 +1339,16 @@ class QuestionConfigure extends React.Component {
                                                                                                                                     </option>
                                                                                                                             )}
                                                                                                                         </select> */}
-                                                                                                                      </div>
+                                                                                                                          </div>
 
-                                                                                                                      <div className="col-sm-3">
-                                                                                                                          <Select value={this.Question_jumpOptions(id).filter((value) => this.state.sections[id].questions[idx].suggested_jump[idy] && Array.isArray(this.state.sections[id].questions[idx].suggested_jump[idy].question_jumpto) && this.state.sections[id].questions[idx].suggested_jump[idy].question_jumpto.includes(value.value))} isClearable styles={colourStyles} isMulti name="ques_suggested_jump" options={this.Question_jumpOptions(id)} className="basic-multi-select" placeholder="Select jump within Section" onChange={this.Question_multihandleChange(id, idx, idy)} />
-                                                                                                                      </div>
-                                                                                                                  </>
-                                                                                                              )}
-                                                                                                          </div>
-                                                                                                      ))
+                                                                                                                          <div className="col-sm-3">
+                                                                                                                              <Select value={this.Question_jumpOptions(id).filter((value) => this.state.sections[id].questions[idx].suggested_jump[idy] && Array.isArray(this.state.sections[id].questions[idx].suggested_jump[idy].question_jumpto) && this.state.sections[id].questions[idx].suggested_jump[idy].question_jumpto.includes(value.value))} isClearable styles={colourStyles} isMulti name="ques_suggested_jump" options={this.Question_jumpOptions(id)} className="basic-multi-select" placeholder="Select jump within Section" onChange={this.Question_multihandleChange(id, idx, idy)} />
+                                                                                                                          </div>
+                                                                                                                      </>
+                                                                                                                  )}
+                                                                                                              </div>
+                                                                                                          );
+                                                                                                      })
                                                                                                   )}
                                                                                         {this.state.sections[id].questions[idx].answer_type === 'TEXT' ? (
                                                                                             <React.Fragment>
