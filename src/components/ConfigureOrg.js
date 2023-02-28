@@ -286,7 +286,7 @@ class ConfigureOrg extends React.Component {
                                     <select name="group_id" className="form-control" id="exampleFormControlSelect1" onChange={this.handleChange} required>
                                         <option value="">Select</option>
                                         {this.state.Organizations &&
-                                            this.state.Organizations?.map((org, i) => (
+                                            this.state.Organizations?.sort((a, b) => a.org_name.localeCompare(b.org_name)).map((org, i) => (
                                                 <option key={i} value={org.id} selected={this.state.org === org.name}>
                                                     {org.org_name}
                                                 </option>

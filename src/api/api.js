@@ -71,10 +71,11 @@ export const login = async (email, password) => {
         dispatch(fetchUsersRequest);
         const response = await axios.post(`${baseApiUrl}/admin/login`, { username: email, password: password });
 
-        const { token, user_id, role_type, is_pwd_updated, is_pwd_expired, pwd_expires_in, count_down } = response.data.response;
+        const { token, user_id, role_type, is_pwd_updated, is_pwd_expired, pwd_expires_in, count_down, name } = response.data.response;
         const user = {
             email,
             token,
+            name,
             user_id,
             role_type: role_type,
             is_pwd_updated: is_pwd_updated,

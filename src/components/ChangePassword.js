@@ -84,37 +84,92 @@ class ChangePassword extends React.Component {
     };
 
     render() {
+        const { name, email, role_type, pwd_expires_in, is_pwd_expired } = this.props.loginData.user;
         return (
             <div className="container-fluid">
                 <form className="">
-                    <div className="row p-2 bg-primary text-white">Change Password</div>
+                    <div className="row p-2 bg-primary text-white">Profile</div>
                     <br />
                     {this.state.error && <div className="col text-center text-danger mb-3 font-weight-bold">{this.state.error}</div>}
-                    <div className=" ml-4">
-                        <div className="form-group row">
-                            <label className="col-sm-2 col-form-label font-weight-bold ">Current Password:​</label>
-                            <div className="col-sm-4">
-                                <input type="password" onChange={this.handleChange} value={this.state.old_password} name="old_password" className="form-control " placeholder="" />
+                    <div className="row">
+                        <div className="col-sm-12 col-lg-6 my-2">
+                            <div className="card rounded shadow-sm">
+                                <div className="card-header border-0">
+                                    <h5 className="card-title primary  text-center  text-primary my-1">
+                                        <strong>Change Password</strong>
+                                    </h5>
+                                </div>
+                                <div className="card-body">
+                                    <div className="form-group row ">
+                                        <label className="col-sm-4 col-form-label font-weight-bold ">Current Password:​</label>
+                                        <div className="col-sm-8">
+                                            <input type="password" onChange={this.handleChange} value={this.state.old_password} name="old_password" className="form-control " placeholder="" />
+                                        </div>
+                                    </div>
+                                    <div className="form-group row ">
+                                        <label className="col-sm-4 col-form-label font-weight-bold ">New Password:</label>
+                                        <div className="col-sm-8">
+                                            <input type="password" onChange={this.handleChange} value={this.state.password} name="password" className="form-control " placeholder="" />
+                                        </div>
+                                    </div>
+                                    <div className="form-group row ">
+                                        <label className="col-sm-4 col-form-label font-weight-bold ">Re-Type New Password:</label>
+                                        <div className="col-sm-8">
+                                            <input type="password" onChange={this.handleChange} value={this.state.retype_password} name="retype_password" className="form-control " placeholder="" />
+                                        </div>
+                                    </div>
+                                    <div className="form-group row ">
+                                        <label className="col-sm-4 col-form-label font-weight-bold "></label>
+                                        <div className="col-sm-8">
+                                            <button type="submit" className="btn btn-primary font-weight-bold btn-block" onClick={this.changePwd}>
+                                                UPDATE
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <div className="form-group row">
-                            <label className="col-sm-2 col-form-label font-weight-bold ">New Password:</label>
-                            <div className="col-sm-4">
-                                <input type="password" onChange={this.handleChange} value={this.state.password} name="password" className="form-control " placeholder="" />
-                            </div>
-                        </div>
-                        <div className="form-group row">
-                            <label className="col-sm-2 col-form-label font-weight-bold ">Re-Type New Password:</label>
-                            <div className="col-sm-4">
-                                <input type="password" onChange={this.handleChange} value={this.state.retype_password} name="retype_password" className="form-control " placeholder="" />
-                            </div>
-                        </div>
-                        <div className="form-group row">
-                            <label className="col-sm-2 col-form-label font-weight-bold "></label>
-                            <div className="col-sm-4">
-                                <button type="submit" className="btn btn-primary font-weight-bold btn-block" onClick={this.changePwd}>
-                                    UPDATE
-                                </button>
+                        <div className="col-sm-12 col-lg-6 my-2">
+                            <div className="card rounded shadow-sm">
+                                <div className="card-header border-0">
+                                    <h5 className="card-title primary text-center  text-primary my-1 ">
+                                        <strong>User Details</strong>
+                                    </h5>
+                                </div>
+                                <div className="card-body">
+                                    <div className="row">
+                                        <label className="col-sm-2 font-weight-bold ">Name:​</label>
+                                        <div className="col">
+                                            <p className="card-text">{name}</p>
+                                        </div>
+                                    </div>
+                                    <div className="row">
+                                        <label className="col-sm-2 font-weight-bold ">Role:​</label>
+                                        <div className="col">
+                                            <p className="card-text">{role_type}</p>
+                                        </div>
+                                    </div>
+                                    <div className="row">
+                                        <label className="col-sm-2 font-weight-bold">Expired In:​</label>
+                                        <div className="col">
+                                            {is_pwd_expired ? (
+                                                <p className="card-text">
+                                                    <span className="badge bg-danger p-2 text-white">Already Password Expired !</span>
+                                                </p>
+                                            ) : (
+                                                <p className="card-text">
+                                                    <span className="badge bg-warning p-2">{pwd_expires_in} Days</span>
+                                                </p>
+                                            )}
+                                        </div>
+                                    </div>
+                                    <div className="row">
+                                        <label className="col-sm-2 font-weight-bold ">Email Id:​</label>
+                                        <div className="col">
+                                            <p className="card-text">{email}</p>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -123,4 +178,9 @@ class ChangePassword extends React.Component {
         );
     }
 }
-export default connect(null, null)(ChangePassword);
+const mapStateToProps = (state) => {
+    return {
+        loginData: state.loginData
+    };
+};
+export default connect(mapStateToProps, null)(ChangePassword);
