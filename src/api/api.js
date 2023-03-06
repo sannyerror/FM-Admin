@@ -1267,7 +1267,7 @@ export const AddQuestionsCategory = async (data) => {
     }
 };
 
-export const logOut = () => {
+export const logOut = async () => {
     const { dispatch } = store;
     let token = localStorage.refreshToken ? (localStorage.refreshToken === undefined ? '' : localStorage.refreshToken === 'undefined' ? '' : localStorage.refreshToken) : '';
     let config = {
@@ -1277,7 +1277,7 @@ export const logOut = () => {
             Authorization: `Bearer ${token}`
         }
     };
-    axios(config).then((response) => {
+    await axios(config).then((response) => {
         localStorage.removeItem('refreshToken');
         localStorage.removeItem('user_role');
         dispatch(clearUser());
