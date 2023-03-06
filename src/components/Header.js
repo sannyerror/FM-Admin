@@ -12,8 +12,8 @@ export class Header extends React.Component {
             profilePage: false
         };
     }
-    handlelogout = () => {
-        logOut();
+    handlelogout = async () => {
+        await logOut();
     };
 
     onformConf = (e) => {
