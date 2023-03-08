@@ -7,6 +7,14 @@ import { connect } from 'react-redux';
 import { toast } from 'react-toastify';
 import { Link } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
+
+const org_options = [
+    { value: '', label: 'Select' },
+    { value: '1', label: 'Provider' },
+    { value: '2', label: 'County' },
+    { value: '3', label: 'Foster Care' }
+];
+
 class AddOrganization extends React.Component {
     constructor() {
         super();
@@ -96,11 +104,6 @@ class AddOrganization extends React.Component {
     };
     render() {
         const { id } = this.props.match.params;
-        const org_options = [
-            { value: '', label: 'Select' },
-            { value: '1', label: 'Provider' },
-            { value: '2', label: 'County' }
-        ];
         toast.configure();
         return (
             <div className="container-fluid">

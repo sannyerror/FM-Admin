@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react';
-import { saveClientConfigure, fetchConfigureQuestions } from '../api/api';
-import Preview from './Preview_Questions';
+import { saveClientConfigure, fetchConfigureQuestions } from '../../api/api';
+import Preview from '../Preview_Questions';
 import { toast } from 'react-toastify';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
@@ -10,8 +10,9 @@ import Modal from 'react-modal';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 import { BeatLoader } from 'react-spinners';
-
+import QuestionsConfig from "./ConfigureQuestions.config.json";
 import { BsFillArrowDownCircleFill, BsFillArrowUpCircleFill } from 'react-icons/bs';
+//import { QueryParams } from '../../Common/QueryParams';
 
 const animatedComponents = makeAnimated();
 const customStyles = {
@@ -44,67 +45,17 @@ class QuestionConfigure extends React.Component {
     constructor() {
         super();
         this.state = this.getInitialState();
+        // let searchParams = new useSearchParams()
     }
-    getInitialState() {
+    
+   getInitialState() {
         return {
             sections: [
                 {
                     section: 'Demographics',
                     section_id: 0,
                     related: 'false',
-                    questions: [
-                        {
-                            question_id: 0,
-                            question: 'Client Code',
-                            description: '',
-                            field_type: '1',
-                            answer_type: 'NUMBER',
-                            suggested_answers: [''],
-                            suggested_jump: [''],
-                            validation1: '100',
-                            validation2: '99999',
-                            error_msg: 'Should be range between 100 - 99999',
-                            re_type: 'no',
-                            is_to_be_mask: 'no',
-                            related: 'no',
-                            required: 'yes',
-                            flag: '0'
-                        },
-                        {
-                            question_id: 1,
-                            question: 'First Name',
-                            description: '',
-                            field_type: '1',
-                            answer_type: 'TEXT',
-                            suggested_answers: [''],
-                            suggested_jump: [''],
-                            validation1: 'Contains',
-                            validation2: 'Both',
-                            error_msg: 'Should not contain special characters',
-                            re_type: 'no',
-                            is_to_be_mask: 'no',
-                            related: 'no',
-                            required: 'yes',
-                            flag: '0'
-                        },
-                        {
-                            question_id: 2,
-                            question: 'Last Name',
-                            description: '',
-                            field_type: '1',
-                            answer_type: 'TEXT',
-                            suggested_answers: [''],
-                            suggested_jump: [''],
-                            validation1: 'Contains',
-                            validation2: 'Both',
-                            error_msg: 'Should not contain special characters',
-                            re_type: 'no',
-                            is_to_be_mask: 'no',
-                            related: 'no',
-                            required: 'yes',
-                            flag: '0'
-                        }
-                    ]
+                    questions: QuestionsConfig.Questions
                 }
             ],
             lastItemId: 3,
@@ -120,7 +71,8 @@ class QuestionConfigure extends React.Component {
             err_msg: [],
             isLoading: false,
             relatedSections: [],
-            relatedQuestions: []
+            relatedQuestions: [],
+            queryParams: ""
         };
     }
     handleNavToTop = () => {
@@ -152,200 +104,11 @@ class QuestionConfigure extends React.Component {
             section: 'Outcomes',
             section_id: this.state.sections.length,
             related: 'false',
-            questions: [
-                {
-                    question_id: 0,
-                    question: 'Referral Status',
-                    description: '',
-                    field_type: '1',
-                    answer_type: 'RADIO',
-                    suggested_answers: [
-                        { id: 0, value: 'Pending', isChecked: true },
-                        { id: 1, value: 'Placed', isChecked: false },
-                        { id: 2, value: 'Rejected', isChecked: false },
-                        { id: 3, value: 'Not Placed', isChecked: false }
-                    ],
-                    suggested_jump: [
-                        { answer: 'Pending', jumpto: [], question_jumpto: ['Program'] },
-                        {
-                            answer: 'Placed',
-                            jumpto: [],
-                            question_jumpto: ['Program', 'Start Date', 'Program Completion', 'End Date']
-                        },
-                        {
-                            answer: 'Rejected',
-                            jumpto: [],
-                            question_jumpto: ['Reason for Rejection']
-                        },
-                        {
-                            answer: 'Not Placed',
-                            jumpto: [],
-                            question_jumpto: ['Program', 'Start Date']
-                        }
-                    ],
-                    validation1: '',
-                    validation2: '',
-                    error_msg: '',
-                    re_type: '',
-                    is_to_be_mask: '',
-                    related: 'no',
-                    required: 'yes',
-                    flag: '0'
-                },
-                {
-                    question_id: 1,
-                    question: 'Program',
-                    description: '',
-                    field_type: '1',
-                    answer_type: 'SELECT',
-                    suggested_answers: [
-                        { id: 0, value: 'Secure Treatment', isChecked: false },
-                        { id: 1, value: 'Mental Health Treatment', isChecked: false }
-                    ],
-                    suggested_jump: [],
-                    validation1: '',
-                    validation2: '',
-                    error_msg: '',
-                    re_type: '',
-                    is_to_be_mask: '',
-                    related: 'yes',
-                    required: 'yes',
-                    flag: '0'
-                },
-                {
-                    question_id: 2,
-                    question: 'Start Date',
-                    description: '',
-                    field_type: '1',
-                    answer_type: 'DATE',
-                    suggested_answers: [],
-                    suggested_jump: [],
-                    validation1: '',
-                    validation2: '',
-                    error_msg: '',
-                    re_type: '',
-                    is_to_be_mask: '',
-                    related: 'yes',
-                    required: 'yes',
-                    flag: '0'
-                },
-                {
-                    question_id: 3,
-                    question: 'Program Completion',
-                    description: '',
-                    field_type: '1',
-                    answer_type: 'SELECT',
-                    suggested_answers: [
-                        { id: 0, value: 'Yes', isChecked: false },
-                        { id: 1, value: 'No', isChecked: false }
-                    ],
-                    suggested_jump: [],
-                    validation1: '',
-                    validation2: '',
-                    error_msg: '',
-                    re_type: '',
-                    is_to_be_mask: '',
-                    related: 'yes',
-                    required: 'yes',
-                    flag: '0'
-                },
-                {
-                    question_id: 4,
-                    question: 'End Date',
-                    description: '',
-                    field_type: '1',
-                    answer_type: 'DATE',
-                    suggested_answers: [],
-                    suggested_jump: [],
-                    validation1: '',
-                    validation2: '',
-                    error_msg: '',
-                    re_type: '',
-                    is_to_be_mask: '',
-                    related: 'yes',
-                    required: 'yes',
-                    flag: '0'
-                },
-                {
-                    question_id: 5,
-                    question: 'Remained Out of Care',
-                    description: '',
-                    field_type: '1',
-                    answer_type: 'SELECT',
-                    suggested_answers: [
-                        { id: 0, value: 'Yes', isChecked: false },
-                        { id: 1, value: 'No', isChecked: false }
-                    ],
-                    suggested_jump: [],
-                    validation1: '',
-                    validation2: '',
-                    error_msg: '',
-                    re_type: '',
-                    is_to_be_mask: '',
-                    related: 'no',
-                    required: 'yes',
-                    flag: '0'
-                },
-                {
-                    question_id: 6,
-                    question: 'Reason for Rejection',
-                    description: '',
-                    field_type: '1',
-                    answer_type: 'SELECT',
-                    suggested_answers: [{ id: 0, value: '', isChecked: false }],
-                    suggested_jump: [],
-                    validation1: '',
-                    validation2: '',
-                    error_msg: '',
-                    re_type: '',
-                    is_to_be_mask: '',
-                    related: 'yes',
-                    required: 'yes',
-                    flag: '0'
-                }
-            ]
+            questions: QuestionsConfig.Questions
         };
-        let countyDemographics = {
-            section: 'Demographics',
-            section_id: 0,
-            related: 'false',
-            questions: [
-                {
-                    question_id: 0,
-                    question: 'Identification Number',
-                    description: '',
-                    field_type: '1',
-                    answer_type: 'TEXT',
-                    suggested_answers: [],
-                    suggested_jump: [],
-                    validation1: 'Contains',
-                    validation2: 'Both',
-                    error_msg: 'Identification Number must contain a minimum of 9 characters to include any combination of letters, numbers and special characters (_@./-).',
-                    re_type: 'no',
-                    is_to_be_mask: 'no',
-                    related: 'no',
-                    required: 'yes',
-                    flag: '0'
-                },
-                {
-                    question_id: 1,
-                    question: 'Date of Birth',
-                    description: '',
-                    field_type: '1',
-                    answer_type: 'DATE',
-                    suggested_answers: [],
-                    suggested_jump: [],
-                    validation1: '',
-                    validation2: '',
-                    error_msg: '',
-                    re_type: '',
-                    is_to_be_mask: '',
-                    related: 'no',
-                    required: 'yes',
-                    flag: '0'
-                }
-            ]
-        };
+        const userParams = await this.useQuery();
+        console.log(userParams, "useParams");
+        let countyDemographics = QuestionsConfig.CountyDemographics;
         window.addEventListener('scroll', this.handleScroll);
         let { id } = this.props.match.params;
         const org_type = this.props.organizationsList.find((org) => org.id === Number(id)).org_type;
@@ -988,8 +751,8 @@ class QuestionConfigure extends React.Component {
         const findIndex = this.state.sections.findIndex((section) => section.section === 'Outcomes');
         //Removing Duplicate values
         const StaticQuesIndex = [];
-        OutcomesStaticQues.filter((ques1, i) => this.state.sections.length > 1 && this.state.sections[id].questions?.some((ques2, j) => ques1 === ques2.question && StaticQuesIndex.push(ques2.question_id)));
-
+        OutcomesStaticQues.filter((ques1, i) => this.state.sections.length > 1 && this.state.sections[id]?.questions?.some((ques2, j) => ques1 === ques2.question && StaticQuesIndex.push(ques2.question_id)));
+    
         if (isPreview) {
             return (
                 <Modal isOpen={this.state.isOpen} ariaHideApp={false} onRequestClose={this.handleClose} style={customStyles} scrollable="true" contentLabel="Example Modal">

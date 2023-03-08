@@ -30,7 +30,7 @@ import ChangePassword from './components/ChangePassword';
 import AddOrganization from './components/AddOrganization';
 import EmailList from './components/Emaillist';
 import BillingDetails from './components/BillingDetails';
-import QuestionConfigure from './components/QuestionConfigure';
+import QuestionConfigure from './components/QuestionConfigure/QuestionConfigure';
 import FormConfigure from './components/FormConfigure';
 import ConfigureOrg from './components/ConfigureOrg';
 import DashboardDetails from './components/DashboardDetails';
@@ -96,7 +96,7 @@ class App extends React.Component {
                                     <PrivateRoute path="/admin/configure/emailslist" component={EmailList} roles={['Super Admin', 'Admin', 'Coordinator']} />
 
                                     <PrivateRoute path="/admin/org-configure/" component={ConfigureOrg} roles={['Super Admin', 'Admin']} />
-                                    <PrivateRoute path="/admin/questions-configure/Org=:Org&id=:id" component={QuestionConfigure} roles={['Super Admin', 'Admin']} />
+                                    <PrivateRoute path="/admin/questions-configure/Org=:Org&id=:id&Config=:Config" component={QuestionConfigure} roles={['Super Admin', 'Admin']} />
                                     <PrivateRoute path="/admin/dashboard-details/Org=:Org&id=:id" component={DashboardDetails} roles={['Super Admin', 'Admin']} />
                                     <PrivateRoute path="/admin/forms-configure/Org=:Org&id=:id" component={FormConfigure} roles={['Super Admin', 'Admin']} />
                                     <PrivateRoute path="/admin/configure-tester-list/Org=:Org&id=:id" component={TesterList} roles={['Super Admin']} />

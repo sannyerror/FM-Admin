@@ -215,7 +215,7 @@ export const resendRAF = async (customer) => {
     }
 };
 
-export const saveClientConfigure = async (data) => {
+export const saveClientConfigure = async (data,configType) => {
     const currentUser = store.getState().loginData.user.token;
     try {
         return await axios
@@ -223,7 +223,8 @@ export const saveClientConfigure = async (data) => {
                 `${baseApiUrl}/client-config`,
                 {
                     customer: data.customer,
-                    sections: data.sections
+                    sections: data.sections,
+                    config_type: configType
                 },
                 {
                     headers: {
