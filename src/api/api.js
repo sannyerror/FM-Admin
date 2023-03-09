@@ -223,7 +223,8 @@ export const saveClientConfigure = async (data) => {
                 `${baseApiUrl}/client-config`,
                 {
                     customer: data.customer,
-                    sections: data.sections
+                    sections: data.sections,
+                    config_type: data.config_type
                 },
                 {
                     headers: {
@@ -241,11 +242,11 @@ export const saveClientConfigure = async (data) => {
     }
 };
 
-export const fetchConfigureQuestions = async (value) => {
+export const fetchConfigureQuestions = async (id, configType) => {
     const currentUser = store.getState().loginData.user.token;
     try {
         return await axios
-            .get(`${baseApiUrl}/client-config?customer=${value}`, {
+            .get(`${baseApiUrl}/client-config?customer=${id}&config_type=${configType}`, {
                 headers: {
                     Authorization: `Bearer ${currentUser}`
                 }

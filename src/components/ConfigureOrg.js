@@ -35,6 +35,7 @@ class ConfigureOrg extends React.Component {
             startBill: false,
             Org_Name: '',
             Org_Type: null,
+            ConfigType:'',
             Org_Id: '',
             logoPath: '',
             color: '#fff',
@@ -66,14 +67,14 @@ class ConfigureOrg extends React.Component {
     handleChange = (e) => {
         e.preventDefault();
         const id = e.target.value;
-        const org_name = this.state.Organizations.filter((org) => org.id == id);
+        const org_details = this.state.Organizations.find((org) => org.id == id);
         this.setState({
-            Org_Name: org_name[0].org_name,
-            Org_Type: org_name[0].org_type,
-            Org_Id: org_name[0].id,
-            logoPath: org_name[0].logo_path,
-            color: org_name[0].header_color,
-            header_color: org_name[0].header_color
+            Org_Name: org_details.org_name,
+            Org_Type: org_details.org_type,
+            Org_Id: org_details.id,
+            logoPath: org_details.logo_path,
+            color: org_details.header_color,
+            header_color: org_details.header_color
         });
     };
 
@@ -102,9 +103,9 @@ class ConfigureOrg extends React.Component {
         const response = await uploadLogo(formdata);
         if (response.message === 'logo uploaded successfully') {
             const res = await fetchOrganizations();
-            let logoPath = res.filter((p) => p.id === org_id);
+            let Org_Details = res.find((p) => p.id === org_id);
             this.setState({
-                logoPath: logoPath[0].logo_path
+                logoPath: Org_Details.logo_path
             });
             toast.info(`Logo uploaded successfully.`, {
                 position: toast.POSITION.TOP_CENTER,
@@ -161,13 +162,23 @@ class ConfigureOrg extends React.Component {
                                                     ''
                                                 )} */}
                                                 <li className="list-group-item border-0">
-                                                    <Link to={`/admin/questions-configure/Org=${Org_Name}&id=${Org_Id}`}>
+                                                    <Link to={`/admin/questions-configure/Org=${Org_Name}&id=${Org_Id}&Config=1`}>
                                                         <span className="h3">
                                                             <MdOutlineEditCalendar color="black" />
                                                         </span>
-                                                        <strong className="px-2">Questions</strong>
+                                                        <strong className="px-2">Client Questions</strong>
                                                     </Link>
                                                 </li>
+                                                {Org_Type === 3 && (
+                                                <li className="list-group-item border-0">
+                                                    <Link to={`/admin/questions-configure/Org=${Org_Name}&id=${Org_Id}&Config=2`}>
+                                                        <span className="h3">
+                                                            <MdOutlineEditCalendar color="black" />
+                                                        </span>
+                                                        <strong className="px-2">Family Questions</strong>
+                                                    </Link>
+                                                </li>
+                                                )}
                                                 <li className="list-group-item border-0">
                                                     <Link to={`/admin/dashboard-details/Org=${Org_Name}&id=${Org_Id}`}>
                                                         <span className="h3">
@@ -270,6 +281,7 @@ class ConfigureOrg extends React.Component {
                                                 top: '30%',
                                                 width: '30%'
                                             }}
+                                        
                                         >
                                             &nbsp;
                                         </span>
