@@ -281,6 +281,7 @@ class ConfigureOrg extends React.Component {
                                                 top: '30%',
                                                 width: '30%'
                                             }}
+                                        
                                         >
                                             &nbsp;
                                         </span>

@@ -215,7 +215,7 @@ export const resendRAF = async (customer) => {
     }
 };
 
-export const saveClientConfigure = async (data,configType) => {
+export const saveClientConfigure = async (data) => {
     const currentUser = store.getState().loginData.user.token;
     try {
         return await axios
@@ -224,7 +224,7 @@ export const saveClientConfigure = async (data,configType) => {
                 {
                     customer: data.customer,
                     sections: data.sections,
-                    config_type: configType
+                    config_type: data.config_type
                 },
                 {
                     headers: {
@@ -242,11 +242,11 @@ export const saveClientConfigure = async (data,configType) => {
     }
 };
 
-export const fetchConfigureQuestions = async (value) => {
+export const fetchConfigureQuestions = async (id, configType) => {
     const currentUser = store.getState().loginData.user.token;
     try {
         return await axios
-            .get(`${baseApiUrl}/client-config?customer=${value}`, {
+            .get(`${baseApiUrl}/client-config?customer=${id}&config_type=${configType}`, {
                 headers: {
                     Authorization: `Bearer ${currentUser}`
                 }

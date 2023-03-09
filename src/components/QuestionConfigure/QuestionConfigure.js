@@ -45,7 +45,6 @@ class QuestionConfigure extends React.Component {
     constructor() {
         super();
         this.state = this.getInitialState();
-        // let searchParams = new useSearchParams()
     }
     
    getInitialState() {
@@ -104,31 +103,43 @@ class QuestionConfigure extends React.Component {
             section: 'Outcomes',
             section_id: this.state.sections.length,
             related: 'false',
-            questions: QuestionsConfig.Questions
+            questions: QuestionsConfig.LastQuestions
         };
-        const userParams = await this.useQuery();
-        console.log(userParams, "useParams");
         let countyDemographics = QuestionsConfig.CountyDemographics;
+        let fosterCareDemographics = QuestionsConfig.FosterCareDemographics;
+        let fosterCareFamilyDemographics = QuestionsConfig.FosterCareFamilyDemographics
         window.addEventListener('scroll', this.handleScroll);
-        let { id } = this.props.match.params;
+        let { id, Config } = this.props.match.params;
         const org_type = this.props.organizationsList.find((org) => org.id === Number(id)).org_type;
         let logopath = this.props.organizationsList.find((org) => org.id === Number(id)).logo_path;
         let headerColor = this.props.organizationsList.find((org) => org.id === Number(id)).header_color;
-        let response = await fetchConfigureQuestions(id);
-
+        let response = await fetchConfigureQuestions(id, Config);
         // 1. When organization have not sections.
         if (!Array.isArray(response.response)) {
-            if (org_type && org_type === 2) {
-                this.setState((prevState) => ({
-                    ...prevState,
-                    sections: [countyDemographics, lastSection]
-                }));
-            } else {
-                this.setState((prevState) => ({
-                    ...prevState,
-                    sections: [...prevState.sections, lastSection]
-                }));
+            if(org_type) {
+                switch (org_type) {
+                    case 1 : 
+                    this.setState((prevState) => ({
+                        ...prevState,
+                        sections: [...prevState.sections, lastSection]
+                    }));
+                    break;
+                    case 2 : 
+                    this.setState((prevState) => ({
+                        ...prevState,
+                        sections: [countyDemographics, lastSection]
+                    }));
+                    break;
+                    case 3 : 
+                    let firstSection = Config == 1 ? fosterCareDemographics : fosterCareFamilyDemographics;
+                    this.setState((prevState) => ({
+                        ...prevState,
+                        sections: [firstSection, lastSection]
+                    }));
+                    break;
+                }
             }
+            
         } else {
             // 2. When organization have sections.
             let isOutcomes = response.response.some((section) => (section.section === 'Outcomes' ? true : false));
@@ -650,10 +661,11 @@ class QuestionConfigure extends React.Component {
                 })
             };
         });
-
+        let { Config } = this.props.match.params;
         let data = {
             customer: this.state.Org_id,
-            sections: sections
+            sections: sections,
+            config_type: Config
         };
 
         if (!this.state.hasError && relatedSections.length === 0 && relatedQuestions.length === 0 && validatedQuestions.length === 0) {
