@@ -35,7 +35,7 @@ class ConfigureOrg extends React.Component {
             startBill: false,
             Org_Name: '',
             Org_Type: null,
-            ConfigType:'',
+            ConfigType: '',
             Org_Id: '',
             logoPath: '',
             color: '#fff',
@@ -170,14 +170,14 @@ class ConfigureOrg extends React.Component {
                                                     </Link>
                                                 </li>
                                                 {Org_Type === 3 && (
-                                                <li className="list-group-item border-0">
-                                                    <Link to={`/admin/questions-configure/Org=${Org_Name}&id=${Org_Id}&Config=2`}>
-                                                        <span className="h3">
-                                                            <MdOutlineEditCalendar color="black" />
-                                                        </span>
-                                                        <strong className="px-2">Family Questions</strong>
-                                                    </Link>
-                                                </li>
+                                                    <li className="list-group-item border-0">
+                                                        <Link to={`/admin/questions-configure/Org=${Org_Name}&id=${Org_Id}&Config=2`}>
+                                                            <span className="h3">
+                                                                <MdOutlineEditCalendar color="black" />
+                                                            </span>
+                                                            <strong className="px-2">Family Questions</strong>
+                                                        </Link>
+                                                    </li>
                                                 )}
                                                 <li className="list-group-item border-0">
                                                     <Link to={`/admin/dashboard-details/Org=${Org_Name}&id=${Org_Id}`}>
@@ -281,7 +281,6 @@ class ConfigureOrg extends React.Component {
                                                 top: '30%',
                                                 width: '30%'
                                             }}
-                                        
                                         >
                                             &nbsp;
                                         </span>

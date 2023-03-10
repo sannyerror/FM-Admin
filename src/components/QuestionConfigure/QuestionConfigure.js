@@ -10,7 +10,7 @@ import Modal from 'react-modal';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 import { BeatLoader } from 'react-spinners';
-import QuestionsConfig from "./ConfigureQuestions.config.json";
+import QuestionsConfig from './ConfigureQuestions.config.json';
 import { BsFillArrowDownCircleFill, BsFillArrowUpCircleFill } from 'react-icons/bs';
 //import { QueryParams } from '../../Common/QueryParams';
 
@@ -30,12 +30,38 @@ const customStyles = {
     }
 };
 const colourStyles = {
-    option: (provided, state) => ({
-        ...provided,
-        borderBottom: '0px dotted green',
-        color: state.isSelected ? 'yellow' : 'black',
-        backgroundColor: state.isSelected ? 'green' : 'white'
-    }),
+    option: (provided, state) => {
+        const {
+            data: { isOutcomesQues },
+            isSelected
+        } = state;
+        return { ...provided, color: isSelected ? 'yellow' : isOutcomesQues ? '#FF8B00' : 'black', backgroundColor: isSelected ? 'green' : 'white', fontWeight: isOutcomesQues ? 'bold' : '', boxShadow: '0px 2px 5px #888888' };
+    },
+    multiValue: (provided, state) => {
+        const {
+            data: { isOutcomesQues }
+        } = state;
+        return {
+            ...provided,
+            backgroundColor: isOutcomesQues ? '#FF8B00' : '#E9ECEF',
+            color: isOutcomesQues ? '#fff' : 'black'
+        };
+    },
+    multiValueLabel: (provided, state) => {
+        const {
+            data: { isOutcomesQues }
+        } = state;
+        return {
+            ...provided,
+            color: isOutcomesQues ? '#fff' : 'black'
+        };
+    },
+    multiValueRemove: (provided, state) => {
+        return {
+            ...provided,
+            cursor: 'pointer'
+        };
+    },
     control: (provided) => ({
         ...provided,
         marginTop: '5%'
@@ -46,8 +72,8 @@ class QuestionConfigure extends React.Component {
         super();
         this.state = this.getInitialState();
     }
-    
-   getInitialState() {
+
+    getInitialState() {
         return {
             sections: [
                 {
@@ -71,7 +97,7 @@ class QuestionConfigure extends React.Component {
             isLoading: false,
             relatedSections: [],
             relatedQuestions: [],
-            queryParams: ""
+            queryParams: ''
         };
     }
     handleNavToTop = () => {
@@ -107,39 +133,36 @@ class QuestionConfigure extends React.Component {
         };
         let countyDemographics = QuestionsConfig.CountyDemographics;
         let fosterCareDemographics = QuestionsConfig.FosterCareDemographics;
-        let fosterCareFamilyDemographics = QuestionsConfig.FosterCareFamilyDemographics
+        let fosterCareFamilyDemographics = QuestionsConfig.FosterCareFamilyDemographics;
         window.addEventListener('scroll', this.handleScroll);
         let { id, Config } = this.props.match.params;
-        const org_type = this.props.organizationsList.find((org) => org.id === Number(id)).org_type;
-        let logopath = this.props.organizationsList.find((org) => org.id === Number(id)).logo_path;
-        let headerColor = this.props.organizationsList.find((org) => org.id === Number(id)).header_color;
+        const { org_type, logo_path: logopath, header_color: headerColor } = this.props.organizationsList.find((org) => org.id === Number(id));
         let response = await fetchConfigureQuestions(id, Config);
         // 1. When organization have not sections.
         if (!Array.isArray(response.response)) {
-            if(org_type) {
+            if (org_type) {
                 switch (org_type) {
-                    case 1 : 
-                    this.setState((prevState) => ({
-                        ...prevState,
-                        sections: [...prevState.sections, lastSection]
-                    }));
-                    break;
-                    case 2 : 
-                    this.setState((prevState) => ({
-                        ...prevState,
-                        sections: [countyDemographics, lastSection]
-                    }));
-                    break;
-                    case 3 : 
-                    let firstSection = Config == 1 ? fosterCareDemographics : fosterCareFamilyDemographics;
-                    this.setState((prevState) => ({
-                        ...prevState,
-                        sections: [firstSection, lastSection]
-                    }));
-                    break;
+                    case 1:
+                        this.setState((prevState) => ({
+                            ...prevState,
+                            sections: [...prevState.sections, lastSection]
+                        }));
+                        break;
+                    case 2:
+                        this.setState((prevState) => ({
+                            ...prevState,
+                            sections: [countyDemographics, lastSection]
+                        }));
+                        break;
+                    case 3:
+                        let firstSection = Config == 1 ? fosterCareDemographics : fosterCareFamilyDemographics;
+                        this.setState((prevState) => ({
+                            ...prevState,
+                            sections: [firstSection, lastSection]
+                        }));
+                        break;
                 }
             }
-            
         } else {
             // 2. When organization have sections.
             let isOutcomes = response.response.some((section) => (section.section === 'Outcomes' ? true : false));
@@ -708,9 +731,33 @@ class QuestionConfigure extends React.Component {
         this.state.sections.filter((sec, key) => sec.related === 'true').map((q, i) => options.push({ value: q.section, label: q.section, id: i }));
         return options;
     };
-    Question_jumpOptions = (id) => {
+    Question_jumpOptions = (id, idx) => {
         let options = [];
-        this.state.sections[id].questions.filter((sec, key) => sec.related === 'yes').map((q, i) => options.push({ value: q.question, label: q.question, id: i }));
+        this.state.sections[id].questions
+            .filter((sec, key) => key > idx && sec.related === 'yes')
+            .map((q, i) => {
+                let exactQuestion = Number(q.question_id) + 1 + '. ' + q.question;
+                options.push({
+                    value: q.question,
+                    label: (
+                        <div data-toggle="tooltip" data-placement="top" title={exactQuestion} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', cursor: 'pointer' }}>
+                            {exactQuestion}
+                        </div>
+                    ),
+                    id: i,
+                    isOutcomesQues: false
+                });
+            });
+        options.push({
+            value: 'Program',
+            label: (
+                <div data-toggle="tooltip" data-placement="top" title={'Program'} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', cursor: 'pointer' }}>
+                    Program
+                </div>
+            ),
+            id: this.state.sections[id].questions.length,
+            isOutcomesQues: true
+        });
         return options;
     };
 
@@ -757,14 +804,30 @@ class QuestionConfigure extends React.Component {
         let id = this.state.lastSectionId;
         const sectionLength = this.state.sections.length - 1;
         let jumpOpt = [];
-        this.state.sections && this.state.sections.filter((sec, key) => sec.related === 'true').map((q, i) => jumpOpt.push({ value: q.section, label: q.section, id: i }));
+        this.state.sections &&
+            this.state.sections
+                .filter((sec, key) => key > id && sec.related === 'true')
+                .map((q, i) => {
+                    let exactSection = Number(q.section_id) + '. ' + q.section;
+                    jumpOpt.push({
+                        value: q.section,
+                        label: (
+                            <div data-toggle="tooltip" data-placement="top" title={exactSection} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', cursor: 'pointer' }}>
+                                {exactSection}
+                            </div>
+                        ),
+                        id: i,
+                        isOutcomesQues: false
+                    });
+                });
+
         const OutcomesStaticQues = ['Client Code', 'First Name', 'Last Name', 'Identification Number', 'Date of Birth', 'Referral Status', 'Program', 'Start Date', 'Program Completion', 'End Date', 'Remained Out of Care'];
         const NonEditSection = ['Demographics', 'Outcomes'];
         const findIndex = this.state.sections.findIndex((section) => section.section === 'Outcomes');
         //Removing Duplicate values
         const StaticQuesIndex = [];
         OutcomesStaticQues.filter((ques1, i) => this.state.sections.length > 1 && this.state.sections[id]?.questions?.some((ques2, j) => ques1 === ques2.question && StaticQuesIndex.push(ques2.question_id)));
-    
+
         if (isPreview) {
             return (
                 <Modal isOpen={this.state.isOpen} ariaHideApp={false} onRequestClose={this.handleClose} style={customStyles} scrollable="true" contentLabel="Example Modal">
@@ -1117,7 +1180,7 @@ class QuestionConfigure extends React.Component {
                                                                                                                           </div>
 
                                                                                                                           <div className="col-sm-3">
-                                                                                                                              <Select value={this.Question_jumpOptions(id).filter((value) => this.state.sections[id].questions[idx].suggested_jump[idy] && Array.isArray(this.state.sections[id].questions[idx].suggested_jump[idy].question_jumpto) && this.state.sections[id].questions[idx].suggested_jump[idy].question_jumpto.includes(value.value))} isClearable styles={colourStyles} isMulti name="ques_suggested_jump" options={this.Question_jumpOptions(id)} className="basic-multi-select" placeholder="Select jump within Section" onChange={this.Question_multihandleChange(id, idx, idy)} />
+                                                                                                                              <Select value={this.Question_jumpOptions(id, idx).filter((value) => this.state.sections[id].questions[idx].suggested_jump[idy] && Array.isArray(this.state.sections[id].questions[idx].suggested_jump[idy].question_jumpto) && this.state.sections[id].questions[idx].suggested_jump[idy].question_jumpto.includes(value.value))} isClearable styles={colourStyles} isMulti name="ques_suggested_jump" options={this.Question_jumpOptions(id, idx)} className="basic-multi-select" placeholder="Select jump within Section" onChange={this.Question_multihandleChange(id, idx, idy)} />
                                                                                                                           </div>
                                                                                                                       </>
                                                                                                                   )}
