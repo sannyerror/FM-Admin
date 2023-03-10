@@ -56,7 +56,7 @@ const colourStyles = {
             color: isOutcomesQues ? '#fff' : 'black'
         };
     },
-    multiValueRemove: (provided, state) => {
+    multiValueRemove: (provided) => {
         return {
             ...provided,
             cursor: 'pointer'
@@ -748,16 +748,16 @@ class QuestionConfigure extends React.Component {
                     isOutcomesQues: false
                 });
             });
-        options.push({
-            value: 'Program',
-            label: (
-                <div data-toggle="tooltip" data-placement="top" title={'Program'} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', cursor: 'pointer' }}>
-                    Program
-                </div>
-            ),
-            id: this.state.sections[id].questions.length,
-            isOutcomesQues: true
-        });
+        // options.push({
+        //     value: 'Program',
+        //     label: (
+        //         <div data-toggle="tooltip" data-placement="top" title={'Program'} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', cursor: 'pointer' }}>
+        //             Program
+        //         </div>
+        //     ),
+        //     id: this.state.sections[id].questions.length,
+        //     isOutcomesQues: true
+        // });
         return options;
     };
 
@@ -1322,6 +1322,7 @@ class QuestionConfigure extends React.Component {
                                                                                                 ''
                                                                                             )
                                                                                         }
+
                                                                                         <fieldset className="form-group">
                                                                                             <div className="row">
                                                                                                 <legend className="col-form-label col-sm-2 font-weight-bold" htmlFor={relatedId}>
